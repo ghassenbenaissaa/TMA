@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}TMA-Profile{% endblock %}</title>
+    {% block stylesheets %}
+        <!-- plugins:css -->
+        <link rel="stylesheet" href="{{asset('vendorsProfile/mdi/css/materialdesignicons.min.css')}}">
+        <link rel="stylesheet" href="{{asset('vendorsProfile/ti-icons/css/themify-icons.css')}}">
+        <link rel="stylesheet" href="{{asset('vendorsProfile/css/vendor.bundle.base.css')}}">
+        <link rel="stylesheet" href="{{asset('vendorsProfile/font-awesome/css/font-awesome.min.css')}}">
+        <!-- endinject -->
+        <!-- Plugin css for this page -->
+        <link rel="stylesheet" href="{{asset('vendorsProfile/font-awesome/css/font-awesome.min.css')}}" />
+        <link rel="stylesheet" href="{{asset('vendorsProfile/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <!-- End plugin css for this page -->
+        <!-- inject:css -->
+        <!-- endinject -->
+        <!-- Layout styles -->
+        <link rel="stylesheet" href="{{asset('cssProfile/style.css')}}">
+        <!-- End layout styles -->
+        <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}" />
+    {% endblock %}
+</head>
+<body>
+<div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+            <a class="navbar-brand brand-logo" href="{{ path('app_home') }}"><img src="{{ asset('images/logo33.png') }}" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="{{ path('app_home') }}"><img src="{{ asset('images/apple-touch-icon.png') }}" alt="logo" /></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav navbar-nav-right">
+                <li class="nav-item nav-profile">
+                    <a class="nav-link">
+                        <div class="nav-profile-img">
+                            <img src="{{ asset('imagesProfile/faces/user.png') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text">
+                            <p class="mb-1 text-black">{{ user.nom }} {{ user.prenom }}</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item d-none d-lg-block full-screen-link">
+                    <a class="nav-link">
+                        <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
+                    </a>
+                </li>
+                <li class="nav-item nav-logout d-none d-lg-block">
+                    <a class="nav-link" href="{{ path('app_home') }}">
+                        <i class="mdi mdi-power"></i>
+                    </a>
+                </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                <span class="mdi mdi-menu"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_profile', {'userId': user.id}) }}">
+                        <span class="menu-title">Profile</span>
+                        <i class="mdi mdi-home menu-icon"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-title">Settings</span>
+                        <i class="menu-arrow"></i>
+                        <i class="fa fa-gear menu-icon"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_editProfile', {'userId': user.id}) }}">Edit Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_CPassword', {'userId': user.id}) }}">Change Password</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_DAccount', {'userId': user.id}) }}">Delete Account</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-title">{{ user.pageNom }}</span>
+                        <i class="menu-arrow"></i>
+                        <i class="fa fa-globe menu-icon"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_Website', {'userId': user.id}) }}">Edit Site web</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_Msections', {'userId': user.id}) }}">Main sections</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_ShowAdventures', {'userId': user.id}) }}">Show adventures</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_ShowPodcast', {'userId': user.id}) }}">Show podcasts</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <!-- partial -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-12 grid-margin">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2 class="animate-box" style="padding-bottom: 20px">Delete your account</h2>
+                                <p>All your profile and website data will be permanently deleted.</p>
+
+                                {% for flashMessage in app.flashes('success') %}
+                                    <div class="alert alert-success" role="alert">
+                                        {{ flashMessage }}
+                                    </div>
+                                {% endfor %}
+                                {% for flashMessage in app.flashes('error') %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ flashMessage }}
+                                    </div>
+                                {% endfor %}
+
+                                {{ form_start(delete_form, {'attr': {'id': 'delete-account-form'}}) }}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="button" value="Delete this Account" class="btn btn-primary" id="delete-account-button">
+                                    </div>
+                                </div>
+                                {{ form_widget(delete_form._token) }}
+                                {{ form_end(delete_form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+            <!-- partial:partials/_footer.html -->
+            {% block body %}
+
+            {% endblock %}
+
+            <footer class="footer">
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                    <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">All Rights Reserved &copy; 2024, <span class="chn-text"> 加斯顿</span></span>
+                </div>
+            </footer>
+            <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+{% block javascripts %}
+    <script>
+        document.getElementById('delete-account-button').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Please note that there is no option to restore the account after deletion!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-account-form').submit();
+                }
+            })
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{asset('vendorsProfile/js/vendor.bundle.base.js')}}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{{asset('vendorsProfile/chart.js/chart.umd.js')}}"></script>
+    <script src="{{asset('vendorsProfile/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{{asset('jsProfile/off-canvas.js')}}"></script>
+    <script src="{{asset('jsProfile/misc.js')}}"></script>
+    <script src="{{asset('jsProfile/settings.js')}}"></script>
+    <script src="{{asset('jsProfile/todolist.js')}}"></script>
+    <script src="{{asset('jsProfile/jquery.cookie.js')}}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="{{asset('jsProfile/dashboard.js')}}"></script>
+    <!-- End custom js for this page -->
+{% endblock %}
+</body>
+</html>

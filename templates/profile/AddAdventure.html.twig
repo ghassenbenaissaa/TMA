@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}TMA-Profile{% endblock %}</title>
+    {% block stylesheets %}
+        <!-- plugins:css -->
+        <link rel="stylesheet" href="{{asset('vendorsProfile/mdi/css/materialdesignicons.min.css')}}">
+        <link rel="stylesheet" href="{{asset('vendorsProfile/ti-icons/css/themify-icons.css')}}">
+        <link rel="stylesheet" href="{{asset('vendorsProfile/css/vendor.bundle.base.css')}}">
+        <link rel="stylesheet" href="{{asset('vendorsProfile/font-awesome/css/font-awesome.min.css')}}">
+        <!-- endinject -->
+        <!-- Plugin css for this page -->
+        <link rel="stylesheet" href="{{asset('vendorsProfile/font-awesome/css/font-awesome.min.css')}}" />
+        <link rel="stylesheet" href="{{asset('vendorsProfile/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <!-- End plugin css for this page -->
+        <!-- inject:css -->
+        <!-- endinject -->
+        <!-- Layout styles -->
+        <link rel="stylesheet" href="{{asset('cssProfile/style.css')}}">
+        <!-- End layout styles -->
+        <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}" />
+        <style>
+            .custom-switch {
+                position: relative;
+                display: inline-block;
+                width: 50px; /* Largeur du switch */
+                height: 28px; /* Hauteur du switch */
+            }
+
+            .custom-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 28px; /* Rayon du bord du switch */
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 22px; /* Taille du bouton (cercle) */
+                width: 22px; /* Taille du bouton (cercle) */
+                left: 3px; /* Décalage à gauche */
+                bottom: 3px; /* Décalage en bas */
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%; /* Forme du bouton (cercle) */
+            }
+
+            input:checked + .slider {
+                background-color: #ff7777; /* Couleur de fond du switch en état activé */
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(20px); /* Déplacement du bouton (cercle) à l'état activé */
+            }
+
+            .play-icon {
+                cursor: pointer;
+                color: #fff;
+                background-color: #ff6060;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: background-color 0.3s ease;
+            }
+
+            .play-icon:hover {
+                background-color: #b23535;
+            }
+
+        </style>
+    {% endblock %}
+</head>
+<body>
+<div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+            <a class="navbar-brand brand-logo" href="{{ path('app_home') }}"><img src="{{ asset('images/logo33.png') }}" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="{{ path('app_home') }}"><img src="{{ asset('images/apple-touch-icon.png') }}" alt="logo" /></a>
+        </div>
+        <div class="navbar-menu-wrapper d-flex align-items-stretch">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav navbar-nav-right">
+                <li class="nav-item nav-profile">
+                    <a class="nav-link">
+                        <div class="nav-profile-img">
+                            <img src="{{ asset('imagesProfile/faces/user.png') }}" alt="image">
+                        </div>
+                        <div class="nav-profile-text">
+                            <p class="mb-1 text-black">{{ user.nom }} {{ user.prenom }}</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item d-none d-lg-block full-screen-link">
+                    <a class="nav-link">
+                        <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
+                    </a>
+                </li>
+                <li class="nav-item nav-logout d-none d-lg-block">
+                    <a class="nav-link" href="{{ path('app_home') }}">
+                        <i class="mdi mdi-power"></i>
+                    </a>
+                </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                <span class="mdi mdi-menu"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_sidebar.html -->
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_profile', {'userId': user.id}) }}">
+                        <span class="menu-title">Profile</span>
+                        <i class="mdi mdi-home menu-icon"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-title">Settings</span>
+                        <i class="menu-arrow"></i>
+                        <i class="fa fa-gear menu-icon"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_editProfile', {'userId': user.id}) }}">Edit Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_CPassword', {'userId': user.id}) }}">Change Password</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_DAccount', {'userId': user.id}) }}">Delete Account</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-title">{{ user.pageNom }}</span>
+                        <i class="menu-arrow"></i>
+                        <i class="fa fa-globe menu-icon"></i>
+                    </a>
+                    <div class="collapse" id="ui-basic">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_Website', {'userId': user.id}) }}">Edit Site web</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_Msections', {'userId': user.id}) }}">Main sections</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_ShowAdventures', {'userId': user.id}) }}">Show adventures</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_ShowPodcast', {'userId': user.id}) }}">Show podcasts</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <!-- partial -->
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-12 grid-margin">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2 class="custom-heading" style="padding-bottom: 15px;">Add Adventure</h2>
+
+                                {% for flashMessage in app.flashes('error') %}
+                                    <div class="alert alert-danger" role="alert">
+                                        <span class="emoji">&#9888;</span> {{ flashMessage }}
+                                    </div>
+                                {% endfor %}
+
+                                {% for flashMessage in app.flashes('success') %}
+                                    <div class="alert alert-success" role="alert">
+                                        <span class="emoji">&#x1F44C;</span> {{ flashMessage }}.
+                                    </div>
+                                {% endfor %}
+                                {{ form_start(form, {'attr': {'class': 'custom-form', 'style': 'text-align: center;', 'enctype': 'multipart/form-data'}}) }}
+                                <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+                                    <div class="custom-form-group" style="width: 50%; margin-bottom: 20px;">
+                                        {{ form_widget(form.nom, {'attr': {'class': 'custom-form-control', 'placeholder': 'Nom de l\'Aventure*', 'style': 'width: 100%; padding: 10px;'}}) }}
+                                    </div>
+                                    <div class="custom-form-group" style="width: 50%; margin-bottom: 20px; display: flex; align-items: center;">
+                                        {{ form_widget(form.description, {'attr': {'class': 'custom-form-control description-input', 'placeholder': 'Description*', 'style': 'flex-grow: 1; padding: 10px; height: 100px;'}}) }}
+                                        <button type="button" id="reformulate-button" class="btn btn-primary" style="padding: 5px 10px; height: 100px; margin-left: 10px;">
+                                            <img src="{{ asset('images/artificial-intelligence.png') }}" alt="icon_ia" style="width: 35px;">
+                                        </button>
+                                    </div>
+                                    <div id="reformulated-description" class="reformulated-description" style=" width: 50%;  text-align: left; margin-bottom: 20px; border: 1px solid #7a7a7a; padding: 10px; background-color: #ffecec; display: none;"></div>
+                                    <!-- Placeholder for reformulated text -->
+
+                                    <div class="custom-form-group" style="width: 50%; margin-bottom: 20px;">
+                                        {{ form_widget(form.Pays, {'attr': {'class': 'custom-form-control', 'placeholder': 'Pays*', 'style': 'width: 100%; padding: 10px;'}}) }}
+                                    </div>
+                                    <div class="custom-form-group" style="width: 50%; margin-bottom: 20px;">
+                                        <div style="position: relative;">
+                                        <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">
+                                        <i class="fab fa-youtube"></i>
+                                        </span>
+                                            {{ form_widget(form.video, {'attr': {'class': 'custom-form-control', 'placeholder': 'Enter a YouTube video link', 'style': 'width:100%; padding: 10px 10px 10px 30px;'}}) }}
+                                        </div>
+                                        <span id="previewVideoBtn" class="play-icon" style="margin-left: 10px; display: none;  margin-top: 5px;"><i class="fas fa-play"></i></span>
+                                    </div>
+                                    {% if form_errors(form.video) %}
+                                        <span style="color: red;">
+                                                    {{ form_errors(form.video) }}
+                                                </span>
+                                    {% endif %}
+                                    <div class="custom-form-group" style="width: 50%; margin-bottom: 20px; border: 1px solid #676767; position: relative; text-align: center;">
+                                        {{ form_widget(form.images, {'attr': {'style': 'display: none;', 'multiple': 'multiple'}}) }}
+                                        <div style="position: relative; display: inline-block;">
+                                            <button type="button" id="custom-file-upload" class="btn btn-primary" style="margin-right: 10px;">
+                                                <i class="fa fa-upload"></i> Select Images
+                                            </button>
+                                            <input type="file" id="images" name="images[]" multiple style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                                        </div>
+
+                                        <span id="file-upload-info" style="display: inline-block; vertical-align: middle; margin-left: 10px;">No files selected</span>
+
+                                        <div id="image-preview-container" style="margin-top: 20px; display: flex; flex-wrap: wrap;"></div>
+                                    </div>
+                                    <div class="custom-form-group" style="width: 50%;">
+                                        <label style="display: inline-block; vertical-align: middle; margin-right: 10px;">
+                                            Recommendation
+                                        </label>
+                                        <label class="custom-switch" style="display: inline-block; vertical-align: middle;">
+                                            {{ form_widget(form.recommander, {'attr': {'style': 'display: none;'}}) }}
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+
+                                    <p style="padding-bottom: 20px">If you recommend this adventure, it will be displayed in the recommendation section.</p>
+
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const imageInput = document.getElementById('images');
+                                            const customFileUploadButton = document.getElementById('custom-file-upload');
+                                            const fileUploadInfo = document.getElementById('file-upload-info');
+                                            const imagePreviewContainer = document.getElementById('image-preview-container');
+
+                                            customFileUploadButton.addEventListener('click', function() {
+                                                imageInput.click();
+                                            });
+
+                                            imageInput.addEventListener('change', function(event) {
+                                                const files = event.target.files;
+                                                fileUploadInfo.textContent = files.length + ' images selected';
+
+                                                imagePreviewContainer.innerHTML = ''; // Clear existing previews
+
+                                                Array.from(files).forEach((file, index) => {
+                                                    const reader = new FileReader();
+                                                    reader.onload = function(e) {
+                                                        const div = document.createElement('div');
+                                                        div.style.position = 'relative';
+                                                        div.style.marginRight = '10px';
+                                                        div.style.marginBottom = '10px';
+
+                                                        const img = document.createElement('img');
+                                                        img.src = e.target.result;
+                                                        img.style.maxWidth = '100px';
+                                                        img.style.maxHeight = '100px';
+                                                        img.style.border = '1px solid #ddd';
+                                                        img.style.padding = '5px';
+                                                        img.style.borderRadius = '5px';
+
+                                                        const removeButton = document.createElement('button');
+                                                        removeButton.innerHTML = 'X';
+                                                        removeButton.style.position = 'absolute';
+                                                        removeButton.style.top = '0';
+                                                        removeButton.style.right = '0';
+                                                        removeButton.style.background = 'red';
+                                                        removeButton.style.color = 'white';
+                                                        removeButton.style.border = 'none';
+                                                        removeButton.style.borderRadius = '50%';
+                                                        removeButton.style.width = '20px';
+                                                        removeButton.style.height = '20px';
+                                                        removeButton.style.cursor = 'pointer';
+
+                                                        removeButton.addEventListener('click', function() {
+                                                            div.remove();
+                                                            const dataTransfer = new DataTransfer();
+                                                            const filesArray = Array.from(imageInput.files);
+                                                            filesArray.splice(index, 1);
+                                                            filesArray.forEach(file => dataTransfer.items.add(file));
+                                                            imageInput.files = dataTransfer.files;
+                                                            fileUploadInfo.textContent = imageInput.files.length + ' images selected';
+                                                        });
+
+                                                        div.appendChild(img);
+                                                        div.appendChild(removeButton);
+                                                        imagePreviewContainer.appendChild(div);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                });
+                                            });
+                                        });
+                                    </script>
+
+                                    <div class="form-group">
+                                        <input type="submit" value="Submit" class="btn btn-primary">
+                                    </div>
+                                </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% block body %}
+
+            {% endblock %}
+
+            <footer class="footer">
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                    <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">All Rights Reserved &copy; 2024, <span class="chn-text"> 加斯顿</span></span>
+                </div>
+            </footer>
+            <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var videoLinkField = $('#{{ form.video.vars.id }}');
+            var previewVideoBtn = $('#previewVideoBtn');
+
+            // Vérifier lors du chargement de la page s'il y a déjà un lien vidéo
+            togglePreviewButton();
+
+            videoLinkField.on('input', function() {
+                togglePreviewButton();
+            });
+
+            function togglePreviewButton() {
+                var videoLink = videoLinkField.val();
+                if (isValidYouTubeLink(videoLink)) {
+                    previewVideoBtn.css('display', 'inline-flex'); // Affiche l'icône de play
+                } else {
+                    previewVideoBtn.css('display', 'none'); // Cache l'icône de play
+                }
+            }
+
+            function isValidYouTubeLink(link) {
+                var regex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+                return regex.test(link);
+            }
+
+            previewVideoBtn.on('click', function() {
+                var videoLink = videoLinkField.val();
+                if (isValidYouTubeLink(videoLink)) {
+                    showVideoPopup(videoLink);
+                } else {
+                    alert('Please enter a valid YouTube video link.');
+                }
+            });
+
+            function showVideoPopup(videoLink) {
+                var videoId = getYouTubeVideoId(videoLink);
+                var videoUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+
+                var popupHtml = `
+                <div id="videoPopupOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+                    <div id="videoPopup" style="position: relative;">
+                        <iframe width="800" height="450" src="${videoUrl}" frameborder="0" allowfullscreen style="border: none;"></iframe>
+                    </div>
+                </div>
+            `;
+
+                $('body').append(popupHtml);
+
+                $('#closeVideoBtn').on('click', function() {
+                    $('#videoPopupOverlay').remove();
+                });
+
+                // Fermer le popup si on clique en dehors de la vidéo
+                $('#videoPopupOverlay').on('click', function(event) {
+                    if (event.target.id === 'videoPopupOverlay') {
+                        $('#videoPopupOverlay').remove();
+                    }
+                });
+            }
+
+            function getYouTubeVideoId(link) {
+                var regex = /[?&]v=([^&#]+)/;
+                var match = link.match(regex);
+                return match && match[1] ? match[1] : null;
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('reformulate-button').addEventListener('click', function() {
+                const description = document.querySelector('.description-input').value;
+
+                fetch('/api/reformulate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ description: description }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const reformulatedDescriptionDiv = document.getElementById('reformulated-description');
+                        if (data.reformulatedText) {
+                            reformulatedDescriptionDiv.innerHTML = `<p>${data.reformulatedText}</p>`;
+                            reformulatedDescriptionDiv.style.display = 'block'; // Show the container if there is content
+                        } else {
+                            console.error('Error:', data.error);
+                            reformulatedDescriptionDiv.style.display = 'none'; // Hide the container if there is no content
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('reformulated-description').style.display = 'none'; // Hide the container on error
+                    });
+            });
+        });
+
+    </script>
+
+    <script src="{{asset('vendorsProfile/js/vendor.bundle.base.js')}}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{{asset('vendorsProfile/chart.js/chart.umd.js')}}"></script>
+    <script src="{{asset('vendorsProfile/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{{asset('jsProfile/off-canvas.js')}}"></script>
+    <script src="{{asset('jsProfile/misc.js')}}"></script>
+    <script src="{{asset('jsProfile/settings.js')}}"></script>
+    <script src="{{asset('jsProfile/todolist.js')}}"></script>
+    <script src="{{asset('jsProfile/jquery.cookie.js')}}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="{{asset('jsProfile/dashboard.js')}}"></script>
+    <!-- End custom js for this page -->
+{% endblock %}
+</body>
+</html>

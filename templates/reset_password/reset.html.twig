@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+{% block body %}
+    <p class="custom-heading">Reset your password</p>
+
+    {{ form_start(resetForm) }}
+    <div class="custom-form-group half-width">
+        {{ form_widget(resetForm.plainPassword, {'attr': {'class': 'custom-form-control', 'placeholder': 'Email'}}) }}
+        <div class="custom-error5-message">{{ form_errors(resetForm.plainPassword) }}</div>
+    </div>
+
+    <button class="custom-btn">Reset password</button>
+    {{ form_end(resetForm) }}
+{% endblock %}

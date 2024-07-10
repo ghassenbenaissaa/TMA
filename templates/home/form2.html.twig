@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}Sign Up{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Facebook and Twitter integration -->
+    <meta property="og:title" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:url" content=""/>
+    <meta property="og:site_name" content=""/>
+    <meta property="og:description" content=""/>
+    <meta name="twitter:title" content="" />
+    <meta name="twitter:image" content="" />
+    <meta name="twitter:url" content="" />
+    <meta name="twitter:card" content="" />
+    {% block stylesheets %}
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}">
+        <link href="{{asset('images/favicon.ico')}}" rel="icon">
+        <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,600,400italic,700' rel='stylesheet' type='text/css'>
+
+        <!-- Animate.css -->
+        <link rel="stylesheet" href="{{asset('css/animate.css')}}">
+        <!-- Flexslider -->
+        <link rel="stylesheet" href="{{asset('css/flexslider.css')}}">
+        <!-- Icomoon Icon Fonts-->
+        <link rel="stylesheet" href="{{asset('css/icomoon.css')}}">
+        <!-- Magnific Popup -->
+        <link rel="stylesheet" href="{{asset('css/magnific-popup.css')}}">
+        <!-- Bootstrap  -->
+        <link rel="stylesheet" href="{{asset('css/bootstrap.css')}}">
+
+        <link rel="stylesheet" href="{{asset('css/style.css')}}">
+
+        <link rel="stylesheet" id="theme-switch" href="{{asset('css/style.css')}}">
+        <!-- End demo purposes only -->
+        <!-- Modernizr JS -->
+        <script src="{{asset('js/modernizr-2.6.2.min.js')}}"></script>
+        <!-- FOR IE9 below -->
+        <!--[if lt IE 9]>
+	<script src="{{asset('js/respond.min.js')}}"></script>
+	<![endif]-->
+    {% endblock %}
+</head>
+
+<body>
+
+<!-- Loader -->
+<div class="fh5co-loader"></div>
+
+<div id="fh5co-page">
+    <section id="fh5co-header">
+        <div class="container">
+            <nav role="navigation">
+                <ul class="pull-left left-menu">
+                    <li><a href="{{ path('app_home') }}#fh5co-about">About</a></li>
+                    <li><a href="{{ path('app_home') }}#fh5co-features-2">Features</a></li>
+                    <li><a href="{{ path('app_home') }}#fh5co-pricing">Pricing</a></li>
+                </ul>
+                <h1 id="fh5co-logo">
+                    <a href="{{ path('app_home') }}">
+                        <img src="{{ asset('images/logo.png') }}" style="width: 100px" alt="Logo"><span>.</span>
+                    </a>
+                </h1>
+            </nav>
+        </div>
+    </section>
+    <!-- #fh5co-header -->
+
+    <section id="fh5co-hero" class="js-fullheight" style="background-image: url('{{ asset('images/hero_bg.jpeg') }}') ;" data-next="yes">
+        <div class="fh5co-overlay"></div>
+        <div class="fh5co-intro js-fullheight" style="padding-top: 10px">
+            <section id="custom-connexion">
+                <div class="custom-container2">
+                    <p class="custom-heading">Site Name and Signature </p>
+                    {# Afficher les messages flash d'erreur #}
+                    {% for flashMessage in app.flashes('error') %}
+                        <div class="error-message">
+                            <span class="emoji">&#9888;</span> <!-- Emoji de danger -->
+                            <span class="error-text">{{ flashMessage }}</span>
+                        </div>
+                    {% endfor %}
+                    {{ form_start(form, {'attr': {'class': 'custom-form'}}) }}
+
+                    <div class="custom-form-row">
+                        <div class="custom-form-group half-width">
+                            {{ form_widget(form.page_nom, {'attr': {'class': 'custom-form-control', 'placeholder': 'Site name'}}) }}
+                        </div>
+                        <div class="custom-form-group half-width">
+                            {{ form_widget(form.logo, {'attr': {'class': 'custom-form-control', 'placeholder': 'Logo'}}) }}
+                        </div>
+                    </div>
+                    <div class="custom-form-group">
+                        <input type="submit" value="Submit" class="custom-btn">
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <style>
+        .error-message {
+            color: #FF4500; /* Couleur orange */
+            margin-bottom: 10px;
+        }
+
+        .error-message .emoji {
+            font-size: 20px;
+            margin-right: 5px;
+        }
+
+        .custom-form-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .custom-form-group {
+            margin-bottom: 15px;
+        }
+
+        .custom-form-group.half-width {
+            width: calc(50% - 10px); /* Ajuster selon l'espace souhaité */
+        }
+    </style>
+
+
+    <!-- END #fh5co-hero -->
+    {% block body %}
+
+    {% endblock %}
+
+
+    <footer id="fh5co-footer" class="text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 animate-box">
+                    <div class="fh5co-footer-widget">
+                        <ul class="fh5co-social">
+                            <li><a href="#"><i class="icon-twitter-square"></i></a></li>
+                            <li><a href="#"><i class="icon-facebook-official"></i></a></li>
+                            <li><a href="#"><i class="icon-google-plus-square"></i></a></li>
+                            <li><a href="#"><i class="icon-instagram"></i></a></li>
+                            <li><a href="#"><i class="icon-youtube-square"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <BR>
+        <div class="fh5co-copyright animate-box" style="padding: 20px 0;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="text-center custom-font" style="margin: 0;">
+                            <small>All Rights Reserved &copy; 2024, <span class="chn-text"> 加斯顿</span>.</small>
+                        </p>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- END #fh5co-footer -->
+</div>
+<!-- END #fh5co-page -->
+
+{% block javascripts %}
+    <!-- jQuery -->
+    <script src="{{asset('js/jquery.min.js')}}"></script>
+    <!-- jQuery Easing -->
+    <script src="{{asset('js/jquery.easing.1.3.js')}}"></script>
+    <!-- Bootstrap -->
+    <script src="{{asset('js/bootstrap.min.js')}}"></script>
+    <!-- Waypoints -->
+    <script src="{{asset('js/jquery.waypoints.min.js')}}"></script>
+    <!-- Flexslider -->
+    <script src="{{asset('js/jquery.flexslider-min.js')}}"></script>
+    <!-- Magnific Popup -->
+    <script src="{{asset('js/jquery.magnific-popup.min.js')}}"></script>
+    <script src="{{asset('js/magnific-popup-options.js')}}"></script>
+
+    <!-- For demo purposes only styleswitcher ( You may delete this anytime ) -->
+    <script src="{{asset('js/jquery.style.switcher.js')}}"></script>
+    <script>
+        $(function(){
+            $('#colour-variations ul').styleSwitcher({
+                defaultThemeId: 'theme-switch',
+                hasPreview: false,
+                cookie: {
+                    expires: 30,
+                    isManagingLoad: true
+                }
+            });
+            $('.option-toggle').click(function() {
+                $('#colour-variations').toggleClass('sleep');
+            });
+        });
+    </script>
+    <!-- End demo purposes only -->
+
+    <!-- Main JS (Do not remove) -->
+    <script src="{{asset('js/main.js')}}"></script>
+
+    <script src="{{asset('js/jquery.cookie.js')}}"></script>
+    <script>
+        $(function(){
+
+            if ( $.cookie('layoutCookie') != '' ) {
+                $('body').addClass($.cookie('layoutCookie'));
+            }
+
+            $('a[data-layout="boxed"]').click(function(event){
+                event.preventDefault();
+                $.cookie('layoutCookie', 'boxed', { expires: 7, path: '/'});
+                $('body').addClass($.cookie('layoutCookie')); // the value is boxed.
+            });
+
+            $('a[data-layout="wide"]').click(function(event){
+                event.preventDefault();
+                $('body').removeClass($.cookie('layoutCookie')); // the value is boxed.
+                $.removeCookie('layoutCookie', { path: '/' }); // remove the value of our cookie 'layoutCookie'
+            });
+        });
+    </script>
+
+{% endblock %}
+</body>
+</html>
+
