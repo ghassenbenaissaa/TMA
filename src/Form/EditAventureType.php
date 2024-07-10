@@ -4,6 +4,7 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -34,9 +35,18 @@ class EditAventureType extends AbstractType
                 'required' => false, // Peut être configuré selon vos besoins
                 'attr' => ['class' => 'custom-switch'],
             ])
-        ->add('video', TextType::class, [
-        'required' => false, // Facultatif selon votre logique métier
-    ]);
+            ->add('video', TextType::class, [
+                'required' => false, // Facultatif selon votre logique métier
+            ]) ->add('audiance', ChoiceType::class, [
+                'label' => 'Audiance',
+                'choices' => [
+                    'Public' => 'public',
+                    'Friends' => 'friends',
+                    'Only Me' => 'only_me',
+                ],
+                'expanded' => true, // Afficher comme des boutons radio
+                'multiple' => false, // Permettre la sélection d'un seul choix
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -25,11 +25,64 @@
         <!-- End layout styles -->
         <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}" />
         <style>
+            /* Style pour les boutons radio */
+            .custom-radio {
+                display: inline-block;
+                vertical-align: middle;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+
+            /* Style du cercle externe des boutons radio */
+            .custom-radio input {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            /* Style du cercle intérieur des boutons radio */
+            .custom-radio .checkmark {
+                position: relative;
+                display: inline-block;
+                height: 16px; /* Hauteur du cercle */
+                width: 16px; /* Largeur du cercle */
+                background-color: #ccc;
+                border-radius: 50%;
+                margin-right: 5px;
+                vertical-align: middle; /* Alignement vertical */
+            }
+
+            /* Style du cercle intérieur (coché) */
+            .custom-radio input:checked ~ .checkmark {
+                background-color: #ff6060;
+            }
+
+            /* Style du point central (coché) */
+            .custom-radio .checkmark:after {
+                content: "";
+                position: absolute;
+                display: none;
+            }
+
+            /* Afficher le point central (coché) */
+            .custom-radio input:checked ~ .checkmark:after {
+                display: block;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 6px; /* Taille du point central */
+                height: 6px; /* Taille du point central */
+                border-radius: 50%;
+                background: white;
+            }
+
+            /* Style pour le switch */
             .custom-switch {
                 position: relative;
                 display: inline-block;
-                width: 50px; /* Largeur du switch */
-                height: 28px; /* Hauteur du switch */
+                width: 36px; /* Largeur du switch */
+                height: 20px; /* Hauteur du switch */
+                vertical-align: middle; /* Alignement vertical */
             }
 
             .custom-switch input {
@@ -47,14 +100,14 @@
                 bottom: 0;
                 background-color: #ccc;
                 transition: .4s;
-                border-radius: 28px; /* Rayon du bord du switch */
+                border-radius: 20px; /* Rayon du bord du switch */
             }
 
             .slider:before {
                 position: absolute;
                 content: "";
-                height: 22px; /* Taille du bouton (cercle) */
-                width: 22px; /* Taille du bouton (cercle) */
+                height: 14px; /* Taille du bouton (cercle) */
+                width: 14px; /* Taille du bouton (cercle) */
                 left: 3px; /* Décalage à gauche */
                 bottom: 3px; /* Décalage en bas */
                 background-color: white;
@@ -67,15 +120,114 @@
             }
 
             input:checked + .slider:before {
-                transform: translateX(20px); /* Déplacement du bouton (cercle) à l'état activé */
+                transform: translateX(16px); /* Déplacement du bouton (cercle) à l'état activé */
             }
+
+            /* Style pour les boutons radio */
+            .custom-radio {
+                display: inline-block;
+                vertical-align: middle;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+
+            /* Style du cercle externe des boutons radio */
+            .custom-radio input {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            /* Style du cercle intérieur des boutons radio */
+            .custom-radio .checkmark {
+                position: relative;
+                display: inline-block;
+                height: 16px;
+                width: 16px;
+                background-color: #ccc;
+                border-radius: 50%;
+                margin-right: 5px;
+                vertical-align: middle; /* Alignement vertical */
+            }
+
+            /* Style du cercle intérieur (coché) */
+            .custom-radio input:checked ~ .checkmark {
+                background-color: #ff6060;
+            }
+
+            /* Style du point central (coché) */
+            .custom-radio .checkmark:after {
+                content: "";
+                position: absolute;
+                display: none;
+            }
+
+            /* Afficher le point central (coché) */
+            .custom-radio input:checked ~ .checkmark:after {
+                display: block;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: white;
+            }
+
+            /* Style pour le switch */
+            .custom-switch {
+                position: relative;
+                display: inline-block;
+                width: 36px; /* Largeur du switch */
+                height: 20px; /* Hauteur du switch */
+                vertical-align: middle; /* Alignement vertical */
+            }
+
+            .custom-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 20px; /* Rayon du bord du switch */
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 14px; /* Taille du bouton (cercle) */
+                width: 14px; /* Taille du bouton (cercle) */
+                left: 3px; /* Décalage à gauche */
+                bottom: 3px; /* Décalage en bas */
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%; /* Forme du bouton (cercle) */
+            }
+
+            input:checked + .slider {
+                background-color: #ff7777; /* Couleur de fond du switch en état activé */
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(16px); /* Déplacement du bouton (cercle) à l'état activé */
+            }
+
             .play-icon {
                 cursor: pointer;
                 color: #fff;
                 background-color: #ff6060;
                 border-radius: 50%;
-                width: 40px;
-                height: 40px;
+                width: 32px; /* Taille du bouton play */
+                height: 32px; /* Taille du bouton play */
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -207,7 +359,6 @@
                                         Sections updated successfully.
                                     </div>
                                 {% endfor %}
-
                                 {{ form_start(form, {'attr': {'class': 'custom-form', 'style': 'text-align: center;'}}) }}
                                 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                                     <div class="custom-form-group" style="width: 50%; margin-bottom: 20px;">
@@ -253,72 +404,6 @@
 
                                         <div id="image-preview-container" style="margin-top: 20px; display: flex; flex-wrap: wrap;"></div>
                                     </div>
-
-                                    <script>
-                                        document.addEventListener('DOMContentLoaded', function() {
-                                            const imageInput = document.getElementById('images');
-                                            const customFileUploadButton = document.getElementById('custom-file-upload');
-                                            const fileUploadInfo = document.getElementById('file-upload-info');
-                                            const imagePreviewContainer = document.getElementById('image-preview-container');
-
-                                            customFileUploadButton.addEventListener('click', function() {
-                                                imageInput.click();
-                                            });
-
-                                            imageInput.addEventListener('change', function(event) {
-                                                const files = event.target.files;
-                                                fileUploadInfo.textContent = files.length + ' images selected';
-
-                                                imagePreviewContainer.innerHTML = ''; // Clear existing previews
-
-                                                Array.from(files).forEach((file, index) => {
-                                                    const reader = new FileReader();
-                                                    reader.onload = function(e) {
-                                                        const div = document.createElement('div');
-                                                        div.style.position = 'relative';
-                                                        div.style.marginRight = '10px';
-                                                        div.style.marginBottom = '10px';
-
-                                                        const img = document.createElement('img');
-                                                        img.src = e.target.result;
-                                                        img.style.maxWidth = '100px';
-                                                        img.style.maxHeight = '100px';
-                                                        img.style.border = '1px solid #ddd';
-                                                        img.style.padding = '5px';
-                                                        img.style.borderRadius = '5px';
-
-                                                        const removeButton = document.createElement('button');
-                                                        removeButton.innerHTML = 'X';
-                                                        removeButton.style.position = 'absolute';
-                                                        removeButton.style.top = '0';
-                                                        removeButton.style.right = '0';
-                                                        removeButton.style.background = 'red';
-                                                        removeButton.style.color = 'white';
-                                                        removeButton.style.border = 'none';
-                                                        removeButton.style.borderRadius = '50%';
-                                                        removeButton.style.width = '20px';
-                                                        removeButton.style.height = '20px';
-                                                        removeButton.style.cursor = 'pointer';
-
-                                                        removeButton.addEventListener('click', function() {
-                                                            div.remove();
-                                                            const dataTransfer = new DataTransfer();
-                                                            const filesArray = Array.from(imageInput.files);
-                                                            filesArray.splice(index, 1);
-                                                            filesArray.forEach(file => dataTransfer.items.add(file));
-                                                            imageInput.files = dataTransfer.files;
-                                                            fileUploadInfo.textContent = imageInput.files.length + ' images selected';
-                                                        });
-
-                                                        div.appendChild(img);
-                                                        div.appendChild(removeButton);
-                                                        imagePreviewContainer.appendChild(div);
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                });
-                                            });
-                                        });
-                                    </script>
                                     <div style="text-align: center; margin-bottom: 20px;">
                                         {% for image in aventure.images %}
                                             <div style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 200px;">
@@ -330,46 +415,29 @@
                                                 </form>
                                             </div>
                                         {% endfor %}
-
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                const deleteButtons = document.querySelectorAll('.delete-button');
-
-                                                deleteButtons.forEach(button => {
-                                                    button.addEventListener('click', function() {
-                                                        const formId = this.getAttribute('data-form-id');
-                                                        Swal.fire({
-                                                            title: 'Are you sure?',
-                                                            text: "You won't be able to revert this!",
-                                                            icon: 'warning',
-                                                            showCancelButton: true,
-                                                            confirmButtonColor: '#3085d6',
-                                                            cancelButtonColor: '#d33',
-                                                            confirmButtonText: 'Yes, delete it!'
-                                                        }).then((result) => {
-                                                            if (result.isConfirmed) {
-                                                                document.getElementById(formId).submit();
-                                                            }
-                                                        });
-                                                    });
-                                                });
-                                            });
-                                        </script>
-
                                     </div>
-                                    <div class="custom-form-group" style="width: 50%;">
-                                        <label style="display: inline-block; vertical-align: middle; margin-right: 10px;">
-                                            Recommendation
-                                        </label>
-                                        <label class="custom-switch" style="display: inline-block; vertical-align: middle;">
-
+                                    <div class="custom-form-group" style="width: 50%; display: flex; align-items: center; padding-bottom: 20px;">
+                                        <label style="display: inline-block; margin-right: 10px; font-size: 20px; color: black; text-align: left;">Audience:</label>
+                                        <div style="display: inline-block;">
+                                            {% for choice in form.audiance %}
+                                                <label class="custom-radio" style="text-align: left; vertical-align: middle;">
+                                                    {{ form_widget(choice, {'attr': {'class': 'custom-control-input'}}) }}
+                                                    <span class="checkmark"></span>
+                                                    <span class="custom-radio-label">{{ form_label(choice) }}</span>
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="custom-form-group" style="width: 50%; display: flex; align-items: center; padding-bottom: 5px;">
+                                        <label style="display: inline-block; margin-right: 10px;font-size: 20px; color: black;">Recommendation:</label>
+                                        <label class="custom-switch" style="display: inline-block; margin-right: 10px;">
                                             {{ form_widget(form.recommander, {'attr': {'style': 'display: none;'}}) }}
                                             <span class="slider"></span>
                                         </label>
                                     </div>
-
-
-                                    <p style="padding-bottom: 20px">If you recommend this adventure, it will be displayed in the recommendation section.</p>
+                                    <div class="custom-form-group" style="width: 50%; display: flex; align-items: center;">
+                                        <p style="padding-bottom: 20px">It will be displayed in the recommendation section.</p>
+                                    </div>
                                     <div class="form-group">
                                         <input type="submit" value="Submit" class="btn btn-primary">
                                     </div>
@@ -400,6 +468,96 @@
 <!-- container-scroller -->
 {% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const formId = this.getAttribute('data-form-id');
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById(formId).submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageInput = document.getElementById('images');
+            const customFileUploadButton = document.getElementById('custom-file-upload');
+            const fileUploadInfo = document.getElementById('file-upload-info');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+
+            customFileUploadButton.addEventListener('click', function() {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', function(event) {
+                const files = event.target.files;
+                fileUploadInfo.textContent = files.length + ' images selected';
+
+                imagePreviewContainer.innerHTML = ''; // Clear existing previews
+
+                Array.from(files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.style.position = 'relative';
+                        div.style.marginRight = '10px';
+                        div.style.marginBottom = '10px';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '100px';
+                        img.style.maxHeight = '100px';
+                        img.style.border = '1px solid #ddd';
+                        img.style.padding = '5px';
+                        img.style.borderRadius = '5px';
+
+                        const removeButton = document.createElement('button');
+                        removeButton.innerHTML = 'X';
+                        removeButton.style.position = 'absolute';
+                        removeButton.style.top = '0';
+                        removeButton.style.right = '0';
+                        removeButton.style.background = 'red';
+                        removeButton.style.color = 'white';
+                        removeButton.style.border = 'none';
+                        removeButton.style.borderRadius = '50%';
+                        removeButton.style.width = '20px';
+                        removeButton.style.height = '20px';
+                        removeButton.style.cursor = 'pointer';
+
+                        removeButton.addEventListener('click', function() {
+                            div.remove();
+                            const dataTransfer = new DataTransfer();
+                            const filesArray = Array.from(imageInput.files);
+                            filesArray.splice(index, 1);
+                            filesArray.forEach(file => dataTransfer.items.add(file));
+                            imageInput.files = dataTransfer.files;
+                            fileUploadInfo.textContent = imageInput.files.length + ' images selected';
+                        });
+
+                        div.appendChild(img);
+                        div.appendChild(removeButton);
+                        imagePreviewContainer.appendChild(div);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             var videoLinkField = $('#{{ form.video.vars.id }}');

@@ -61,13 +61,14 @@
             }
 
             .image-wrapper {
-                width: 150px; /* Adjust the width as needed */
+                width: 290px; /* Adjust the width as needed */
                 height: 150px; /* Adjust the height as needed */
                 overflow: hidden;
                 margin: 10px auto; /* Center the image-wrapper horizontally */
                 display: flex;
                 align-items: center;
                 justify-content: center; /* Center the image within the wrapper */
+                text-align: center;
             }
 
             .image-wrapper img {
@@ -232,7 +233,7 @@
                                 {% for flashMessage in app.flashes('success') %}
                                     <div class="alert alert-success" role="alert">
                                         <span class="emoji">&#x1F44C;</span> <!-- Emoji de succès -->
-                                        Sections updated successfully.
+                                        {{ flashMessage }}
                                     </div>
                                 {% endfor %}
                                 <div class="grid-container">

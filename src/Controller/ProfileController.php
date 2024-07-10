@@ -461,6 +461,8 @@ class ProfileController extends AbstractController
             $aventure->setRecommander($recommander);
             $video = $form->get('video')->getData();
             $aventure->setVideo($video);
+            $audience = $form->get('audience')->getData();
+            $aventure->setAudiance($audience);
             $entityManager->persist($aventure);
             $entityManager->flush();
 
@@ -474,7 +476,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    function addWatermark(File $imagePath, string $watermarkPath, string $outputPath, int $numWatermarks = 5): void
+    function addWatermark(File $imagePath, string $watermarkPath, string $outputPath): void
     {
         // Load the main image
         $image = imagecreatefromstring(file_get_contents($imagePath->getPathname()));
@@ -489,23 +491,12 @@ class ProfileController extends AbstractController
         $watermarkWidth = imagesx($watermark);
         $watermarkHeight = imagesy($watermark);
 
-        // Array to store positions of placed watermarks
-        $placedPositions = [];
+        // Calculate the position for the watermark to be in the bottom right
+        $x = $imageWidth - $watermarkWidth - 10; // 10 pixels from the right edge
+        $y = $imageHeight - $watermarkHeight - 10; // 10 pixels from the bottom edge
 
-        // Add multiple watermarks in random positions
-        for ($i = 0; $i < $numWatermarks; $i++) {
-            do {
-                // Calculate random positions
-                $x = rand(0, $imageWidth - $watermarkWidth);
-                $y = rand(0, $imageHeight - $watermarkHeight);
-            } while ($this->isOverlapping($x, $y, $watermarkWidth, $watermarkHeight, $placedPositions));
-
-            // Merge the watermark with the main image
-            imagecopy($image, $watermark, $x, $y, 0, 0, $watermarkWidth, $watermarkHeight);
-
-            // Store the position of the placed watermark
-            $placedPositions[] = ['x' => $x, 'y' => $y];
-        }
+        // Merge the watermark with the main image
+        imagecopy($image, $watermark, $x, $y, 0, 0, $watermarkWidth, $watermarkHeight);
 
         // Save the image with the watermark
         imagejpeg($image, $outputPath);
@@ -514,17 +505,7 @@ class ProfileController extends AbstractController
         imagedestroy($image);
         imagedestroy($watermark);
     }
-    function isOverlapping($x, $y, $watermarkWidth, $watermarkHeight, $placedPositions) {
-        foreach ($placedPositions as $position) {
-            if ($x < $position['x'] + $watermarkWidth &&
-                $x + $watermarkWidth > $position['x'] &&
-                $y < $position['y'] + $watermarkHeight &&
-                $y + $watermarkHeight > $position['y']) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
 
 
@@ -1048,6 +1029,8 @@ class ProfileController extends AbstractController
             $aventure->setRecommander($recommander);
             $video = $form->get('video')->getData();
             $aventure->setVideo($video);
+            $audience = $form->get('audiance')->getData();
+            $aventure->setAudiance($audience);
             $entityManager->persist($aventure);
             $entityManager->flush();
 

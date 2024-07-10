@@ -7,6 +7,7 @@ use App\Entity\Pays;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
@@ -40,6 +41,18 @@ class AventureType extends AbstractType
             ])
             ->add('video', TextType::class, [
                 'required' => false, // Facultatif selon votre logique métier
+            ])
+            ->add('audience', ChoiceType::class, [
+                'label' => 'Audience',
+                'choices' => [
+                    'Public' => 'public',
+                    'Friends' => 'friends',
+                    'Only Me' => 'only_me',
+                ],
+                'expanded' => true, // Afficher comme des boutons radio
+                'multiple' => false, // Permettre la sélection d'un seul choix
+                'mapped' => false,
+                'data' => 'public',
             ]);
 
     }

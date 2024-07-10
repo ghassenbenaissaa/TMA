@@ -39,6 +39,9 @@ class Aventure
     #[Assert\Regex( pattern :"/^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/" , message:"Please enter a valid YouTube video link." )]
     private ?string $video = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $audiance = null;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -148,6 +151,18 @@ class Aventure
     public function setVideo(?string $video): static
     {
         $this->video = $video;
+
+        return $this;
+    }
+
+    public function getAudiance(): ?string
+    {
+        return $this->audiance;
+    }
+
+    public function setAudiance(string $audiance): static
+    {
+        $this->audiance = $audiance;
 
         return $this;
     }
