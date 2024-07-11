@@ -408,7 +408,8 @@ class ProfileController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFiles = $request->files->get('images');
-            $watermarkPath = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getPageNom() . $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();
@@ -416,7 +417,7 @@ class ProfileController extends AbstractController
                     try {
                         $imageFile->move($logos_directory, $newFilename);
                         // Add watermark to the image
-                        $this->addWatermark(new File($temporaryFilePath), $watermarkPath, $temporaryFilePath, 5);
+                        $this->addWatermarks(new File($temporaryFilePath), $watermarkPath1, $watermarkPath2, $temporaryFilePath, 5);
                     }
                     catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
@@ -476,39 +477,90 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    function addWatermark(File $imagePath, string $watermarkPath, string $outputPath): void
+    function addWatermarks(File $imagePath, string $watermarkPath1, string $watermarkPath2, string $outputPath, int $numWatermarks = 5): void
     {
         // Load the main image
         $image = imagecreatefromstring(file_get_contents($imagePath->getPathname()));
         $imageWidth = imagesx($image);
         $imageHeight = imagesy($image);
 
-        // Load the watermark
-        $watermark = @imagecreatefrompng($watermarkPath); // Suppress warning
-        if (!$watermark) {
-            throw new Exception("Failed to load the watermark image");
+        // Load the first watermark
+        $watermark1 = @imagecreatefrompng($watermarkPath1); // Suppress warning
+        if (!$watermark1) {
+            throw new Exception("Failed to load the first watermark image");
         }
-        $watermarkWidth = imagesx($watermark);
-        $watermarkHeight = imagesy($watermark);
+        $watermark1Width = imagesx($watermark1);
+        $watermark1Height = imagesy($watermark1);
 
-        // Calculate the position for the watermark to be in the bottom right
-        $x = $imageWidth - $watermarkWidth - 10; // 10 pixels from the right edge
-        $y = $imageHeight - $watermarkHeight - 10; // 10 pixels from the bottom edge
+        // Load the second watermark
+        $watermark2 = @imagecreatefrompng($watermarkPath2); // Suppress warning
+        if (!$watermark2) {
+            throw new Exception("Failed to load the second watermark image");
+        }
+        $watermark2Width = imagesx($watermark2);
+        $watermark2Height = imagesy($watermark2);
 
-        // Merge the watermark with the main image
-        imagecopy($image, $watermark, $x, $y, 0, 0, $watermarkWidth, $watermarkHeight);
+        // Resize the watermarks to make them smaller
+        $newWatermark2Width = 30; // Adjust the size as needed
+        $newWatermark2Height = 30; // Adjust the size as needed
+        $resizedWatermark2 = imagecreatetruecolor($newWatermark2Width, $newWatermark2Height);
+        imagesavealpha($resizedWatermark2, true);
+        $transparency = imagecolorallocatealpha($resizedWatermark2, 0, 0, 0, 127);
+        imagefill($resizedWatermark2, 0, 0, $transparency);
+        imagecopyresampled($resizedWatermark2, $watermark2, 0, 0, 0, 0, $newWatermark2Width, $newWatermark2Height, $watermark2Width, $watermark2Height);
+
+        // Place the first watermark in the bottom right corner
+        $x1 = $imageWidth - $watermark1Width - 10; // 10 pixels from the right edge
+        $y1 = $imageHeight - $watermark1Height - 10; // 10 pixels from the bottom edge
+        imagecopy($image, $watermark1, $x1, $y1, 0, 0, $watermark1Width, $watermark1Height);
+
+        // Array to store positions of placed watermarks
+        $placedPositions = [];
+
+        // Add multiple watermarks in random positions with a maximum number of attempts
+        $maxAttempts = 100; // Define the maximum number of attempts for finding a non-overlapping position
+        for ($i = 0; $i < $numWatermarks; $i++) {
+            $attempts = 0;
+            do {
+                // Calculate random positions
+                $x2 = rand(0, $imageWidth - $newWatermark2Width);
+                $y2 = rand(0, $imageHeight - $newWatermark2Height);
+                $attempts++;
+            } while ($this->isOverlapping($x2, $y2, $newWatermark2Width, $newWatermark2Height, $placedPositions) && $attempts < $maxAttempts);
+
+            if ($attempts >= $maxAttempts) {
+                // If a non-overlapping position couldn't be found, skip this watermark
+                continue;
+            }
+
+            // Merge the watermark with the main image
+            imagecopy($image, $resizedWatermark2, $x2, $y2, 0, 0, $newWatermark2Width, $newWatermark2Height);
+
+            // Store the position of the placed watermark
+            $placedPositions[] = ['x' => $x2, 'y' => $y2];
+        }
 
         // Save the image with the watermark
         imagejpeg($image, $outputPath);
 
         // Clean up
         imagedestroy($image);
-        imagedestroy($watermark);
+        imagedestroy($watermark1);
+        imagedestroy($watermark2);
+        imagedestroy($resizedWatermark2);
     }
 
-
-
-
+    function isOverlapping($x, $y, $watermarkWidth, $watermarkHeight, $placedPositions) {
+        foreach ($placedPositions as $position) {
+            if ($x < $position['x'] + $watermarkWidth &&
+                $x + $watermarkWidth > $position['x'] &&
+                $y < $position['y'] + $watermarkHeight &&
+                $y + $watermarkHeight > $position['y']) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public function getContinentByCountry(string $country): ?string
     {
@@ -981,14 +1033,15 @@ class ProfileController extends AbstractController
 
         if ($form->isSubmitted() ) {
             $imageFiles = $request->files->get('images');
-            $watermarkPath = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getPageNom() . $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();
                     $temporaryFilePath = $logos_directory . '/' . $newFilename;
                     try {
                         $imageFile->move($logos_directory, $newFilename);
-                        $this->addWatermark(new File($temporaryFilePath), $watermarkPath, $temporaryFilePath, 5);
+                        $this->addWatermarks(new File($temporaryFilePath), $watermarkPath1, $watermarkPath2, $temporaryFilePath, 5);
                     } catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
                         return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
@@ -1158,7 +1211,8 @@ class ProfileController extends AbstractController
 
         if ($form->isSubmitted()) {
             $imageFiles = $request->files->get('images');
-            $watermarkPath = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();
@@ -1166,7 +1220,7 @@ class ProfileController extends AbstractController
                     try {
                         $imageFile->move($podcast_directory, $newFilename);
                         // Add watermark to the image
-                        $this->addWatermark(new File($temporaryFilePath), $watermarkPath, $temporaryFilePath, 5);
+                        $this->addWatermarks(new File($temporaryFilePath), $watermarkPath1, $watermarkPath2, $temporaryFilePath, 5);
                     }
                     catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
@@ -1227,14 +1281,15 @@ class ProfileController extends AbstractController
 
         if ($form->isSubmitted()) {
             $imageFiles = $request->files->get('images');
-            $watermarkPath = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getPageNom() . $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();
                     $temporaryFilePath = $podcast_directory . '/' . $newFilename;
                     try {
                         $imageFile->move($podcast_directory, $newFilename);
-                        $this->addWatermark(new File($temporaryFilePath), $watermarkPath, $temporaryFilePath, 5);
+                        $this->addWatermarks(new File($temporaryFilePath), $watermarkPath1, $watermarkPath2, $temporaryFilePath, 5);
                     } catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
                         return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'PdId' => $PdId]);
