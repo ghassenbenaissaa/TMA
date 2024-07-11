@@ -17,7 +17,6 @@ class Image
     private ?string $nom = null;
 
     #[ORM\ManyToOne(inversedBy: 'images')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?aventure $idAventure = null;
 
     #[ORM\ManyToOne(inversedBy: 'images')]

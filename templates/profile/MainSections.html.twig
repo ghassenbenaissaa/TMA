@@ -50,7 +50,8 @@
                 <li class="nav-item nav-profile">
                     <a class="nav-link">
                         <div class="nav-profile-img">
-                            <img src="{{ asset('imagesProfile/faces/user.png') }}" alt="image">
+                            <img src="{{ asset('logoClient/' ~ photoProfile) }}" alt="image">
+                            <span class="availability-status online"></span>
                         </div>
                         <div class="nav-profile-text">
                             <p class="mb-1 text-black">{{ user.nom }} {{ user.prenom }}</p>

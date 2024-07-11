@@ -48,11 +48,21 @@ class ProfileController extends AbstractController
     public function index(UserRepository $userRepository, int $userId): Response
     {
         $user = $userRepository->find($userId);
+        $photoProfile = null;
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
-
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
+        }
         // Récupérer les nombres des aventures par pays
         $countryAdventureCounts = [];
         foreach ($user->getAventures() as $aventure) {
@@ -119,6 +129,7 @@ class ProfileController extends AbstractController
             'totalAdventures' => $totalAdventures,
             'totalContinentsVisited' => $totalContinentsVisited,
             'countryAdventureList' => $countryAdventureList, // Pass the list to Twig
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -131,6 +142,17 @@ class ProfileController extends AbstractController
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         $form = $this->createForm(EditProfileType::class, $user);
@@ -166,6 +188,7 @@ class ProfileController extends AbstractController
         return $this->render('profile/EditProfile.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -175,6 +198,16 @@ class ProfileController extends AbstractController
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         $form = $this->createForm(ChangePasswordType::class);
@@ -217,6 +250,7 @@ class ProfileController extends AbstractController
         return $this->render('profile/ChangePassword.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -226,6 +260,16 @@ class ProfileController extends AbstractController
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         $form = $this->createForm(DeleteAccountType::class);
@@ -241,6 +285,7 @@ class ProfileController extends AbstractController
         return $this->render('profile/DeleteAccount.html.twig', [
             'user' => $user,
             'delete_form' => $form->createView(),
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -255,6 +300,16 @@ class ProfileController extends AbstractController
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         if (!$aboutMeSection) {
@@ -387,7 +442,8 @@ class ProfileController extends AbstractController
             'current_photo' => $ProfilePhotoSection->getImage(),
             'aboutMeSection' => $aboutMeSection,
             'CoverSection' => $CoverSection,
-            'ProfilePhotoSection' => $ProfilePhotoSection
+            'ProfilePhotoSection' => $ProfilePhotoSection,
+            'photoProfile' => $photoProfile
         ]);
     }
 
@@ -400,6 +456,16 @@ class ProfileController extends AbstractController
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         $aventure = new Aventure();
@@ -474,6 +540,7 @@ class ProfileController extends AbstractController
         return $this->render('profile/AddAdventure.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -975,6 +1042,16 @@ class ProfileController extends AbstractController
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
+        }
 
         // Récupérer toutes les aventures de l'utilisateur
         $aventures = $aventureRepository->findBy(['IdUser' => $user]);
@@ -993,6 +1070,7 @@ class ProfileController extends AbstractController
             'user' => $user,
             'aventures' => $aventures,
             'images' => $image,
+            'photoProfile' => $photoProfile
         ]);
     }
 
@@ -1003,6 +1081,7 @@ class ProfileController extends AbstractController
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
+
 
         $aventure = $adventureRepository->find($AvId);
         if (!$aventure) {
@@ -1021,6 +1100,16 @@ class ProfileController extends AbstractController
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         $aventure = $aventureRepository->find($AvId);
@@ -1095,6 +1184,7 @@ class ProfileController extends AbstractController
             'form' => $form->createView(),
             'user' => $user,
             'aventure' => $aventure,
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -1132,6 +1222,16 @@ class ProfileController extends AbstractController
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
+        }
 
         $form = $this->createForm(Form1Type::class, $user);
         $form->handleRequest($request);
@@ -1145,6 +1245,7 @@ class ProfileController extends AbstractController
         return $this->render('profile/EditSiteWeb.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -1154,6 +1255,16 @@ class ProfileController extends AbstractController
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
         // Récupérer toutes les aventures de l'utilisateur
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);
@@ -1172,6 +1283,7 @@ class ProfileController extends AbstractController
             'user' => $user,
             'podcasts' => $podcasts,
             'images' => $image,
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -1182,6 +1294,7 @@ class ProfileController extends AbstractController
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
+
 
 
         $podcast = $podcastRepository->find($PdId);
@@ -1201,6 +1314,16 @@ class ProfileController extends AbstractController
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         $podcast = new Podcast();
@@ -1258,6 +1381,7 @@ class ProfileController extends AbstractController
         return $this->render('profile/AddPodcast.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
+            'photoProfile' => $photoProfile,
         ]);
     }
 
@@ -1269,6 +1393,16 @@ class ProfileController extends AbstractController
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
         }
 
         $podcast = $podcastRepository->find($PdId);
@@ -1331,6 +1465,7 @@ class ProfileController extends AbstractController
             'form' => $form->createView(),
             'user' => $user,
             'podcast' => $podcast,
+            'photoProfile' => $photoProfile,
         ]);
     }
     #[Route('/profile/delete/image2/{PdId}/{userId}/{imageId}', name: 'delete_image2')]
@@ -1340,6 +1475,7 @@ class ProfileController extends AbstractController
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
+
 
         $podcast = $podcastRepository->find($PdId);
         if (!$podcast) {
