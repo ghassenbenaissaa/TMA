@@ -23814,7 +23814,7 @@ dl {
 ul li,
 ol li,
 dl li {
-  line-height: 1.8;
+
 }
 
 .list-ticked,
@@ -25649,10 +25649,10 @@ dl li {
   overflow: hidden;
   flex-wrap: nowrap;
   flex-direction: column;
-  margin-bottom: 60px;
+
 }
 .sidebar .nav .nav-item {
-  padding: 0 2.25rem;
+  padding: 0 1.7rem;
   -webkit-transition-duration: 0.25s;
   -moz-transition-duration: 0.25s;
   -o-transition-duration: 0.25s;
@@ -25670,7 +25670,7 @@ dl li {
   align-items: center;
   white-space: nowrap;
   padding: 1.125rem 0 1.125rem 0;
-  color: #3e4b5b;
+  color: #000000;
   -webkit-transition-duration: 0.45s;
   -moz-transition-duration: 0.45s;
   -o-transition-duration: 0.45s;
@@ -25739,11 +25739,11 @@ dl li {
   background: #ffffff;
 }
 .sidebar .nav .nav-item.active > .nav-link .menu-title {
-  color: #f85454;
+  color: #000000;
   font-family: "ubuntu-medium", sans-serif;
 }
 .sidebar .nav .nav-item.active > .nav-link i {
-  color: #f85454;
+  color: #fc8195;
 }
 .sidebar .nav .nav-item:hover {
   background: #fcfcfc;
@@ -25793,7 +25793,7 @@ dl li {
   color: initial;
 }
 .sidebar .nav:not(.sub-menu) > .nav-item:hover:not(.nav-category):not(.nav-profile) > .nav-link {
-  color: #29323d;
+  color: #f85454;
 }
 .sidebar .nav.sub-menu {
   margin-bottom: 20px;

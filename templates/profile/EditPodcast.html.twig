@@ -159,7 +159,7 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" href="{{ path('app_profile', {'userId': user.id}) }}">
                         <span class="menu-title">Profile</span>
                         <i class="mdi mdi-home menu-icon"></i>
@@ -172,38 +172,52 @@
                         <i class="fa fa-gear menu-icon"></i>
                     </a>
                     <div class="collapse" id="ui-basic">
-                        <ul class="nav flex-column sub-menu">
+                        <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_editProfile', {'userId': user.id}) }}">Edit Profile</a>
+                                <a class="nav-link" href="{{ path('app_editProfile', {'userId': user.id}) }}">
+                                    <i class="fas fa-user-edit  me-2"></i> Edit Profile
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_CPassword', {'userId': user.id}) }}">Change Password</a>
+                                <a class="nav-link" href="{{ path('app_CPassword', {'userId': user.id}) }}">
+                                    <i class="fas fa-key  me-2"></i> Change Password
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_DAccount', {'userId': user.id}) }}">Delete Account</a>
+                                <a class="nav-link" href="{{ path('app_DAccount', {'userId': user.id}) }}">
+                                    <i class="fas fa-user-times  me-2"></i> Delete Account
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                        <span class="menu-title">{{ user.pageNom }}</span>
+                    <a class="nav-link" data-bs-toggle="collapse" href="#ui-pages" aria-expanded="false" aria-controls="ui-basic">
+                        <span class="menu-title" style="color: #f85454">{{ user.pageNom }}</span>
                         <i class="menu-arrow"></i>
                         <i class="fa fa-globe menu-icon"></i>
                     </a>
-                    <div class="collapse" id="ui-basic">
-                        <ul class="nav flex-column sub-menu">
+                    <div class="collapse" id="ui-pages">
+                        <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Website', {'userId': user.id}) }}">Edit Site web</a>
+                                <a class="nav-link" href="{{ path('app_Website', {'userId': user.id}) }}">
+                                    <i class="fas fa-edit me-2"></i> Edit Website
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Msections', {'userId': user.id}) }}">Main sections</a>
+                                <a class="nav-link" href="{{ path('app_Msections', {'userId': user.id}) }}">
+                                    <i class="fas fa-th-large me-2"></i> Main Sections
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_ShowAdventures', {'userId': user.id}) }}">Show adventures</a>
+                                <a class="nav-link" href="{{ path('app_ShowAdventures', {'userId': user.id}) }}">
+                                    <i class="fas fa-mountain me-2"></i> Show Adventures
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_ShowPodcast', {'userId': user.id}) }}">Show podcasts</a>
+                                <a class="nav-link" style="color: #f85454" href="{{ path('app_ShowPodcast', {'userId': user.id}) }}">
+                                    <i class="fas fa-podcast me-2"></i> Show Podcasts
+                                </a>
                             </li>
                         </ul>
                     </div>
