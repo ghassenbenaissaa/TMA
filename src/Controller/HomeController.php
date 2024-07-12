@@ -14,23 +14,52 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Security;
 
 
 class HomeController extends AbstractController
 {
-    #[Route('/home', name: 'app_home')]
-    public function index(): Response
+    #[Route('/', name: 'app_home')]
+    public function index0(Security $security): Response
+    {
+        // Vérifie si l'utilisateur est connecté
+        if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // Redirige vers la page pour utilisateurs authentifiés
+            return $this->redirectToRoute('app_home_authenticated');
+        }
+
+        // Redirige vers la page pour utilisateurs non authentifiés
+        return $this->redirectToRoute('app_home_unauthenticated');
+    }
+
+    #[Route('/home', name: 'app_home_authenticated')]
+    public function index00(): Response
+    {
+        return $this->render('home/index1.html.twig', [
+            'controller_name' => 'HomeController',
+        ]);
+    }
+
+    #[Route('/homeA', name: 'app_home_unauthenticated')]
+    public function index000(): Response
     {
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
         ]);
     }
 
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(): void
+    {
+        // Le logout est géré par Symfony, pas besoin de logique ici.
+    }
+
 
     #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
-    public function login(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function login(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, SessionInterface $session): Response
     {
         $form = $this->createForm(LoginType::class);
         $form->handleRequest($request);
@@ -60,6 +89,7 @@ class HomeController extends AbstractController
             if (is_null($user->getPageNom()) || is_null($user->getLogo())) {
                 return $this->redirectToRoute('app_form2', ['userId' => $user->getId()]);
             }
+            $session->set('user', $user->getId());
             return $this->redirectToRoute('app_profile', ['userId' => $user->getId()]);
         }
 
@@ -70,7 +100,7 @@ class HomeController extends AbstractController
 
 
     #[Route('/signup', name: 'app_signup', methods: ['GET', 'POST'])]
-    public function signup(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository): Response
+    public function signup(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository , SessionInterface $session): Response
     {
         $form = $this->createForm(SignUpType::class);
         $form->handleRequest($request);
@@ -115,7 +145,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/signup1/{userId}', name: 'app_form1', methods: ['GET', 'POST'])]
-    public function form1(int $userId, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    public function form1(int $userId, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository , SessionInterface $session): Response
     {
         $user = $userRepository->find($userId);
 
@@ -137,7 +167,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/signup2/{userId}', name: 'app_form2', methods: ['GET', 'POST'])]
-    public function form2(int $userId, Request $request, UserRepository $userRepository,ParameterBagInterface $params): Response {
+    public function form2(int $userId, Request $request, UserRepository $userRepository,ParameterBagInterface $params , SessionInterface $session): Response {
         $logos_directory = $params->get('logos_directory');
 
         $user = $userRepository->find($userId);
@@ -180,6 +210,7 @@ class HomeController extends AbstractController
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
+            $session->set('user', $user->getId());
             return $this->redirectToRoute('app_profile', ['userId' => $user->getId()]);
         }
 

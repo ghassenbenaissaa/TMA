@@ -47,6 +47,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/{userId}', name: 'app_profile')]
     public function index(UserRepository $userRepository, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         $photoProfile = null;
 
@@ -136,6 +142,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/edit/{userId}', name: 'app_editProfile')]
     public function editProfile(Request $request,ParameterBagInterface $params, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $user = $entityManager->getRepository(User::class)->find($userId);
         $logos_directory = $params->get('logos_directory');
@@ -195,6 +207,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/CPassword/{userId}', name: 'app_CPassword')]
     public function index2(Request $request, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -257,6 +275,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/DAccount/{userId}', name: 'app_DAccount')]
     public function index3(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -292,6 +316,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/MainSections/{userId}', name: 'app_Msections')]
     public function index4(Request $request, UserRepository $userRepository, SectionRepository $sectionRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         $logos_directory = $params->get('logos_directory');
         $aboutMeSection = $sectionRepository->findOneBy(['id_user' => $userId, 'type' => 'AboutMe']);
@@ -452,6 +482,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/AddAdventure/{userId}', name: 'app_AddAdventure')]
     public function index5(Request $request, UserRepository $userRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $logos_directory = $params->get('Adv_directory');
         $user = $userRepository->find($userId);
         if (!$user) {
@@ -1038,6 +1074,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/ShowAdventures/{userId}', name: 'app_ShowAdventures')]
     public function index6(Request $request, UserRepository $userRepository, AventureRepository $aventureRepository,ImageRepository $imageRepository, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -1077,6 +1119,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/ShowAdventures/{AvId}/{userId}', name: 'app_DAdventures')]
     public function index7(UserRepository $userRepository,AventureRepository $adventureRepository, EntityManagerInterface $entityManager, int $AvId,  int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -1096,6 +1144,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/EditAdventure/{AvId}/{userId}', name: 'app_EditAdventure')]
     public function index8(Request $request, UserRepository $userRepository, AventureRepository $aventureRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId, int $AvId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $logos_directory = $params->get('Adv_directory');
         $user = $userRepository->find($userId);
         if (!$user) {
@@ -1191,6 +1245,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/delete/image/{AvId}/{userId}/{imageId}', name: 'delete_image')]
     public function deleteImage(Request $request, EntityManagerInterface $entityManager, ImageRepository $imageRepository, UserRepository $userRepository, AventureRepository $aventureRepository, int $userId, int $AvId,int $imageId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -1217,6 +1277,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/EditSiteWeb/{userId}', name: 'app_Website', methods: ['GET', 'POST'])]
     public function editSite(int $userId, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
 
         if (!$user) {
@@ -1252,6 +1318,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/ShowPodcast/{userId}', name: 'app_ShowPodcast')]
     public function showPodcast(Request $request, UserRepository $userRepository, PodcastRepository $podcastRepository, ImageRepository $imageRepository, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -1290,6 +1362,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/ShowPodcast/{PdId}/{userId}', name: 'app_DPodcast')]
     public function deletePodcast(UserRepository $userRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, int $PdId,  int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -1310,6 +1388,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/AddPodcast/{userId}', name: 'app_AddPodcast')]
     public function addPodcast(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $podcast_directory = $params->get('Podcast_directory');
         $user = $userRepository->find($userId);
         if (!$user) {
@@ -1389,6 +1473,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/EditPodcast/{PdId}/{userId}', name: 'app_EditPodcast')]
     public function editPodcast(Request $request, UserRepository $userRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId,int $PdId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $podcast_directory = $params->get('Podcast_directory');
         $user = $userRepository->find($userId);
         if (!$user) {
@@ -1471,6 +1561,12 @@ class ProfileController extends AbstractController
     #[Route('/profile/delete/image2/{PdId}/{userId}/{imageId}', name: 'delete_image2')]
     public function deleteImage2(Request $request, EntityManagerInterface $entityManager, ImageRepository $imageRepository, UserRepository $userRepository, PodcastRepository $podcastRepository, int $userId, int $PdId,int $imageId): Response
     {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
         $user = $userRepository->find($userId);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
