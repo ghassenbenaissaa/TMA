@@ -20,9 +20,40 @@ class BlogController extends AbstractController
             return $this->redirectToRoute('app_error404');
         }
 
+        $socialHandles = [
+            'twitter' => $this->extractHandle($user->getTwitter(), 'twitter'),
+            'facebook' => $this->extractHandle($user->getFacebook(), 'facebook'),
+            'instagram' => $this->extractHandle($user->getInstagram(), 'instagram'),
+        ];
+
+        $sections = $user->getSections();
+
+        $coverImage = null;
+        $AboutMeImage = null;
+
+        // Parcourir les sections pour trouver l'image de couverture
+        foreach ($sections as $section) {
+            if ($section->getType() === 'Couverture') {
+                $coverImage = $section->getImage();
+                break;
+            }
+        }
+        foreach ($sections as $section) {
+            if ($section->getType() === 'AboutMe') {
+                $AboutMeImage = $section->getImage();
+                $AboutMeDescription = $section->getDescription();
+                break;
+            }
+        }
+
         // Rendre la vue avec les informations de la page
         return $this->render('blog/index.html.twig', [
             'user' => $user,
+            'sections' => $sections,
+            'coverImage' => $coverImage,
+            'AboutMeImage' => $AboutMeImage,
+            'AboutMeDescription' => $AboutMeDescription,
+            'socialHandles' => $socialHandles,
         ]);
     }
     #[Route('/blog', name: 'app_error404')]
@@ -30,5 +61,30 @@ class BlogController extends AbstractController
     {
         return $this->render('blog/error-404.html.twig');
     }
+    private function extractHandle(string $url, string $platform): string
+    {
+        if (empty($url)) {
+            return ''; // Retourne une chaîne vide si l'URL est vide
+        }
+
+
+        if ($platform === 'twitter') {
+            $parts = explode('/', $url);
+            $handle = end($parts);
+        } elseif ($platform === 'instagram') {
+            if (preg_match('/https?:\/\/(?:www\.)?instagram\.com\/([^\/?]+)/', $url, $matches)) {
+                $handle = $matches[1];// Extrait avant le point
+            }
+        } elseif ($platform === 'facebook') {
+            // Enlever les paramètres après le '?'
+            if (preg_match('/https?:\/\/(?:www\.)?facebook\.com\/([^\/?]+)/', $url, $matches)) {
+            $handle = $matches[1]; // Extrait avant le '?'
+            }
+            // Si l'identifiant Instagram a un underscore, on le garde tel quel
+        }
+
+        return $handle; // Ajoute le '@' devant
+    }
+
 
 }

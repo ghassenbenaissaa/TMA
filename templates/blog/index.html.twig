@@ -22,7 +22,7 @@
 <body class="">
 
 <!-- Add your content of header -->
-<div class="background-color-layer" style="background-image: url('{{ asset('logoClient/' ~ user.logo) }}')">
+<div class="background-color-layer" style="background-image: url('{{ asset('logoClient/' ~ coverImage) }}')">
 </div>
 <main class="content-wrapper">
     <header class="white-text-container section-container">
@@ -46,13 +46,10 @@
                         <h2>About me</h2>
                         <div class="row">
                             <div class="col-md-4">
-                                <p><img src="{{ asset('logoClient/' ~ user.logo) }}" class="img-responsive" alt=""></p>
+                                <p><img src="{{ asset('logoClient/' ~ AboutMeImage) }}" class="img-responsive" alt=""></p>
                             </div>
                             <div class="col-md-8">
-
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                                <p> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
+                                <p>{{ AboutMeDescription }}.</p>
                             </div>
                         </div>
                     </div>
@@ -203,13 +200,13 @@
                         <h2>Social Network</h2>
                         <div class="row">
                             <div class="col-md-3">
-                                <p class="social-buttons"><a href="https://twitter.com/" title=""><span class="social-round-icon fa-icon"><i class="fa fa-twitter"></i></span>@David_Folley</a></p>
+                                <p class="social-buttons"><a href="{{ user.twitter }}" title=""><span class="social-round-icon fa-icon"><i class="fa fa-twitter"></i></span>@{{ socialHandles.twitter }}</a></p>
                             </div>
                             <div class="col-md-3">
-                                <p class="social-buttons"><a href="https://www.linkedin.com/" title=""><span class="social-round-icon fa-icon"><i class="fa fa-linkedin"></i></span>David Folley</a></p>
+                                <p class="social-buttons"><a href="{{ user.facebook }}" title=""><span class="social-round-icon fa-icon"><i class="fa fa-facebook"></i></span>{{ socialHandles.facebook }}</a></p>
                             </div>
                             <div class="col-md-3">
-                                <p class="social-buttons"><a href="https://dribbble.com/" title=""><span class="social-round-icon fa-icon"><i class="fa fa-dribbble"></i></span>David Folley</a></p>
+                                <p class="social-buttons"><a href="{{ user.instagram }}" title=""><span class="social-round-icon fa-icon"><i class="fa fa-instagram"></i></span>{{ socialHandles.instagram }}</a></p>
                             </div>
                         </div>
                     </div>
