@@ -25,21 +25,20 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index0(Security $security): Response
     {
-        // Vérifie si l'utilisateur est connecté
-        if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-            // Redirige vers la page pour utilisateurs authentifiés
+        $session = $this->get('session');
+        if ($session->has('user')) {
             return $this->redirectToRoute('app_home_authenticated');
         }
-
-        // Redirige vers la page pour utilisateurs non authentifiés
         return $this->redirectToRoute('app_home_unauthenticated');
     }
 
     #[Route('/home', name: 'app_home_authenticated')]
     public function index00(): Response
     {
+        $session = $this->get('session');
+        $user_id = $session->get('user');
         return $this->render('home/index1.html.twig', [
-            'controller_name' => 'HomeController',
+            'userId' => $user_id,
         ]);
     }
 
