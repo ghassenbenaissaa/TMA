@@ -12,12 +12,12 @@ class BlogController extends AbstractController
     #[Route('/blog/{slug}', name: 'app_blog')]
     public function index(string $slug, UserRepository $userRepository): Response
     {
-        // Chercher la page par son slug dans la base de données
+
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
         // Si la page n'existe pas, lancer une exception
         if (!$user) {
-            throw $this->createNotFoundException('Page not found');
+            return $this->redirectToRoute('app_error404');
         }
 
         // Rendre la vue avec les informations de la page
@@ -25,4 +25,10 @@ class BlogController extends AbstractController
             'user' => $user,
         ]);
     }
+    #[Route('/blog', name: 'app_error404')]
+    public function index1(): Response
+    {
+        return $this->render('blog/error-404.html.twig');
+    }
+
 }
