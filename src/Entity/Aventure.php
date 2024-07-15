@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AventureRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,6 +42,12 @@ class Aventure
 
     #[ORM\Column(length: 255)]
     private ?string $audiance = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $Date_Debut = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $Date_Fin = null;
 
     public function __construct()
     {
@@ -163,6 +170,30 @@ class Aventure
     public function setAudiance(string $audiance): static
     {
         $this->audiance = $audiance;
+
+        return $this;
+    }
+
+    public function getDateDebut(): ?\DateTimeInterface
+    {
+        return $this->Date_Debut;
+    }
+
+    public function setDateDebut(\DateTimeInterface $Date_Debut): static
+    {
+        $this->Date_Debut = $Date_Debut;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTimeInterface
+    {
+        return $this->Date_Fin;
+    }
+
+    public function setDateFin(\DateTimeInterface $Date_Fin): static
+    {
+        $this->Date_Fin = $Date_Fin;
 
         return $this;
     }
