@@ -401,8 +401,14 @@ class ProfileController extends AbstractController
 
 
             if ($aboutMeText && $aboutMeSection->getDescription() !== $aboutMeText) {
+                if (strlen($aboutMeText) > 255) {
+                    $errorMessage = sprintf('Description must not exceed 255 characters.');
+                    $this->addFlash('error', $errorMessage);
+                    return $this->redirectToRoute('app_Msections', ['userId' => $user->getId()]);
+                }
                 $aboutMeSection->setDescription($aboutMeText);
             }
+
 
             if ($imageFile) {
                 $newFilename = "AboutMe" . $user->getId() . '.' . $imageFile->guessExtension();

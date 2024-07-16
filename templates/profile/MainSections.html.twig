@@ -251,7 +251,7 @@
                                 <h2 class="custom-heading" style="padding-bottom: 15px;">About you</h2>
                                 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                                     <div class="custom-form-group" style="width: 50%; margin-bottom: 20px;">
-                                        {{ form_widget(form.description, {'attr': {'class': 'custom-form-control', 'placeholder': 'Tell us about yourself. Share your interests, experiences...', 'style': 'width: 100%; padding: 10px;'}}) }}
+                                        {{ form_widget(form.description, {'attr': {'class': 'custom-form-control', 'placeholder': 'Tell us about yourself. Share your interests, experiences...', 'style': 'width: 100%; padding: 10px;', 'maxlength': 255}}) }}
                                     </div>
                                 </div>
                                 <div style="text-align: center; margin-bottom: 20px;">
