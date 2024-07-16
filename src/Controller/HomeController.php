@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Section;
 use App\Entity\User;
 use App\Form\Form1Type;
 use App\Form\Form2Type;
+use App\Form\Form3Type;
 use App\Form\LoginType;
 use App\Form\SignUpType;
+use App\Repository\SectionRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -87,6 +90,22 @@ class HomeController extends AbstractController
             // Vérifier si le nom de la page ou le logo est null
             if (is_null($user->getPageNom()) || is_null($user->getLogo())) {
                 return $this->redirectToRoute('app_form2', ['userId' => $user->getId()]);
+            }
+
+            $photoProfile = null;
+
+            foreach ($user->getSections() as $section) {
+                if ("PhotoProfile" == $section->getType()) {
+                    $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                    $sectionImage = $section->getImage();
+                    if ($expectedImageName == $sectionImage) {
+                        $photoProfile = $sectionImage;
+                        break;
+                    }
+                }
+            }
+            if (is_null($photoProfile)) {
+                return $this->redirectToRoute('app_form3', ['userId' => $user->getId()]);
             }
             $session->set('user', $user->getId());
             return $this->redirectToRoute('app_profile', ['userId' => $user->getId()]);
@@ -209,11 +228,57 @@ class HomeController extends AbstractController
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
+            return $this->redirectToRoute('app_form3', ['userId' => $userId]);
+        }
+
+        return $this->render('home/form2.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/signup3/{userId}', name: 'app_form3', methods: ['GET', 'POST'])]
+    public function form3(int $userId,EntityManagerInterface $entityManager, Request $request, UserRepository $userRepository,SectionRepository $sectionRepository, ParameterBagInterface $params , SessionInterface $session): Response {
+        $logos_directory = $params->get('logos_directory');
+
+        $user = $userRepository->find($userId);
+        $ProfilePhotoSection = $sectionRepository->findOneBy(['id_user' => $userId, 'type' => 'PhotoProfile']);
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        $form = $this->createForm(Form3Type::class, $user);
+        $form->handleRequest($request);
+
+        if (!$ProfilePhotoSection) {
+            $ProfilePhotoSection = new Section();
+            $ProfilePhotoSection->setType('PhotoProfile');
+            $ProfilePhotoSection->setIdUser($user);
+            $ProfilePhotoSection->setDescription('PhotoProfile');
+        }
+
+        if ($form->isSubmitted()) {
+            $PhotoFile = $form['PhotoProfile']->getData();
+            if ($PhotoFile) {
+                $newFilename = $user->getId() . 'PhotoProfile' . '.' . $PhotoFile->guessExtension();
+                try {
+                    $PhotoFile->move($logos_directory, $newFilename);
+                    $ProfilePhotoSection->setImage($newFilename);
+                } catch (FileException $e) {
+                    $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
+                    $this->addFlash('error', $errorMessage);
+                    return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                }
+
+            }
+
+            $entityManager->persist($ProfilePhotoSection);
+            $entityManager->flush();
             $session->set('user', $user->getId());
             return $this->redirectToRoute('app_profile', ['userId' => $user->getId()]);
         }
 
-        return $this->render('home/form2.html.twig', [
+        return $this->render('home/form3.html.twig', [
             'form' => $form->createView(),
         ]);
     }
