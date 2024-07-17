@@ -515,6 +515,19 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $dateDebutString = $request->request->get('dateDebut');
+            $dateFinString = $request->request->get('dateFin');
+
+            // Vérifier que les chaînes de date ne sont pas vides
+            if ($dateDebutString && $dateFinString) {
+                // Vérifier que la date de fin n'est pas avant la date de début
+                if ($dateDebutString > $dateFinString) {
+                    $this->addFlash('error', 'End Date cannot be before Start Date. Start Date: ' . $dateFinString);
+                    return $this->redirectToRoute('app_AddAdventure', ['userId' => $userId]);
+                }
+                $dateDebut = \DateTime::createFromFormat('m-d-Y', $dateDebutString);
+                $dateFin = \DateTime::createFromFormat('m-d-Y', $dateFinString);
+            }
             $imageFiles = $request->files->get('images');
             $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
             $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
@@ -572,6 +585,8 @@ class ProfileController extends AbstractController
             $aventure->setVideo($video);
             $audience = $form->get('audience')->getData();
             $aventure->setAudiance($audience);
+            $aventure->setDateDebut($dateDebut);
+            $aventure->setDateFin($dateFin);
             $entityManager->persist($aventure);
             $entityManager->flush();
 
@@ -1181,6 +1196,19 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() ) {
+            $dateDebutString = $request->request->get('dateDebut');
+            $dateFinString = $request->request->get('dateFin');
+
+            // Vérifier que les chaînes de date ne sont pas vides
+            if ($dateDebutString && $dateFinString) {
+                // Vérifier que la date de fin n'est pas avant la date de début
+                if ($dateDebutString > $dateFinString) {
+                    $this->addFlash('error', 'End Date cannot be before Start Date. Start Date: ' . $dateFinString);
+                    return $this->redirectToRoute('app_AddAdventure', ['userId' => $userId]);
+                }
+                $dateDebut = \DateTime::createFromFormat('m-d-Y', $dateDebutString);
+                $dateFin = \DateTime::createFromFormat('m-d-Y', $dateFinString);
+            }
             $imageFiles = $request->files->get('images');
             $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
             $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
@@ -1233,6 +1261,8 @@ class ProfileController extends AbstractController
             $aventure->setVideo($video);
             $audience = $form->get('audiance')->getData();
             $aventure->setAudiance($audience);
+            $aventure->setDateDebut($dateDebut);
+            $aventure->setDateFin($dateFin);
             $entityManager->persist($aventure);
             $entityManager->flush();
 

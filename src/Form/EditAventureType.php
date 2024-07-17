@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,7 +20,11 @@ class EditAventureType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class)
-            ->add('description', TextareaType::class)
+            ->add('description', TextareaType::class, [
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+            ])
             ->add('images', FileType::class, [
                 'label' => 'Image (PNG, JPEG)',
                 'mapped' => false,
@@ -46,7 +52,14 @@ class EditAventureType extends AbstractType
                 ],
                 'expanded' => true, // Afficher comme des boutons radio
                 'multiple' => false, // Permettre la sélection d'un seul choix
+            ])
+            ->add('dateDebut', DateTimeType::class, [
+                'mapped' => true,
+            ])
+            ->add('dateFin', DateTimeType::class, [
+                'mapped' => true,
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
