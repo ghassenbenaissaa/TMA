@@ -1204,7 +1204,7 @@ class ProfileController extends AbstractController
                 // Vérifier que la date de fin n'est pas avant la date de début
                 if ($dateDebutString > $dateFinString) {
                     $this->addFlash('error', 'End Date cannot be before Start Date. Start Date: ' . $dateFinString);
-                    return $this->redirectToRoute('app_AddAdventure', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
                 }
                 $dateDebut = \DateTime::createFromFormat('m-d-Y', $dateDebutString);
                 $dateFin = \DateTime::createFromFormat('m-d-Y', $dateFinString);
