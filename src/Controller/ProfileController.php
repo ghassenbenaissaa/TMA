@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\AddFriend;
 use App\Entity\Aventure;
 use App\Entity\Continent;
+use App\Entity\Friend;
 use App\Entity\Image;
 use App\Entity\Pays;
 use App\Entity\Podcast;
 use App\Entity\Section;
 use App\Entity\User;
+use App\Repository\AddFriendRepository;
 use OpenAI\Client;
 use App\Form\AddPodcastType;
 use App\Form\AventureType;
@@ -34,6 +37,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -1673,6 +1677,160 @@ class ProfileController extends AbstractController
             return new JsonResponse(['reformulatedText' => $reformulatedText]);
         }
     }
+
+    #[Route('/profile/ShowFriends/{userId}', name: 'app_friends')]
+    public function showFriends( UserRepository $userRepository, int $userId): Response
+    {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
+        $user = $userRepository->find($userId);
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
+        }
+
+        $friends = $this->getFriends($userId, $userRepository);
+
+        // Récupérer les amis de l'utilisateur ou toute autre logique nécessaire
+        $friends = $user->getFriends();
+
+        return $this->render('profile/ShowFriends.html.twig', [
+            'user' => $user,
+            'friends' => $friends,
+            'photoProfile' => $photoProfile,
+        ]);
+    }
+
+    private function getFriends(int $userId, UserRepository $userRepository)
+    {
+        $friends = [];
+        $friendships = $this->getDoctrine()->getRepository(Friend::class)->findBy(['id_user' => $userId]);
+
+        foreach ($friendships as $friendship) {
+            $friendId = $friendship->getId2();
+            $friend = $userRepository->find($friendId);
+            if ($friend) {
+                $friends[] = $friend;
+            }
+        }
+
+        $friendships = $this->getDoctrine()->getRepository(Friend::class)->findBy(['id_2' => $userId]);
+
+        foreach ($friendships as $friendship) {
+            $friendId = $friendship->getIdUser()->first()->getId();
+            $friend = $userRepository->find($friendId);
+            if ($friend) {
+                $friends[] = $friend;
+            }
+        }
+
+        return $friends;
+    }
+
+    #[Route('/profile/removeFriend/{friendId}', name: 'app_remove_friend')]
+    public function removeFriend(int $friendId, EntityManagerInterface $entityManager, SessionInterface $session): Response
+    {
+        $loggedInUserId = $session->get('user');
+        $friendshipRepo = $entityManager->getRepository(Friend::class);
+
+        // Chercher l'amitié dans laquelle l'utilisateur est soit id_user soit id_2
+        $friendship = $friendshipRepo->findOneBy([
+            'id_user' => $loggedInUserId,
+            'id_2' => $friendId,
+        ]);
+
+        if (!$friendship) {
+            $friendship = $friendshipRepo->findOneBy([
+                'id_user' => $friendId,
+                'id_2' => $loggedInUserId,
+            ]);
+        }
+
+        if ($friendship) {
+            $entityManager->remove($friendship);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Friend removed successfully.');
+        } else {
+            $this->addFlash('error', 'Friend not found.');
+        }
+
+        return $this->redirectToRoute('app_friends', ['userId' => $loggedInUserId]);
+    }
+
+    #[Route('/profile/AddFriends/{userId}', name: 'app_addfriends')]
+    public function addFriends(UserRepository $userRepository, int $userId): Response
+    {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+
+        $user = $userRepository->find($userId);
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        foreach ($user->getSections() as $section) {
+            if ("PhotoProfile" == $section->getType()) {
+                $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
+                $sectionImage = $section->getImage();
+                if ($expectedImageName == $sectionImage) {
+                    $photoProfile = $sectionImage;
+                    break;
+                }
+            }
+        }
+
+        $users = $userRepository->findAll();
+        $usersArray = array_map(function($user) {
+            return $user->toArray();
+        }, $users);
+        $usersJson = json_encode($usersArray);
+
+        return $this->render('profile/AddFriend.html.twig', [
+            'user' => $user,
+            'usersJson' => $usersJson,
+            'photoProfile' => $photoProfile,
+            'userId' => $userId,
+        ]);
+    }
+
+    #[Route('/profile/addFriendRequest/{userId}', name: 'app_add_friend_request', methods: ['POST'])]
+    public function addFriendRequest(UserRepository $userRepository, EntityManagerInterface $entityManager, int $userId): Response
+    {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            return $this->json(['success' => false, 'message' => 'User not logged in.']);
+        }
+
+        $currentUser = $session->get('user'); // Assurez-vous que vous obtenez l'utilisateur connecté
+
+        $Addfriend = new AddFriend();
+        $user = $userRepository->find($currentUser); // Assurez-vous que vous utilisez le bon ID
+        $Addfriend->setUserId($user);
+        $Addfriend->setUserId2($userId);
+        $Addfriend->setConfirmation(0);
+        $entityManager->persist($Addfriend);
+        $entityManager->flush();
+
+        return $this->json(['success' => true, 'message' => 'Friend request sent.']);
+    }
+
 
 
 

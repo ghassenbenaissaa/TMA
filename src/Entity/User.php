@@ -108,12 +108,30 @@ private ?string $mdp = null;
     #[ORM\OneToMany(targetEntity: Podcast::class, mappedBy: 'idUser')]
     private Collection $podcasts;
 
+    #[ORM\OneToMany(targetEntity: Friend::class, mappedBy: 'id_user')]
+    private Collection $friends;
+
+    #[ORM\OneToMany(targetEntity: AddFriend::class, mappedBy: 'User_id')]
+    private Collection $addFriends;
+
     public function __construct()
     {
         $this->sections = new ArrayCollection();
         $this->continents = new ArrayCollection();
         $this->aventures = new ArrayCollection();
         $this->podcasts = new ArrayCollection();
+        $this->friends = new ArrayCollection();
+        $this->addFriends = new ArrayCollection();
+    }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'nom' => $this->getNom(),
+            'prenom' => $this->getPrenom(),
+            'email' => $this->getEmail(),
+        ];
     }
 
     public function getId(): ?int
@@ -418,6 +436,63 @@ private ?string $mdp = null;
             // set the owning side to null (unless already changed)
             if ($podcast->getIdUser() === $this) {
                 $podcast->setIdUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Friend>
+     */
+    public function getFriends(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function addFriends(Friend $friends): static
+    {
+        if (!$this->friends->contains($friends)) {
+            $this->friends->add($friends);
+            $friends->addIdUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriends(Friend $friends): static
+    {
+        if ($this->friends->removeElement($friends)) {
+            $friends->removeIdUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, AddFriend>
+     */
+    public function getAddFriends(): Collection
+    {
+        return $this->addFriends;
+    }
+
+    public function addAddFriend(AddFriend $addFriend): static
+    {
+        if (!$this->addFriends->contains($addFriend)) {
+            $this->addFriends->add($addFriend);
+            $addFriend->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddFriend(AddFriend $addFriend): static
+    {
+        if ($this->addFriends->removeElement($addFriend)) {
+            // set the owning side to null (unless already changed)
+            if ($addFriend->getUserId() === $this) {
+                $addFriend->setUserId(null);
             }
         }
 

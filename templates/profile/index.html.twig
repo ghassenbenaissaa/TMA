@@ -102,6 +102,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_friends', {'userId': user.id}) }}">
+                                    <i class="fas fa-users me-2"></i> Friends
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ path('app_DAccount', {'userId': user.id}) }}">
                                     <i class="fas fa-user-times  me-2"></i> Delete Account
                                 </a>
