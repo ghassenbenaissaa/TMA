@@ -1811,7 +1811,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/addFriendRequest/{userId}', name: 'app_add_friend_request', methods: ['POST'])]
-    public function addFriendRequest(UserRepository $userRepository, EntityManagerInterface $entityManager, int $userId): Response
+    public function addFriendRequest(UserRepository $userRepository, EntityManagerInterface $entityManager, AddFriendRepository $addFriendRepository, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1819,19 +1819,35 @@ class ProfileController extends AbstractController
         }
 
         $currentUser = $session->get('user'); // Assurez-vous que vous obtenez l'utilisateur connecté
-
-        $Addfriend = new AddFriend();
         $user = $userRepository->find($currentUser); // Assurez-vous que vous utilisez le bon ID
-        $Addfriend->setUserId($user);
-        $Addfriend->setUserId2($userId);
-        $Addfriend->setConfirmation(0);
-        $entityManager->persist($Addfriend);
+
+        if (!$user) {
+            return $this->json(['success' => false, 'message' => 'Current user not found.']);
+        }
+
+        // Vérifiez si une demande d'ami existe déjà dans un sens ou l'autre
+        $existingFriendRequest = $addFriendRepository->findOneBy([
+            'User_id' => $user,
+            'user_id2' => $userId
+        ]) ?? $addFriendRepository->findOneBy([
+            'User_id' => $userId,
+            'user_id2' => $currentUser
+        ]);
+
+        if ($existingFriendRequest) {
+            return $this->json(['success' => false, 'message' => 'Friend request already exists.']);
+        }
+
+        // Création d'une nouvelle demande d'ami
+        $addFriend = new AddFriend();
+        $addFriend->setUserId($user);
+        $addFriend->setUserId2($userId);
+        $addFriend->setConfirmation(0);
+
+        $entityManager->persist($addFriend);
         $entityManager->flush();
 
         return $this->json(['success' => true, 'message' => 'Friend request sent.']);
     }
-
-
-
 
 }

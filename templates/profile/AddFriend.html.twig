@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="{{asset('vendorsProfile/font-awesome/css/font-awesome.min.css')}}" />
         <link rel="stylesheet" href="{{asset('vendorsProfile/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.4/dist/sweetalert2.min.css">
         <!-- End plugin css for this page -->
         <!-- inject:css -->
         <!-- endinject -->
@@ -252,6 +253,7 @@
     <!-- endinject -->
     <!-- Custom js for this page -->
     <script src="{{asset('jsProfile/dashboard.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.4/dist/sweetalert2.min.js"></script>
     <!-- End custom js for this page -->
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -330,18 +332,28 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data.message);
+                    Swal.fire({
+                        title: 'Success',
+                        text: data.message,
+                        icon: 'success'
+                    });
                 } else {
-                    alert(data.message);
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error'
+                    });
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while sending the friend request.');
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while sending the friend request: ' + error.message,
+                    icon: 'error'
+                });
             });
     }
-
-
 
 </script>
 {% endblock %}
