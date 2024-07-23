@@ -306,12 +306,6 @@
 
                                     </div>
                                 </div>
-                                {% for flashMessage in app.flashes('error') %}
-                                    <div class="alert alert-danger" role="alert">
-                                        <span class="emoji">&#9888;</span> <!-- Emoji de danger -->
-                                        {{ flashMessage }}
-                                    </div>
-                                {% endfor %}
 
                                 {% for flashMessage in app.flashes('success') %}
                                     <div class="alert alert-success" role="alert">
