@@ -21,15 +21,16 @@ class BlogController extends AbstractController
         }
 
         $socialHandles = [
-            'twitter' => $this->extractHandle($user->getTwitter(), 'twitter'),
-            'facebook' => $this->extractHandle($user->getFacebook(), 'facebook'),
-            'instagram' => $this->extractHandle($user->getInstagram(), 'instagram'),
+            'twitter' => $user->getTwitter() ? $this->extractHandle($user->getTwitter(), 'twitter') : null,
+            'facebook' => $user->getFacebook() ? $this->extractHandle($user->getFacebook(), 'facebook') : null,
+            'instagram' => $user->getInstagram() ? $this->extractHandle($user->getInstagram(), 'instagram') : null,
         ];
 
         $sections = $user->getSections();
 
         $coverImage = null;
         $AboutMeImage = null;
+        $AboutMeDescription = null;
 
         // Parcourir les sections pour trouver l'image de couverture
         foreach ($sections as $section) {
