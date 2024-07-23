@@ -58,31 +58,7 @@
                     </div>
                 </div>
 
-
-                <div class="card">
-                    <div class="card-block">
-                        <h2>Projects</h2>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img src="{{asset('BlogSite/images/img-02.jpg')}}" class="img-responsive" alt="">
-                                <h3 class="h5">Amelia App</h3>
-                                <p>June 2017</p>
-                            </div>
-                            <div class="col-md-4">
-                                <img src="{{asset('BlogSite/images/img-03.jpg')}}" class="img-responsive" alt="">
-                                <h3 class="h5">Portland</h3>
-                                <p>March 2017</p>
-                            </div>
-                            <div class="col-md-4">
-                                <img src="{{asset('BlogSite/images/img-04.jpg')}}" class="img-responsive" alt="">
-                                <h3 class="h5">Denz for Nilon</h3>
-                                <p>Jan 2017</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
+                {% if adventuresReq|length > 0 %}
                 <div class="card recommendations-card ">
                     <div class="card-block">
                         <h2>Top Adventures</h2>
@@ -90,7 +66,7 @@
                             <!-- Wrapper for slides -->
                             <div class="carousel-inner" role="listbox">
                                 {% set adventures_per_slide = 3 %}
-                                {% set total_adventures = adventures|length %}
+                                {% set total_adventures = adventuresReq|length %}
                                 {% set total_slides = ((total_adventures / adventures_per_slide) | round(0, 'ceil')) %}
                                 {% for i in 0..total_slides - 1 %}
                                     <div class="item {% if i == 0 %}active{% endif %}">
@@ -98,7 +74,7 @@
                                             {% for j in 0..adventures_per_slide - 1 %}
                                                 {% set index = i * adventures_per_slide + j %}
                                                 {% if index < total_adventures %}
-                                                    {% set adventure = adventures[index] %}
+                                                    {% set adventure = adventuresReq[index] %}
                                                     <div class="col-md-4">
                                                         {% set imageFound = false %}
                                                         {% for image in images %}
@@ -138,6 +114,84 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
+
+                {% if adventures|length > 0 %}
+                <div class="card All-adventures-card">
+                    <div class="card-block">
+                        <h2>Adventures</h2>
+                        <div class="row">
+                            {% set adventure_count = 0 %}
+                            {% for adventure in adventures %}
+                            {% if adventure_count < 9 %}
+                            <div class="col-md-4">
+                                {% set imageFound = false %}
+                                {% for image in images %}
+                                    {% if image.getIdAventure() is not null and adventure.id == image.getIdAventure().id and not imageFound %}
+                                        <div class="image-wrapper">
+                                            <img src="{{ asset('AdvClient/' ~ image.nom) }}" class="img-responsive" alt="{{ adventure.nom }}">
+                                        </div>
+                                        {% set imageFound = true %}
+                                    {% endif %}
+                                {% endfor %}
+                                <h3 class="h5">{{ adventure.nom }}</h3>
+                                <p>{{ adventure.getDateDebut|date('F Y') }}</p>
+                            </div>
+                            {% set adventure_count = adventure_count + 1 %}
+                            {% if adventure_count % 3 == 0 and adventure_count < 9 %}
+                        </div><div class="row">
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% if adventures|length > 9 %}
+                            <div class="text-center" style="margin-top: 20px;">
+                                <a href="{{ path('all_adventures') }}" class="btn btn-primary">View All Adventures</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if adventures|length > 0 %}
+                    <div class="card All-podcasts-card">
+                        <div class="card-block">
+                            <h2>Podcasts</h2>
+                            <div class="row">
+                                {% set podcast_count = 0 %}
+                                {% for podcast in podcasts %}
+                                {% if podcast_count < 9 %}
+                                <div class="col-md-4">
+                                    {% set imageFound = false %}
+                                    {% for image in images %}
+                                        {% if image.getIdPodcast() is not null and podcast.id == image.getIdPodcast().id and not imageFound %}
+                                            <div class="image-wrapper">
+                                                <img src="{{ asset('PodcastClient/' ~ image.nom) }}" class="img-responsive" alt="{{ podcast.name }}">
+                                            </div>
+                                            {% set imageFound = true %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <h3 class="h5">{{ podcast.name }}</h3>
+                                </div>
+                                {% set podcast_count = podcast_count + 1 %}
+                                {% if podcast_count % 3 == 0 and podcast_count < 9 %}
+                            </div><div class="row">
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% if podcasts|length > 9 %}
+                                <div class="text-center" style="margin-top: 20px;">
+                                    <a href="{{ path('all_podcasts') }}" class="btn btn-primary">View All podcasts</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+
+
+
 
 
 
@@ -185,7 +239,7 @@
                         <p style="font-size: 20px; margin-bottom: 20px;">
                             Feel free to contact me if you have travel questions, comments, or suggestions! <br>I'll try to get back to you!
                         </p>
-                        <a href="mailto:your-email@example.com" class="btn btn-primary">
+                        <a href="mailto:{{user.email}}" class="btn btn-primary">
                          Send Me an Email
                         </a>
                         <div style="margin-top: 20px; text-align: center;">

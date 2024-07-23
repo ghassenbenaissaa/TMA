@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\AventureRepository;
 use App\Repository\ImageRepository;
+use App\Repository\PodcastRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BlogController extends AbstractController
 {
     #[Route('/blog/{slug}', name: 'app_blog')]
-    public function index(string $slug, UserRepository $userRepository,ImageRepository $imageRepository, AventureRepository $aventureRepository): Response
+    public function index(string $slug, UserRepository $userRepository,ImageRepository $imageRepository,PodcastRepository $podcastRepository, AventureRepository $aventureRepository): Response
     {
 
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
@@ -43,7 +44,9 @@ class BlogController extends AbstractController
                 break;
             }
         }
+        $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
         $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
+        $podcasts = $podcastRepository->findBy(['idUser' => $user]);
         $image = $imageRepository->findAll();
 
         // Rendre la vue avec les informations de la page
@@ -53,7 +56,9 @@ class BlogController extends AbstractController
             'coverImage' => $coverImage,
             'AboutMeImage' => $AboutMeImage,
             'AboutMeDescription' => $AboutMeDescription,
+            'podcasts' => $podcasts,
             'adventures' => $aventures,
+            'adventuresReq' => $aventuresReq,
             'images' => $image,
         ]);
     }

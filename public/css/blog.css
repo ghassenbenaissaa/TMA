@@ -54,7 +54,7 @@
     margin-right: 10px;
 }
 
-.about-me-card, .contact-card, .social-card, .recommendations-card {
+.about-me-card, .contact-card, .social-card, .recommendations-card, .All-adventures-card, .All-podcasts-card {
     background: #f9f9f9; /* Light background for card */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -114,7 +114,18 @@ h2 {
      object-fit: cover; /* Ensures the image covers the container, maintaining aspect ratio */
  }
 
+.image-wrapper img {
+    width: 350px;
+    height: 200px; /* Adjust this value to your desired maximum height */
+    object-fit: cover; /* Ensures the image covers the container, maintaining aspect ratio */
+}
+
+
 .carousel-inner .item {
     text-align: center; /* Center align text and images inside the carousel item */
+}
+
+.col-md-4{
+    text-align: center;
 }
 
