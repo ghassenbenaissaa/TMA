@@ -108,9 +108,6 @@ private ?string $mdp = null;
     #[ORM\OneToMany(targetEntity: Podcast::class, mappedBy: 'idUser')]
     private Collection $podcasts;
 
-    #[ORM\OneToMany(targetEntity: Friend::class, mappedBy: 'id_user')]
-    private Collection $friends;
-
     #[ORM\OneToMany(targetEntity: AddFriend::class, mappedBy: 'User_id')]
     private Collection $addFriends;
 
@@ -286,28 +283,6 @@ private ?string $mdp = null;
         return $this->continents;
     }
 
-    public function addContinent(Continent $continent): static
-    {
-        if (!$this->continents->contains($continent)) {
-            $this->continents->add($continent);
-            $continent->setIdUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeContinent(Continent $continent): static
-    {
-        if ($this->continents->removeElement($continent)) {
-            // set the owning side to null (unless already changed)
-            if ($continent->getIdUser() === $this) {
-                $continent->setIdUser(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getRoles(): array
     {
         return ['ROLE_USER'];
@@ -437,33 +412,6 @@ private ?string $mdp = null;
             if ($podcast->getIdUser() === $this) {
                 $podcast->setIdUser(null);
             }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Friend>
-     */
-    public function getFriends(): Collection
-    {
-        return $this->friends;
-    }
-
-    public function addFriends(Friend $friends): static
-    {
-        if (!$this->friends->contains($friends)) {
-            $this->friends->add($friends);
-            $friends->addIdUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFriends(Friend $friends): static
-    {
-        if ($this->friends->removeElement($friends)) {
-            $friends->removeIdUser($this);
         }
 
         return $this;

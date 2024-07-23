@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\AddFriend;
 use App\Entity\Aventure;
 use App\Entity\Continent;
-use App\Entity\Friend;
 use App\Entity\Image;
 use App\Entity\Pays;
 use App\Entity\Podcast;
@@ -49,14 +48,14 @@ use OpenAI;
 class ProfileController extends AbstractController
 {
     #[Route('/profile/{userId}', name: 'app_profile')]
-    public function index(UserRepository $userRepository, int $userId): Response
+    public function index(UserRepository $userRepository, int $userId, AddFriendRepository $addFriendRepository): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
-
+        $currentUser = $session->get('user');
         $user = $userRepository->find($userId);
         $photoProfile = null;
 
@@ -130,6 +129,31 @@ class ProfileController extends AbstractController
                 'progressPercent' => $progressPercent,
             ];
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,
@@ -140,11 +164,12 @@ class ProfileController extends AbstractController
             'totalContinentsVisited' => $totalContinentsVisited,
             'countryAdventureList' => $countryAdventureList, // Pass the list to Twig
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
     #[Route('/profile/edit/{userId}', name: 'app_editProfile')]
-    public function editProfile(Request $request,ParameterBagInterface $params, int $userId): Response
+    public function editProfile(Request $request,AddFriendRepository $addFriendRepository, ParameterBagInterface $params, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -200,16 +225,42 @@ class ProfileController extends AbstractController
 
             return $this->redirectToRoute('app_editProfile', ['userId' => $userId]);
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/EditProfile.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
     #[Route('/profile/CPassword/{userId}', name: 'app_CPassword')]
-    public function index2(Request $request, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository, int $userId): Response
+    public function index2(Request $request, UserPasswordEncoderInterface $passwordEncoder,AddFriendRepository $addFriendRepository, UserRepository $userRepository, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -268,16 +319,42 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Password updated successfully.');
             return $this->redirectToRoute('app_CPassword', ['userId' => $userId]);
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/ChangePassword.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
     #[Route('/profile/DAccount/{userId}', name: 'app_DAccount')]
-    public function index3(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, int $userId): Response
+    public function index3(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -309,16 +386,42 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Your account has been deleted successfully.');
             return $this->redirectToRoute('app_home');
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/DeleteAccount.html.twig', [
             'user' => $user,
             'delete_form' => $form->createView(),
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
     #[Route('/profile/MainSections/{userId}', name: 'app_Msections')]
-    public function index4(Request $request, UserRepository $userRepository, SectionRepository $sectionRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, int $userId): Response
+    public function index4(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, SectionRepository $sectionRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -474,6 +577,32 @@ class ProfileController extends AbstractController
             }
         }
 
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
+
         return $this->render('profile/MainSections.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
@@ -483,14 +612,15 @@ class ProfileController extends AbstractController
             'aboutMeSection' => $aboutMeSection,
             'CoverSection' => $CoverSection,
             'ProfilePhotoSection' => $ProfilePhotoSection,
-            'photoProfile' => $photoProfile
+            'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
 
 
     #[Route('/profile/AddAdventure/{userId}', name: 'app_AddAdventure')]
-    public function index5(Request $request, UserRepository $userRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId): Response
+    public function index5(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -597,11 +727,37 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Adventure added successfully.');
             return $this->redirectToRoute('app_ShowAdventures', ['userId' => $userId]);
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/AddAdventure.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
@@ -1097,7 +1253,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/ShowAdventures/{userId}', name: 'app_ShowAdventures')]
-    public function index6(Request $request, UserRepository $userRepository, AventureRepository $aventureRepository,ImageRepository $imageRepository, int $userId): Response
+    public function index6(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository,ImageRepository $imageRepository, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1133,11 +1289,37 @@ class ProfileController extends AbstractController
             }
         }
         $image = $imageRepository->findAll();
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
         return $this->render('profile/ShowAdventure.html.twig', [
             'user' => $user,
             'aventures' => $aventures,
             'images' => $image,
-            'photoProfile' => $photoProfile
+            'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
@@ -1167,7 +1349,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/EditAdventure/{AvId}/{userId}', name: 'app_EditAdventure')]
-    public function index8(Request $request, UserRepository $userRepository, AventureRepository $aventureRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId, int $AvId): Response
+    public function index8(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId, int $AvId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1273,12 +1455,38 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Adventure updated successfully.');
             return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/EditAdventure.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
             'aventure' => $aventure,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
@@ -1315,7 +1523,7 @@ class ProfileController extends AbstractController
 
 
     #[Route('/profile/EditSiteWeb/{userId}', name: 'app_Website', methods: ['GET', 'POST'])]
-    public function editSite(int $userId, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    public function editSite(int $userId, Request $request, AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1347,16 +1555,42 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Site web updated successfully.');
             return $this->redirectToRoute('app_Website', ['userId' => $userId]);
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/EditSiteWeb.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
     #[Route('/profile/ShowPodcast/{userId}', name: 'app_ShowPodcast')]
-    public function showPodcast(Request $request, UserRepository $userRepository, PodcastRepository $podcastRepository, ImageRepository $imageRepository, int $userId): Response
+    public function showPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, PodcastRepository $podcastRepository, ImageRepository $imageRepository, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1391,11 +1625,37 @@ class ProfileController extends AbstractController
             }
         }
         $image = $imageRepository->findAll();
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
         return $this->render('profile/ShowPodcast.html.twig', [
             'user' => $user,
             'podcasts' => $podcasts,
             'images' => $image,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
@@ -1426,7 +1686,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/AddPodcast/{userId}', name: 'app_AddPodcast')]
-    public function addPodcast(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId): Response
+    public function addPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1501,17 +1761,43 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Podcast added successfully.');
             return $this->redirectToRoute('app_ShowPodcast', ['userId' => $userId]);
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/AddPodcast.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
 
     #[Route('/profile/EditPodcast/{PdId}/{userId}', name: 'app_EditPodcast')]
-    public function editPodcast(Request $request, UserRepository $userRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId,int $PdId): Response
+    public function editPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId,int $PdId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1590,12 +1876,38 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Podcast edited successfully.');
             return $this->redirectToRoute('app_ShowPodcast', ['userId' => $userId]);
         }
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/EditPodcast.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
             'podcast' => $podcast,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
     #[Route('/profile/delete/image2/{PdId}/{userId}/{imageId}', name: 'delete_image2')]
@@ -1679,7 +1991,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/ShowFriends/{userId}', name: 'app_friends')]
-    public function showFriends( UserRepository $userRepository, int $userId): Response
+    public function showFriends( UserRepository $userRepository, AddFriendRepository $addFriendRepository, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1703,34 +2015,67 @@ class ProfileController extends AbstractController
         }
 
         $friends = $this->getFriends($userId, $userRepository);
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
 
-        // Récupérer les amis de l'utilisateur ou toute autre logique nécessaire
-        $friends = $user->getFriends();
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/ShowFriends.html.twig', [
             'user' => $user,
             'friends' => $friends,
             'photoProfile' => $photoProfile,
+            'notifications' => $notifications,
         ]);
     }
 
     private function getFriends(int $userId, UserRepository $userRepository)
     {
         $friends = [];
-        $friendships = $this->getDoctrine()->getRepository(Friend::class)->findBy(['id_user' => $userId]);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        // Rechercher les amitiés où l'utilisateur actuel est l'initiateur de la demande
+        $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
+            'User_id' => $userId,
+            'confirmation' => 1
+        ]);
 
         foreach ($friendships as $friendship) {
-            $friendId = $friendship->getId2();
+            $friendId = $friendship->getUserId2();
             $friend = $userRepository->find($friendId);
             if ($friend) {
                 $friends[] = $friend;
             }
         }
 
-        $friendships = $this->getDoctrine()->getRepository(Friend::class)->findBy(['id_2' => $userId]);
+        // Rechercher les amitiés où l'utilisateur actuel a reçu la demande
+        $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
+            'user_id2' => $userId,
+            'confirmation' => 1
+        ]);
 
         foreach ($friendships as $friendship) {
-            $friendId = $friendship->getIdUser()->first()->getId();
+            $friendId = $friendship->getUserId()->getId();
             $friend = $userRepository->find($friendId);
             if ($friend) {
                 $friends[] = $friend;
@@ -1740,22 +2085,23 @@ class ProfileController extends AbstractController
         return $friends;
     }
 
+
     #[Route('/profile/removeFriend/{friendId}', name: 'app_remove_friend')]
     public function removeFriend(int $friendId, EntityManagerInterface $entityManager, SessionInterface $session): Response
     {
         $loggedInUserId = $session->get('user');
-        $friendshipRepo = $entityManager->getRepository(Friend::class);
+        $friendshipRepo = $entityManager->getRepository(AddFriend::class);
 
         // Chercher l'amitié dans laquelle l'utilisateur est soit id_user soit id_2
         $friendship = $friendshipRepo->findOneBy([
-            'id_user' => $loggedInUserId,
-            'id_2' => $friendId,
+            'User_id' => $loggedInUserId,
+            'user_id2' => $friendId,
         ]);
 
         if (!$friendship) {
             $friendship = $friendshipRepo->findOneBy([
-                'id_user' => $friendId,
-                'id_2' => $loggedInUserId,
+                'User_id' => $friendId,
+                'user_id2' => $loggedInUserId,
             ]);
         }
 
@@ -1772,7 +2118,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/AddFriends/{userId}', name: 'app_addfriends')]
-    public function addFriends(UserRepository $userRepository, int $userId): Response
+    public function addFriends(UserRepository $userRepository,AddFriendRepository $addFriendRepository, int $userId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -1801,12 +2147,38 @@ class ProfileController extends AbstractController
             return $user->toArray();
         }, $users);
         $usersJson = json_encode($usersArray);
+        $notifications = [];
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        foreach ($friendRequests as $request) {
+            $sender = $request->getUserId();
+            $photo = null;
+
+            if ($sender) {
+                foreach ($sender->getSections() as $section) {
+                    if ("PhotoProfile" == $section->getType()) {
+                        $expectedImageName = $sender->getId() . 'PhotoProfile.jpg';
+                        $sectionImage = $section->getImage();
+                        if ($expectedImageName == $sectionImage) {
+                            $photo = $sectionImage;
+                            break;
+                        }
+                    }
+                }
+                $notifications[] = [
+                    'requestId' => $request->getId(),
+                    'nom' => $sender->getNom(),
+                    'prenom' => $sender->getPrenom(),
+                    'photo' => $photo,
+                ];
+            }
+        }
 
         return $this->render('profile/AddFriend.html.twig', [
             'user' => $user,
             'usersJson' => $usersJson,
             'photoProfile' => $photoProfile,
             'userId' => $userId,
+            'notifications' => $notifications,
         ]);
     }
 
@@ -1849,5 +2221,44 @@ class ProfileController extends AbstractController
 
         return $this->json(['success' => true, 'message' => 'Friend request sent.']);
     }
+
+    #[Route('/profile/respondToFriendRequest/{requestId}/{action}', name: 'app_respond_to_friend_request')]
+    public function respondToFriendRequest(
+        int $requestId,
+        string $action,
+        AddFriendRepository $addFriendRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $currentUserId = $session->get('user'); // ID de l'utilisateur connecté
+
+        $friendRequest = $addFriendRepository->find($requestId);
+        if (!$friendRequest) {
+            $this->addFlash('error', 'Request not found.');
+            return $this->redirectToRoute('app_friends', ['userId' => $currentUserId]);
+        }
+        if ($action === 'accept') {
+            // Mettre à jour la demande pour indiquer l'acceptation
+            $friendRequest->setConfirmation(1);
+            $entityManager->persist($friendRequest);
+            $entityManager->flush();
+            $this->addFlash('success', 'Request accepted.');
+        } elseif ($action === 'decline') {
+            // Supprimer la demande d'ami
+            $entityManager->remove($friendRequest);
+            $entityManager->flush();
+            $this->addFlash('success', 'Request decline.');
+        } else {
+            $this->addFlash('error', 'Invalid action.');
+            return $this->redirectToRoute('app_friends', ['userId' => $currentUserId]);
+        }
+        return $this->redirectToRoute('app_friends', ['userId' => $currentUserId]);
+    }
+
+
 
 }

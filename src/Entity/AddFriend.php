@@ -15,7 +15,7 @@ class AddFriend
 
     #[ORM\ManyToOne(inversedBy: 'addFriends')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $User_id = null;
+    private ?User $User_id = null;
 
     #[ORM\Column]
     private ?int $user_id2 = null;
@@ -28,12 +28,12 @@ class AddFriend
         return $this->id;
     }
 
-    public function getUserId(): ?user
+    public function getUserId(): ?User
     {
         return $this->User_id;
     }
 
-    public function setUserId(?user $User_id): static
+    public function setUserId(?User $User_id): static
     {
         $this->User_id = $User_id;
 
