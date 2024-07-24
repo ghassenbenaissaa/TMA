@@ -21,7 +21,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
-<body class="">
+
+<header style="width: 100%; top: 0; background-color: transparent; z-index: 1000; margin-top: 35px;">
+    <div class="container" style="display: flex; justify-content: center;">
+        <div class="collapse navbar-collapse" id="navbarNav" style="flex-grow: 0;">
+            <ul class="navbar-nav" style="display: flex; justify-content: center; list-style: none; padding: 0;">
+                <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#about-me" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">About Me</a>
+                </li>
+                {% if adventuresReq|length > 0 %}<li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#top-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Top Adventures</a>
+                </li> {% endif %}
+                {% if adventures|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#all-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Adventures</a>
+                </li> {% endif %}
+                {% if countries|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#countries-visited" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Countries Visited</a>
+                </li> {% endif %}
+                {% if podcasts|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#all-podcasts" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Podcasts</a>
+                </li> {% endif %}
+                <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#social-network" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Social Network</a>
+                </li>
+                <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#contact" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Get in Touch</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+
+
+
 <!-- Add your content of header -->
 <div class="background-color-layer" style="background-image: url('{{ asset('logoClient/' ~ coverImage) }}')">
 </div>
@@ -39,7 +72,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-
+                <section id="about-me" class="about-me-section">
                 <div class="card about-me-card">
                     <div class="card-block">
                         <h2>About Me</h2>
@@ -57,7 +90,9 @@
                         </div>
                     </div>
                 </div>
+                </section>
 
+                <section id="top-adventures" class="top-adventures-section">
                 {% if adventuresReq|length > 0 %}
                 <div class="card recommendations-card ">
                     <div class="card-block">
@@ -115,7 +150,10 @@
                     </div>
                 </div>
                 {% endif %}
+                </section>
 
+
+                <section id="all-adventures" class="all-adventures-section">
                 {% if adventures|length > 0 %}
                     <div class="card All-adventures-card">
                         <div class="card-block">
@@ -152,9 +190,10 @@
                         </div>
                     </div>
                 {% endif %}
+                </section>
 
 
-
+                <section id="countries-visited" class="countries-visited-section">
                 {% if countries|length > 0 %}
                     <div class="card All-countries-card">
                         <div class="card-block">
@@ -188,11 +227,12 @@
                         </div>
                     </div>
                 {% endif %}
+                </section>
 
 
 
 
-
+                <section id="all-podcasts" class="all-podcasts-section">
                 {% if podcasts|length > 0 %}
                     <div class="card All-podcasts-card">
                         <div class="card-block">
@@ -228,11 +268,12 @@
                         </div>
                     </div>
                 {% endif %}
+                </section>
 
 
 
 
-
+                <section id="social-network" class="social-network-section">
                 <div class="card social-card">
                     <div class="card-block">
                         <h2>Social Network</h2>
@@ -270,9 +311,10 @@
                         </div>
                     </div>
                 </div>
+                </section>
 
 
-
+                <section id="contact" class="contact-section">
                 <div class="card contact-card">
                     <div class="card-block text-center">
                         <h2>Get in Touch</h2>
@@ -288,6 +330,7 @@
 
                     </div>
                 </div>
+                </section>
 
 
                 {% if travelers|length > 0 %}

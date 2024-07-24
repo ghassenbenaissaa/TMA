@@ -250,8 +250,16 @@ h2 {
     object-fit: cover; /* Ensures the image covers the area */
 }
 
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease; /* Transition douce pour couleur et agrandissement */
+}
 
-
+.nav-link:hover {
+    color: #ff7777; /* Couleur de survol */
+    transform: scale(1.2); /* Agrandissement du texte */
+}
 
 
 
