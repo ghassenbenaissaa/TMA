@@ -215,7 +215,7 @@ class HomeController extends AbstractController
                     return $this->redirectToRoute('app_form2', ['userId' => $userId]);
                 }
 
-                $newFilename = $user->getPageNom() . '.' . $logoFile->guessExtension();
+                $newFilename = $user->getPageNom() . $user->getId() . '.' . $logoFile->guessExtension();
                 try {
                     $logoFile->move($logos_directory, $newFilename);
                 } catch (FileException $e) {

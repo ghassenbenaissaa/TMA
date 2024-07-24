@@ -8,13 +8,14 @@ use App\Repository\ImageRepository;
 use App\Repository\PodcastRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
 {
     #[Route('/blog/{slug}', name: 'app_blog')]
-    public function index(string $slug, UserRepository $userRepository,ImageRepository $imageRepository,PodcastRepository $podcastRepository, AventureRepository $aventureRepository): Response
+    public function index(string $slug, UserRepository $userRepository,ImageRepository $imageRepository,PodcastRepository $podcastRepository, AventureRepository $aventureRepository, SessionInterface $session): Response
     {
 
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
@@ -90,8 +91,10 @@ class BlogController extends AbstractController
 
         // Check if any required data is missing and redirect to Under Construction page if needed
         if (empty($coverImage) || empty($AboutMeImage) || empty($AboutMeDescription) || empty($aventures)) {
+            $session->set('current_slug', $slug);
             return $this->redirectToRoute('app_under_construction');
         }
+
 
         // Rendre la vue avec les informations de la page
         return $this->render('blog/index.html.twig', [
@@ -136,6 +139,7 @@ class BlogController extends AbstractController
     {
         return $this->render('blog/under_construction.html.twig');
     }
+
 
     #[Route('/blog', name: 'all_podcasts')]
     public function all_podcasts(): Response

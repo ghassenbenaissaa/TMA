@@ -54,6 +54,11 @@
     <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Under Construction">
     <h1>Under Construction</h1>
     <p>Sorry, this page is currently under construction. Please check back later.</p>
+    <div class="row mt-5">
+        <div class="col-12 text-center mt-xl-2">
+            <a class="text-white font-weight-medium" href="{{ path('app_profile', {'userId': app.session.get('user')}) }}">Back to home</a>
+        </div>
+    </div>
 </div>
 </body>
 </html>

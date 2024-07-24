@@ -57,6 +57,13 @@ class ProfileController extends AbstractController
         }
         $currentUser = $session->get('user');
         $user = $userRepository->find($userId);
+        if ($session->has('current_slug')) {
+            $current_slug = $session->get('current_slug');
+            if ($current_slug == $user->getPageNom()){
+                $this->addFlash('error', 'Please add the main sections of your site (Cover Image, About Me, Description) and at least one adventure to make the page complete.');
+            }
+            $session->remove('current_slug');
+        }
         $photoProfile = null;
 
         if (!$user) {
@@ -664,7 +671,7 @@ class ProfileController extends AbstractController
             }
             $imageFiles = $request->files->get('images');
             $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
-            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().$user->getId().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getPageNom() . $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();
@@ -779,7 +786,7 @@ class ProfileController extends AbstractController
         // Load the second watermark
         $watermark2 = @imagecreatefrompng($watermarkPath2); // Suppress warning
         if (!$watermark2) {
-            throw new Exception("Failed to load the second watermark image");
+            throw new Exception("Failed to load the second watermark image". $watermarkPath2);
         }
         $watermark2Width = imagesx($watermark2);
         $watermark2Height = imagesy($watermark2);
@@ -1397,7 +1404,7 @@ class ProfileController extends AbstractController
             }
             $imageFiles = $request->files->get('images');
             $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
-            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().$user->getId().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getPageNom() . $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();
@@ -1719,7 +1726,7 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted()) {
             $imageFiles = $request->files->get('images');
             $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
-            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().$user->getId().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();
@@ -1832,7 +1839,7 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted()) {
             $imageFiles = $request->files->get('images');
             $watermarkPath1 = $this->getParameter('kernel.project_dir').'/public/images/watermark.png';
-            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().'.png';
+            $watermarkPath2 = $this->getParameter('kernel.project_dir').'/public/logoClient/'.$user->getPageNom().$user->getId().'.png';
             foreach ($imageFiles as $imageFile) {
                 if ($imageFile) {
                     $newFilename = $user->getPageNom() . $user->getId() . '_' . uniqid() . '_' . date('His') . '.' . $imageFile->guessExtension();

@@ -31,7 +31,6 @@
             margin-right: 5px; /* Ajustez la valeur selon vos besoins */
             margin-left: 10px; /* Ajustez la valeur selon vos besoins */
         }
-
     </style>
 </head>
 <body>
@@ -442,25 +441,31 @@
                     const message = messageElement.textContent;
 
                     // Configure SweetAlert based on the type of message
-                    let swalType = 'info';
-                    if (label === 'success') {
-                        swalType = 'success';
-                    } else if (label === 'error') {
-                        swalType = 'error';
-                    } else if (label === 'warning') {
-                        swalType = 'warning';
-                    }
-
-                    // Display SweetAlert
-                    Swal.fire({
-                        icon: swalType,
+                    let swalOptions = {
                         title: message,
                         showConfirmButton: false,
                         timer: 1500 // Adjust the time as needed
-                    });
+                    };
+
+                    if (label === 'success') {
+                        swalOptions.icon = 'success';
+                    } else if (label === 'error') {
+                        swalOptions.icon = 'error';
+                        swalOptions.title = 'Error'; // Set the title to "Erreur"
+                        swalOptions.html = message; // Set the content to the actual error message
+                        swalOptions.showConfirmButton = true; // Show the OK button for errors
+                        swalOptions.timer = null; // No auto-dismissal for errors
+                    } else if (label === 'warning') {
+                        swalOptions.icon = 'warning';
+                    }
+
+                    // Display SweetAlert
+                    Swal.fire(swalOptions);
                 });
             });
         });
+
+
 
     </script>
     <script src="{{asset('vendorsProfile/js/vendor.bundle.base.js')}}"></script>
