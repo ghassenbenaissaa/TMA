@@ -54,7 +54,8 @@
     margin-right: 10px;
 }
 
-.about-me-card, .contact-card, .social-card, .recommendations-card, .All-adventures-card, .All-podcasts-card {
+.about-me-card, .contact-card, .social-card, .recommendations-card, .All-adventures-card, .All-podcasts-card, .All-countries-card,
+.travelers-card{
     background: #f9f9f9; /* Light background for card */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -128,4 +129,134 @@ h2 {
 .col-md-4{
     text-align: center;
 }
+/* Additional styles for the card */
+.travelers-card {
+    background-color: #f8f9fa; /* Light background color for the card */
+    border: 1px solid #dee2e6; /* Border to give the card a defined edge */
+    border-radius: 10px; /* Rounded corners for the card */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for a floating effect */
+}
+
+.traveler-wrapper {
+    text-align: center; /* Center-align text and images */
+    margin-bottom: 20px; /* Margin below each traveler item */
+    background-color: #ffffff; /* White background for each traveler */
+    border-radius: 10px; /* Rounded corners for each traveler wrapper */
+    padding: 10px; /* Padding inside each traveler wrapper */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for a floating effect */
+}
+
+.profile-photo-wrapper {
+    overflow: hidden;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 10px;
+    background-color: #e9ecef; /* Light gray background for profile photo area */
+    border: 2px solid #dee2e6; /* Border around the profile photo */
+}
+
+.profile-photo-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Ensures that traveler names are truncated with ellipsis if they are too long */
+.traveler-name {
+    font-size: 15px; /* Smaller font size for traveler names */
+    color: #495057; /* Dark gray color for names */
+    white-space: nowrap; /* Prevents the text from wrapping to a new line */
+    overflow: hidden; /* Hides the overflow text */
+    text-overflow: ellipsis; /* Adds ellipsis (...) to indicate that the text is truncated */
+    margin: 0; /* Removes default margins */
+    padding: 0; /* Removes default padding */
+}
+
+/* Style for podcast wrapper */
+.podcast-wrapper {
+    background-color: #fff; /* Background color for the card */
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Padding inside the card */
+    text-align: center; /* Center-aligns the text inside the card */
+    margin-bottom: 20px; /* Spacing between rows */
+}
+
+/* Style for image wrapper */
+.podcast-wrapper .image-wrapper {
+    overflow: hidden; /* Ensures the image fits within the container */
+    border-radius: 8px; /* Rounded corners for the image container */
+    width: 100%; /* Full width of the card */
+    height: 200px; /* Fixed height for images */
+    margin-bottom: 10px; /* Spacing between image and text */
+}
+
+/* Style for images */
+.podcast-wrapper .image-wrapper img {
+    width: 100%; /* Full width of the container */
+    height: 100%; /* Full height of the container */
+    object-fit: cover; /* Ensures the image covers the area */
+}
+/* Style for country wrapper */
+.country-wrapper {
+    background-color: #fff; /* Background color for the card */
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Padding inside the card */
+    text-align: center; /* Center-aligns the text inside the card */
+    margin-bottom: 20px; /* Spacing between rows */
+}
+
+/* Style for flag wrapper */
+.flag-wrapper {
+    overflow: hidden; /* Ensures the image fits within the container */
+    border-radius: 8px; /* Rounded corners for the image container */
+    width: 100%; /* Full width of the card */
+    height: 200px; /* Fixed height for flags */
+    margin-bottom: 10px; /* Spacing between image and text */
+}
+
+/* Style for flags */
+.flag-wrapper img {
+    width: 100%; /* Full width of the container */
+    height: 100%; /* Full height of the container */
+    object-fit: cover; /* Ensures the image covers the area */
+}
+
+/* Style for adventure wrapper */
+.adventure-wrapper {
+    background-color: #fff; /* Background color for the card */
+    border: 1px solid #ddd; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 15px; /* Padding inside the card */
+    text-align: center; /* Center-aligns the text inside the card */
+    margin-bottom: 20px; /* Spacing between rows */
+}
+
+/* Style for image wrapper */
+.image-wrapper {
+    overflow: hidden; /* Ensures the image fits within the container */
+    border-radius: 8px; /* Rounded corners for the image container */
+    width: 100%; /* Full width of the card */
+    height: 200px; /* Fixed height for images */
+    margin-bottom: 10px; /* Spacing between image and text */
+}
+
+/* Style for adventure images */
+.image-wrapper img {
+    width: 100%; /* Full width of the container */
+    height: 100%; /* Full height of the container */
+    object-fit: cover; /* Ensures the image covers the area */
+}
+
+
+
+
+
+
+
+
+
+
 
