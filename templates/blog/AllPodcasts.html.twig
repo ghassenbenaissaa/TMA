@@ -21,8 +21,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
     {% endblock %}
 </head>
 
@@ -71,75 +69,44 @@
         <div class="row">
             <div class="col-xs-12">
 
-                <section id="all-adventures" class="all-adventures-section">
-
-                        <div class="row">
-                            {% if adventureClic %}
-                                <div class="col-md-12">
-                                    <div class="card All-adventures-card">
-                                        <div class="card-block">
-                                            <h2 class="card-title">{{ adventureClic.nom }}</h2>
-                                            <p class="card-description">{{ adventureClic.description }}</p>
-
-                                            <!-- Country -->
-                                            <div class="card-country">
-                                                {% if countries %}
-                                                    {% set country = countries[adventureClic.getIdPays().getId()] %}
-                                                    <p style="margin-top: 8px"><strong>Country:</strong> {{ country.name }}</p>
-                                                    <img src="{{ country.flag }}" class="country-flag" alt="{{ country.name }}">
-                                                {% endif %}
-                                            </div>
-
-                                            <!-- Recommendation Status -->
-                                            <p class="card-recommendation">
-                                                <strong>Recommended:</strong>
-                                                {% if adventureClic.recommander == 1 %}
-                                                    <span class="badge badge-success">Recommended</span>
-                                                {% else %}
-                                                    <span class="badge badge-danger">Not Recommended</span>
-                                                {% endif %}
-                                            </p>
-
-                                            <!-- Dates -->
-                                            <div class="card-dates">
-                                                <p class="date-item">
-                                                    <i class="fa fa-calendar-alt"></i>
-                                                    <span class="date">{{ adventureClic.getDateDebut|date('d F Y') }}</span>
-                                                </p>
-                                                <p class="date-item">
-                                                    <i class="fa fa-calendar-check"></i>
-                                                    <span class="date">{{ adventureClic.getDateFin|date('d F Y') }}</span>
-                                                </p>
-                                            </div>
-                                            {% if adventureClic.video %}
-                                            <!-- Video -->
-                                            <div class="video-container">
-                                                    <iframe src="https://www.youtube.com/embed/{{ videoId }}" frameborder="0" allowfullscreen></iframe>
-                                            </div>
-                                            {% endif %}
-
-                                            <!-- Images -->
-                                            <div class="image-gallery">
-                                                {% for img in images %}
-                                                    <div class="gallery-item">
-                                                        <img src="{{ asset('AdvClient/' ~ img.nom) }}" alt="Adventure Image" class="gallery-image" onclick="openLightbox('{{ asset('AdvClient/' ~ img.nom) }}')">
-                                                    </div>
+                {% if podcasts|length > 0 %}
+                    <section id="all-podcasts" class="all-podcasts-section">
+                        <div class="card All-podcasts-card">
+                            <div class="card-block">
+                                <h2>All Podcasts</h2>
+                                <div class="row">
+                                    {% for podcast in podcasts %}
+                                    <div class="col-md-4 mb-4">
+                                        <a href="{{ path('podcast_detail', {'id': podcast.id, 'slug': user.pageNom}) }}" class="podcast-link">
+                                            <div class="podcast-wrapper All-podcasts-card">
+                                                {% set imageFound = false %}
+                                                {% for image in images %}
+                                                    {% if image.getIdPodcast() is not null and podcast.id == image.getIdPodcast().id and not imageFound %}
+                                                        <div class="image-wrapper">
+                                                            <img src="{{ asset('PodcastClient/' ~ image.nom) }}" class="img-responsive" alt="{{ podcast.name }}">
+                                                        </div>
+                                                        {% set imageFound = true %}
+                                                    {% endif %}
                                                 {% endfor %}
+                                                <h3 class="h5">{{ podcast.name }}</h3>
                                             </div>
-
-                                        </div>
+                                        </a>
                                     </div>
+                                    {% if loop.index % 3 == 0 and not loop.last %}
+                                </div><div class="row">
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
-                            {% endif %}
+                                <div class="text-center" style="margin-top: 20px;">
+                                    <a href="{{ path('all_podcasts', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Podcasts</a>
+                                </div>
+                            </div>
                         </div>
-                </section>
+                    </section>
+                {% endif %}
 
 
-                <!-- Lightbox Modal -->
-                <div id="lightbox" class="lightbox">
-                    <span class="close" onclick="closeLightbox()">&times;</span>
-                    <img class="lightbox-content" id="lightbox-image">
-                </div>
+
 
                 <section id="social-network" class="social-network-section">
                     <div class="card social-card">
@@ -285,23 +252,7 @@
     document.addEventListener("DOMContentLoaded", function (event) {
         scrollRevelation('.card');
     });
-    function openLightbox(imageSrc) {
-        document.getElementById('lightbox').style.display = 'block';
-        document.getElementById('lightbox-image').src = imageSrc;
-    }
-
-    function closeLightbox() {
-        document.getElementById('lightbox').style.display = 'none';
-    }
-
-    // Close the lightbox when clicking anywhere outside of the image
-    window.onclick = function(event) {
-        if (event.target === document.getElementById('lightbox')) {
-            closeLightbox();
-        }
-    }
 </script>
-
 --><script type="text/javascript" src="{{asset('BlogSite/main.bc58148c.js')}}"></script></body>
 
 </html>

@@ -97,145 +97,153 @@
 
 
                 {% if adventuresReq|length > 0 %}
-                <section id="top-adventures" class="top-adventures-section">
-                <div class="card recommendations-card ">
-                    <div class="card-block">
-                        <h2>Top Adventures</h2>
-                        <div id="adventures-carousel" class="carousel slide" data-ride="carousel">
-                            <!-- Wrapper for slides -->
-                            <div class="carousel-inner" role="listbox">
-                                {% set adventures_per_slide = 3 %}
-                                {% set total_adventures = adventuresReq|length %}
-                                {% set total_slides = ((total_adventures / adventures_per_slide) | round(0, 'ceil')) %}
-                                {% for i in 0..total_slides - 1 %}
-                                    <div class="item {% if i == 0 %}active{% endif %}">
-                                        <div class="row">
-                                            {% for j in 0..adventures_per_slide - 1 %}
-                                                {% set index = i * adventures_per_slide + j %}
-                                                {% if index < total_adventures %}
-                                                    {% set adventure = adventuresReq[index] %}
-                                                    <div class="col-md-4">
-                                                        {% set imageFound = false %}
-                                                        {% for image in images %}
-                                                            {% if image.getIdAventure() is not null and adventure.id == image.getIdAventure().id and not imageFound %}
-                                                                <div class="image-wrapper">
-                                                                    <img src="{{ asset('AdvClient/' ~ image.nom) }}" class="img-responsive" alt="{{ adventure.nom }}">
-                                                                </div>
-                                                                {% set imageFound = true %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                        <h3 class="h5">{{ adventure.nom }}</h3>
-                                                        <p>{{ adventure.getDateDebut|date('F Y') }}</p>
-                                                    </div>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
+                    <section id="top-adventures" class="top-adventures-section">
+                        <div class="card recommendations-card">
+                            <div class="card-block">
+                                <h2 style="margin-bottom: 10px">Top Adventures</h2>
+                                <div id="adventures-carousel" class="carousel slide" data-ride="carousel">
+                                    <!-- Wrapper for slides -->
+                                    <div class="carousel-inner" role="listbox">
+                                        {% set adventures_per_slide = 3 %}
+                                        {% set total_adventures = adventuresReq|length %}
+                                        {% set total_slides = ((total_adventures / adventures_per_slide) | round(0, 'ceil')) %}
+                                        {% for i in 0..total_slides - 1 %}
+                                            <div class="item {% if i == 0 %}active{% endif %}">
+                                                <div class="row">
+                                                    {% for j in 0..adventures_per_slide - 1 %}
+                                                        {% set index = i * adventures_per_slide + j %}
+                                                        {% if index < total_adventures %}
+                                                            {% set adventure = adventuresReq[index] %}
+                                                            <div class="col-md-4 mb-4">
+                                                                <a href="{{ path('adventure_detail', {'id': adventure.id, 'slug': user.pageNom}) }}" class="adventure-link">
+                                                                    <div class="adventure-wrapper All-adventures-card">
+                                                                        {% set imageFound = false %}
+                                                                        {% for image in images %}
+                                                                            {% if image.getIdAventure() is not null and adventure.id == image.getIdAventure().id and not imageFound %}
+                                                                                <div class="image-wrapper">
+                                                                                    <img src="{{ asset('AdvClient/' ~ image.nom) }}" class="img-responsive" alt="{{ adventure.nom }}">
+                                                                                </div>
+                                                                                {% set imageFound = true %}
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                        <h3 class="h5">{{ adventure.nom }}</h3>
+                                                                        <p>{{ adventure.getDateDebut|date('F Y') }}</p>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                     </div>
-                                {% endfor %}
+
+                                    <!-- Indicators -->
+                                    <ol class="carousel-indicators">
+                                        {% for i in 0..total_slides - 1 %}
+                                            <li data-target="#adventures-carousel" data-slide-to="{{ i }}" class="{% if i == 0 %}active{% endif %}"></li>
+                                        {% endfor %}
+                                    </ol>
+
+                                    <!-- Controls -->
+                                    <a class="left carousel-control" href="#adventures-carousel" role="button" data-slide="prev">
+                                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="right carousel-control" href="#adventures-carousel" role="button" data-slide="next">
+                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
                             </div>
-
-                            <!-- Indicators -->
-                            <ol class="carousel-indicators">
-                                {% for i in 0..total_slides - 1 %}
-                                    <li data-target="#adventures-carousel" data-slide-to="{{ i }}" class="{% if i == 0 %}active{% endif %}"></li>
-                                {% endfor %}
-                            </ol>
-
-                            <!-- Controls -->
-                            <a class="left carousel-control" href="#adventures-carousel" role="button" data-slide="prev">
-                                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            <a class="right carousel-control" href="#adventures-carousel" role="button" data-slide="next">
-                                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                                <span class="sr-only">Next</span>
-                            </a>
                         </div>
-                    </div>
-                </div>
-                </section>
+                    </section>
                 {% endif %}
 
 
 
-
                 {% if adventures|length > 0 %}
-                <section id="all-adventures" class="all-adventures-section">
-                    <div class="card All-adventures-card">
-                        <div class="card-block">
-                            <h2>All Adventures</h2>
-                            <div class="row">
-                                {% set adventure_count = 0 %}
-                                {% for adventure in adventures %}
-                                {% if adventure_count < 9 %}
-                                <div class="col-md-4">
-                                    <div class="adventure-wrapper">
-                                        {% set imageFound = false %}
-                                        {% for image in images %}
-                                            {% if image.getIdAventure() is not null and adventure.id == image.getIdAventure().id and not imageFound %}
-                                                <div class="image-wrapper">
-                                                    <img src="{{ asset('AdvClient/' ~ image.nom) }}" class="img-responsive" alt="{{ adventure.nom }}">
-                                                </div>
-                                                {% set imageFound = true %}
-                                            {% endif %}
-                                        {% endfor %}
-                                        <h3 class="h5">{{ adventure.nom }}</h3>
-                                        <p>{{ adventure.getDateDebut|date('F Y') }}</p>
+                    <section id="all-adventures" class="all-adventures-section">
+                        <div class="card All-adventures-card">
+                            <div class="card-block">
+                                <h2>All Adventures</h2>
+                                <div class="row">
+                                    {% set adventure_count = 0 %}
+                                    {% for adventure in adventures %}
+                                    {% if adventure_count < 9 %}
+                                    <div class="col-md-4 mb-4">
+                                        <a href="{{ path('adventure_detail', {'id': adventure.id, 'slug': user.pageNom}) }}" class="adventure-link">
+                                            <div class="adventure-wrapper All-adventures-card">
+                                                {% set imageFound = false %}
+                                                {% for image in images %}
+                                                    {% if image.getIdAventure() is not null and adventure.id == image.getIdAventure().id and not imageFound %}
+                                                        <div class="image-wrapper">
+                                                            <img src="{{ asset('AdvClient/' ~ image.nom) }}" class="img-responsive" alt="{{ adventure.nom }}">
+                                                        </div>
+                                                        {% set imageFound = true %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <h3 class="h5">{{ adventure.nom }}</h3>
+                                                <p>{{ adventure.getDateDebut|date('F Y') }}</p>
+                                            </div>
+                                        </a>
                                     </div>
+                                    {% set adventure_count = adventure_count + 1 %}
+                                    {% if adventure_count % 3 == 0 and adventure_count < 9 %}
+                                </div><div class="row">
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
-                                {% set adventure_count = adventure_count + 1 %}
-                                {% if adventure_count % 3 == 0 and adventure_count < 9 %}
-                            </div><div class="row">
-                                {% endif %}
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                            <div class="text-center" style="margin-top: 20px;">
-                                <a href="{{ path('all_adventures', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Adventures</a>
+                                <div class="text-center" style="margin-top: 20px;">
+                                    <a href="{{ path('all_adventures', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Adventures</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
                 {% endif %}
 
 
 
 
                 {% if countries|length > 0 %}
-                <section id="countries-visited" class="countries-visited-section">
-                    <div class="card All-countries-card">
-                        <div class="card-block">
-                            <h2>Countries Visited</h2>
-                            <div class="row">
-                                {% set country_count = 0 %}
-                                {% for country in countries %}
-                                {% if country_count < 9 %}
-                                <div class="col-md-4">
-                                    <div class="country-wrapper">
-                                        {% if country.flag %}
-                                            <div class="flag-wrapper">
-                                                <img src="{{ country.flag }}" class="img-responsive" alt="{{ country.name }}" style="width: 350px; height: 200px; object-fit: cover;">
+                    <section id="countries-visited" class="countries-visited-section">
+                        <div class="card All-countries-card">
+                            <div class="card-block">
+                                <h2>Countries Visited</h2>
+                                <div class="row">
+                                    {% set country_count = 0 %}
+                                    {% for country in countries %}
+                                    {% if country_count < 9 %}
+                                    <div class="col-md-4 mb-4">
+                                        <a href="{{ path('country_detail', {'id': country.id, 'slug': user.pageNom}) }}" class="country-link">
+                                            <div class="country-wrapper All-countries-card">
+                                                {% if country.flag %}
+                                                    <div class="flag-wrapper">
+                                                        <img src="{{ country.flag }}" class="img-responsive" alt="{{ country.name }}" style="width: 100%; height: auto; object-fit: cover;">
+                                                    </div>
+                                                {% else %}
+                                                    <p>No flag available for {{ country.name }}</p>
+                                                {% endif %}
+                                                <h3 class="h5">{{ country.name }}</h3>
                                             </div>
-                                        {% else %}
-                                            <p>No flag available for {{ country.name }}</p>
-                                        {% endif %}
-                                        <h3 class="h5">{{ country.name }}</h3>
+                                        </a>
                                     </div>
+                                    {% set country_count = country_count + 1 %}
+                                    {% if country_count % 3 == 0 and country_count < 9 %}
+                                </div><div class="row">
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
-                                {% set country_count = country_count + 1 %}
-                                {% if country_count % 3 == 0 and country_count < 9 %}
-                            </div><div class="row">
-                                {% endif %}
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                            <div class="text-center" style="margin-top: 20px;">
-                                <a href="{{ path('all_countries', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Countries</a>
+                                <div class="text-center" style="margin-top: 20px;">
+                                    <a href="{{ path('all_countries', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Countries</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
                 {% endif %}
+
 
 
 
@@ -243,41 +251,43 @@
 
 
                 {% if podcasts|length > 0 %}
-                <section id="all-podcasts" class="all-podcasts-section">
-                    <div class="card All-podcasts-card">
-                        <div class="card-block">
-                            <h2>All Podcasts</h2>
-                            <div class="row">
-                                {% set podcast_count = 0 %}
-                                {% for podcast in podcasts %}
-                                {% if podcast_count < 9 %}
-                                <div class="col-md-4">
-                                    <div class="podcast-wrapper">
-                                        {% set imageFound = false %}
-                                        {% for image in images %}
-                                            {% if image.getIdPodcast() is not null and podcast.id == image.getIdPodcast().id and not imageFound %}
-                                                <div class="image-wrapper">
-                                                    <img src="{{ asset('PodcastClient/' ~ image.nom) }}" class="img-responsive" alt="{{ podcast.name }}">
-                                                </div>
-                                                {% set imageFound = true %}
-                                            {% endif %}
-                                        {% endfor %}
-                                        <h3 class="h5">{{ podcast.name }}</h3>
+                    <section id="all-podcasts" class="all-podcasts-section">
+                        <div class="card All-podcasts-card">
+                            <div class="card-block">
+                                <h2>All Podcasts</h2>
+                                <div class="row">
+                                    {% set podcast_count = 0 %}
+                                    {% for podcast in podcasts %}
+                                    {% if podcast_count < 9 %}
+                                    <div class="col-md-4 mb-4">
+                                        <a href="{{ path('podcast_detail', {'id': podcast.id, 'slug': user.pageNom}) }}" class="podcast-link">
+                                            <div class="podcast-wrapper All-podcasts-card">
+                                                {% set imageFound = false %}
+                                                {% for image in images %}
+                                                    {% if image.getIdPodcast() is not null and podcast.id == image.getIdPodcast().id and not imageFound %}
+                                                        <div class="image-wrapper">
+                                                            <img src="{{ asset('PodcastClient/' ~ image.nom) }}" class="img-responsive" alt="{{ podcast.name }}">
+                                                        </div>
+                                                        {% set imageFound = true %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <h3 class="h5">{{ podcast.name }}</h3>
+                                            </div>
+                                        </a>
                                     </div>
+                                    {% set podcast_count = podcast_count + 1 %}
+                                    {% if podcast_count % 3 == 0 and podcast_count < 9 %}
+                                </div><div class="row">
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
                                 </div>
-                                {% set podcast_count = podcast_count + 1 %}
-                                {% if podcast_count % 3 == 0 and podcast_count < 9 %}
-                            </div><div class="row">
-                                {% endif %}
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                            <div class="text-center" style="margin-top: 20px;">
-                                <a href="{{ path('all_podcasts', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Podcasts</a>
+                                <div class="text-center" style="margin-top: 20px;">
+                                    <a href="{{ path('all_podcasts', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Podcasts</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
                 {% endif %}
 
 

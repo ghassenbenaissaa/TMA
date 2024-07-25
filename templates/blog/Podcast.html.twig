@@ -39,9 +39,9 @@
                 {% if adventures|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
                     <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#all-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Adventures</a>
                 </li> {% endif %}
-                {% if countries|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
+              <li class="nav-item" style="margin: 0 10px;">
                     <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#countries-visited" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Countries Visited</a>
-                </li> {% endif %}
+                </li>
                 {% if podcasts|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
                     <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#all-podcasts" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Podcasts</a>
                 </li> {% endif %}
@@ -71,58 +71,32 @@
         <div class="row">
             <div class="col-xs-12">
 
-                <section id="all-adventures" class="all-adventures-section">
+
+                {% if podcastsClic %}
+                <section id="all-podcasts" class="all-podcasts-section">
 
                         <div class="row">
-                            {% if adventureClic %}
                                 <div class="col-md-12">
-                                    <div class="card All-adventures-card">
+                                    <div class="card All-podcasts-card">
                                         <div class="card-block">
-                                            <h2 class="card-title">{{ adventureClic.nom }}</h2>
-                                            <p class="card-description">{{ adventureClic.description }}</p>
+                                            <h2 class="card-title">{{ podcastsClic.name }}</h2>
+                                            <p class="card-description">{{ podcastsClic.description }}</p>
 
-                                            <!-- Country -->
-                                            <div class="card-country">
-                                                {% if countries %}
-                                                    {% set country = countries[adventureClic.getIdPays().getId()] %}
-                                                    <p style="margin-top: 8px"><strong>Country:</strong> {{ country.name }}</p>
-                                                    <img src="{{ country.flag }}" class="country-flag" alt="{{ country.name }}">
-                                                {% endif %}
-                                            </div>
-
-                                            <!-- Recommendation Status -->
-                                            <p class="card-recommendation">
-                                                <strong>Recommended:</strong>
-                                                {% if adventureClic.recommander == 1 %}
-                                                    <span class="badge badge-success">Recommended</span>
-                                                {% else %}
-                                                    <span class="badge badge-danger">Not Recommended</span>
-                                                {% endif %}
-                                            </p>
-
-                                            <!-- Dates -->
-                                            <div class="card-dates">
-                                                <p class="date-item">
-                                                    <i class="fa fa-calendar-alt"></i>
-                                                    <span class="date">{{ adventureClic.getDateDebut|date('d F Y') }}</span>
-                                                </p>
-                                                <p class="date-item">
-                                                    <i class="fa fa-calendar-check"></i>
-                                                    <span class="date">{{ adventureClic.getDateFin|date('d F Y') }}</span>
-                                                </p>
-                                            </div>
-                                            {% if adventureClic.video %}
-                                            <!-- Video -->
-                                            <div class="video-container">
-                                                    <iframe src="https://www.youtube.com/embed/{{ videoId }}" frameborder="0" allowfullscreen></iframe>
-                                            </div>
+                                            <!-- Podcast -->
+                                            {% if podcastsClic.source %}
+                                                <div class="audio-container">
+                                                    <audio controls>
+                                                        <source src="{{ asset('PodcastClient/' ~ podcastsClic.source) }}" type="audio/mpeg">
+                                                        Your browser does not support the audio element.
+                                                    </audio>
+                                                </div>
                                             {% endif %}
 
                                             <!-- Images -->
                                             <div class="image-gallery">
                                                 {% for img in images %}
                                                     <div class="gallery-item">
-                                                        <img src="{{ asset('AdvClient/' ~ img.nom) }}" alt="Adventure Image" class="gallery-image" onclick="openLightbox('{{ asset('AdvClient/' ~ img.nom) }}')">
+                                                        <img src="{{ asset('PodcastClient/' ~ img.nom) }}" alt="Podcast Image" class="gallery-image" onclick="openLightbox('{{ asset('PodcastClient/' ~ img.nom) }}')">
                                                     </div>
                                                 {% endfor %}
                                             </div>
@@ -130,9 +104,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            {% endif %}
                         </div>
+
                 </section>
+                {% endif %}
 
 
                 <!-- Lightbox Modal -->
