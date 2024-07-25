@@ -372,6 +372,13 @@ h2 {
     border-radius: 5px;
 }
 
+.card-country2 img.country-flag {
+    width: 50px;
+    height: auto;
+    margin-left: 10px;
+    border-radius: 5px;
+}
+
 /* Gallery styles */
 .image-gallery {
     display: flex;
