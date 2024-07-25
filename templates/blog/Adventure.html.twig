@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <meta content="description" name="description">
+    <meta name="google" content="notranslate" />
+    <meta content="Mashup templates have been developped by Orson.io team" name="author">
+
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no">
+    <title>{% block title %}{{ user.pageNom }}{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="apple-touch-icon" sizes="180x180" href="{{asset('BlogSite/apple-icon-180x180.png')}}">
+        <link href="{{asset('images/favicon-32x32.png')}}" rel="icon">
+        <link href="{{asset('BlogSite/main.d8e0d294.css')}}" rel="stylesheet">
+        <link href="{{asset('css/blog.css')}}" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    {% endblock %}
+</head>
+
+<header style="width: 100%; top: 0; background-color: transparent; z-index: 1000; margin-top: 35px;">
+    <div class="container" style="display: flex; justify-content: center;">
+        <div class="collapse navbar-collapse" id="navbarNav" style="flex-grow: 0;">
+            <ul class="navbar-nav" style="display: flex; justify-content: center; list-style: none; padding: 0;">
+                <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#about-me" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">About Me</a>
+                </li>
+                {% if adventuresReq|length > 0 %}<li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#top-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Top Adventures</a>
+                    </li> {% endif %}
+                {% if adventures|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#all-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Adventures</a>
+                </li> {% endif %}
+                {% if countries|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#countries-visited" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Countries Visited</a>
+                </li> {% endif %}
+                {% if podcasts|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#all-podcasts" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Podcasts</a>
+                </li> {% endif %}
+                <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#social-network" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Social Network</a>
+                </li>
+                <li class="nav-item" style="margin: 0 10px;">
+                    <a class="nav-link" href="#contact" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Get in Touch</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+
+
+
+<!-- Add your content of header -->
+<div class="background-color-layer" style="background-image: url('{{ asset('logoClient/' ~ coverImage) }}')">
+</div>
+<main class="content-wrapper">
+
+
+    <!-- Add your site or app content here -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <section id="all-adventures" class="all-adventures-section">
+                    <div class="container">
+                        <div class="row">
+                            {% if adventureClic %}
+                                <div class="col-md-12">
+                                    <div class="card All-adventures-card">
+                                        <div class="card-block">
+                                            <h2 class="card-title">{{ adventureClic.nom }}</h2>
+                                            <p class="card-description">{{ adventureClic.description }}</p>
+
+                                            <!-- Country -->
+                                            <div class="card-country">
+                                                {% if countries %}
+                                                    {% set country = countries[adventureClic.getIdPays().getId()] %}
+                                                    <p style="margin-top: 8px"><strong>Country:</strong> {{ country.name }}</p>
+                                                    <img src="{{ country.flag }}" class="country-flag" alt="{{ country.name }}">
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Recommendation Status -->
+                                            <p class="card-recommendation">
+                                                <strong>Recommended:</strong>
+                                                {% if adventureClic.recommander == 1 %}
+                                                    <span class="badge badge-success">Recommended</span>
+                                                {% else %}
+                                                    <span class="badge badge-danger">Not Recommended</span>
+                                                {% endif %}
+                                            </p>
+
+                                            <!-- Dates -->
+                                            <div class="card-dates">
+                                                <p class="date-item">
+                                                    <i class="fa fa-calendar-alt"></i>
+                                                    <span class="date">{{ adventureClic.getDateDebut|date('d F Y') }}</span>
+                                                </p>
+                                                <p class="date-item">
+                                                    <i class="fa fa-calendar-check"></i>
+                                                    <span class="date">{{ adventureClic.getDateFin|date('d F Y') }}</span>
+                                                </p>
+                                            </div>
+
+                                            <!-- Video -->
+                                            <div class="video-container">
+                                                {% if adventureClic.video %}
+                                                    <iframe src="https://www.youtube.com/embed/{{ videoId }}" frameborder="0" allowfullscreen></iframe>
+                                                {% else %}
+                                                    <p>No Video Available</p>
+                                                {% endif %}
+
+                                            </div>
+
+
+                                            <!-- Images -->
+                                            <div class="image-gallery">
+                                                {% for img in images %}
+                                                    <div class="gallery-item">
+                                                        <img src="{{ asset('AdvClient/' ~ img.nom) }}" alt="Adventure Image" class="gallery-image" onclick="openLightbox('{{ asset('AdvClient/' ~ img.nom) }}')">
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-center">No adventure found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Lightbox Modal -->
+                <div id="lightbox" class="lightbox">
+                    <span class="close" onclick="closeLightbox()">&times;</span>
+                    <img class="lightbox-content" id="lightbox-image">
+                </div>
+
+                <section id="social-network" class="social-network-section">
+                    <div class="card social-card">
+                        <div class="card-block">
+                            <h2>Social Network</h2>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="social-buttons">
+                                        <a href="{{ user.twitter }}" title="Twitter">
+                            <span class="social-round-icon fa-icon">
+                                <i class="fab fa-twitter"></i>
+                            </span>
+                                            Twitter
+                                        </a>
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="social-buttons">
+                                        <a href="{{ user.facebook }}" title="Facebook">
+                            <span class="social-round-icon fa-icon">
+                                <i class="fab fa-facebook"></i>
+                            </span>
+                                            Facebook
+                                        </a>
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="social-buttons">
+                                        <a href="{{ user.instagram }}" title="Instagram">
+                            <span class="social-round-icon fa-icon">
+                                <i class="fab fa-instagram"></i>
+                            </span>
+                                            Instagram
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="contact" class="contact-section">
+                    <div class="card contact-card">
+                        <div class="card-block text-center">
+                            <h2>Get in Touch</h2>
+                            <p style="font-size: 20px; margin-bottom: 20px;">
+                                Feel free to contact me if you have travel questions, comments, or suggestions! <br>I'll try to get back to you!
+                            </p>
+                            <a href="mailto:{{user.email}}" class="btn btn-primary">
+                                Send Me an Email
+                            </a>
+                            <div style="margin-top: 20px; text-align: center;">
+                                <i class="fa-solid fa-paper-plane" style="font-size: 3em; color: #fd5971;"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                {% if travelers|length > 0 %}
+                    <div class="card travelers-card">
+                        <div class="card-block">
+                            <h2>Discover Other Travelers</h2>
+                            <div id="travelers-carousel" class="carousel slide" data-ride="carousel">
+                                <!-- Wrapper for slides -->
+                                <div class="carousel-inner" role="listbox">
+                                    {% set travelers_per_slide = 6 %}
+                                    {% set total_travelers = travelers|length %}
+                                    {% set total_slides = ((total_travelers / travelers_per_slide) | round(0, 'ceil')) %}
+                                    {% for i in 0..total_slides - 1 %}
+                                        <div class="item {% if i == 0 %}active{% endif %}">
+                                            <div class="row">
+                                                {% for j in 0..travelers_per_slide - 1 %}
+                                                    {% set index = i * travelers_per_slide + j %}
+                                                    {% if index < total_travelers %}
+                                                        {% set traveler = travelers[index] %}
+                                                        <div class="col-md-2"> <!-- Change col-md-4 to col-md-2 for 6 items per row -->
+                                                            <div class="traveler-wrapper">
+                                                                <div class="profile-photo-wrapper" style="overflow: hidden; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 10px;">
+                                                                    {% if traveler.profilePhoto %}
+                                                                        <img src="{{ asset('logoClient/' ~ traveler.profilePhoto) }}" class="img-responsive" alt="{{ traveler.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    {% else %}
+                                                                        <img src="{{ asset('default-profile.png') }}" class="img-responsive" alt="{{ traveler.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    {% endif %}
+                                                                </div>
+                                                                <h3 class="h5 text-center traveler-name " >{{ traveler.name }}</h3>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Indicators -->
+                                <ol class="carousel-indicators">
+                                    {% for i in 0..total_slides - 1 %}
+                                        <li data-target="#travelers-carousel" data-slide-to="{{ i }}" class="{% if i == 0 %}active{% endif %}"></li>
+                                    {% endfor %}
+                                </ol>
+
+                                <!-- Controls -->
+                                <a class="left carousel-control" href="#travelers-carousel" role="button" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#travelers-carousel" role="button" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+
+
+            </div>
+        </div>
+    </div>
+
+</main>
+<footer class="footer-container white-text-container text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <p>All Rights Reserved &copy; 2024, <span class="chn-text"> 加斯顿</span>.</p>
+                <p>
+                    <a class="fa-icon fa-icon-2x" href="{{ path('app_home') }}" title="">
+                        <i class="fab fa-dribbble"></i>
+                    </a>
+
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        scrollRevelation('.card');
+    });
+    function openLightbox(imageSrc) {
+        document.getElementById('lightbox').style.display = 'block';
+        document.getElementById('lightbox-image').src = imageSrc;
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+    }
+
+    // Close the lightbox when clicking anywhere outside of the image
+    window.onclick = function(event) {
+        if (event.target === document.getElementById('lightbox')) {
+            closeLightbox();
+        }
+    }
+</script>
+
+--><script type="text/javascript" src="{{asset('BlogSite/main.bc58148c.js')}}"></script></body>
+
+</html>

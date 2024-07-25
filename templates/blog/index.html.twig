@@ -20,6 +20,8 @@
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
 </head>
 
 <header style="width: 100%; top: 0; background-color: transparent; z-index: 1000; margin-top: 35px;">
@@ -62,8 +64,9 @@
     <header class="white-text-container section-container">
         <div class="text-center">
             <h1>I am {{ user.nom }} {{ user.prenom }}</h1>
-            <h2 style="font-size: 40px">Welcome to my world</h2>
+            <h2 style="font-size: 40px;">Welcome to <span style="font-family: 'Pacifico', cursive;">{{ user.pageNom }}</span></h2>
         </div>
+
         {% endblock %}
     </header>
 
@@ -92,8 +95,9 @@
                 </div>
                 </section>
 
-                <section id="top-adventures" class="top-adventures-section">
+
                 {% if adventuresReq|length > 0 %}
+                <section id="top-adventures" class="top-adventures-section">
                 <div class="card recommendations-card ">
                     <div class="card-block">
                         <h2>Top Adventures</h2>
@@ -149,12 +153,14 @@
                         </div>
                     </div>
                 </div>
-                {% endif %}
                 </section>
+                {% endif %}
 
 
-                <section id="all-adventures" class="all-adventures-section">
+
+
                 {% if adventures|length > 0 %}
+                <section id="all-adventures" class="all-adventures-section">
                     <div class="card All-adventures-card">
                         <div class="card-block">
                             <h2>All Adventures</h2>
@@ -185,16 +191,18 @@
                                 {% endfor %}
                             </div>
                             <div class="text-center" style="margin-top: 20px;">
-                                <a href="{{ path('all_adventures') }}" class="btn btn-primary">View All Adventures</a>
+                                <a href="{{ path('all_adventures', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Adventures</a>
                             </div>
                         </div>
                     </div>
-                {% endif %}
                 </section>
+                {% endif %}
 
 
-                <section id="countries-visited" class="countries-visited-section">
+
+
                 {% if countries|length > 0 %}
+                <section id="countries-visited" class="countries-visited-section">
                     <div class="card All-countries-card">
                         <div class="card-block">
                             <h2>Countries Visited</h2>
@@ -222,18 +230,20 @@
                                 {% endfor %}
                             </div>
                             <div class="text-center" style="margin-top: 20px;">
-                                <a href="{{ path('all_countries') }}" class="btn btn-primary">View All Countries</a>
+                                <a href="{{ path('all_countries', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Countries</a>
                             </div>
                         </div>
                     </div>
-                {% endif %}
                 </section>
+                {% endif %}
 
 
 
 
-                <section id="all-podcasts" class="all-podcasts-section">
+
+
                 {% if podcasts|length > 0 %}
+                <section id="all-podcasts" class="all-podcasts-section">
                     <div class="card All-podcasts-card">
                         <div class="card-block">
                             <h2>All Podcasts</h2>
@@ -263,12 +273,13 @@
                                 {% endfor %}
                             </div>
                             <div class="text-center" style="margin-top: 20px;">
-                                <a href="{{ path('all_podcasts') }}" class="btn btn-primary">View All Podcasts</a>
+                                <a href="{{ path('all_podcasts', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Podcasts</a>
                             </div>
                         </div>
                     </div>
-                {% endif %}
                 </section>
+                {% endif %}
+
 
 
 

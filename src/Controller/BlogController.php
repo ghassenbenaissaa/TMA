@@ -129,7 +129,7 @@ class BlogController extends AbstractController
     }
 
 
-    #[Route('/blog', name: 'app_error404')]
+    #[Route('/error', name: 'app_error404')]
     public function index1(): Response
     {
         return $this->render('blog/error-404.html.twig');
@@ -141,22 +141,186 @@ class BlogController extends AbstractController
     }
 
 
-    #[Route('/blog', name: 'all_podcasts')]
+    #[Route('/blog/{slug}/podcasts', name: 'all_podcasts')]
     public function all_podcasts(): Response
     {
-        return $this->render('blog/error-404.html.twig');
+        return $this->render('blog/AllPodcasts.html.twig');
     }
 
-    #[Route('/blog', name: 'all_countries')]
+    #[Route('/blog/{slug}/countries', name: 'all_countries')]
     public function all_countries(): Response
     {
-        return $this->render('blog/error-404.html.twig');
+        return $this->render('blog/AllCountries.html.twig');
     }
 
-    #[Route('/blog', name: 'all_adventures')]
-    public function all_adventures(): Response
+    #[Route('/blog/{slug}/adventures', name: 'all_adventures')]
+    public function all_adventures(string $slug,UserRepository $userRepository, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository ): Response
     {
-        return $this->render('blog/error-404.html.twig');
+        $user = $userRepository->findOneBy(['pageNom' => $slug]);
+
+        // Si la page n'existe pas, lancer une exception
+        if (!$user) {
+            return $this->redirectToRoute('app_error404');
+        }
+
+
+        $sections = $user->getSections();
+
+        $coverImage = null;
+
+        // Parcourir les sections pour trouver l'image de couverture
+        foreach ($sections as $section) {
+            if ($section->getType() === 'Couverture') {
+                $coverImage = $section->getImage();
+                break;
+            }
+        }
+
+        $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
+        $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
+        $podcasts = $podcastRepository->findBy(['idUser' => $user]);
+        $image = $imageRepository->findAll();
+        $users = $userRepository->findAll();
+        $travelers = [];
+
+        foreach ($users as $useri) {
+            $photoProfile = null;
+
+            // Iterate through the user's sections to find the profile photo
+            foreach ($useri->getSections() as $section) {
+                if ($section->getType() === 'PhotoProfile') {
+                    // Check if the image name matches the expected pattern
+                    $expectedImageName = $useri->getId() . 'PhotoProfile.jpg';
+                    $sectionImage = $section->getImage();
+                    if ($expectedImageName === $sectionImage) {
+                        $photoProfile = $sectionImage;
+                        break;
+                    }
+                }
+            }
+
+            // Store the traveler's data in the array
+            $travelers[] = [
+                'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
+                'profilePhoto' => $photoProfile
+            ];
+
+        }
+
+        $countries = [];
+        foreach ($aventures as $adventure) {
+            $country = $adventure->getIdPays();
+            if ($country && !isset($countries[$country->getId()])) {
+                $flagUrl = $this->fetchCountryFlag($country->getNom());
+                $countries[$country->getId()] = [
+                    'name' => $country->getNom(),
+                    'flag' => $flagUrl
+                ];
+            }
+        }
+
+        // Rendre la vue avec les informations de la page
+        return $this->render('blog/AllAdventures.html.twig', [
+            'user' => $user,
+            'sections' => $sections,
+            'coverImage' => $coverImage,
+            'countries' => $countries,
+            'podcasts' => $podcasts,
+            'adventures' => $aventures,
+            'adventuresReq' => $aventuresReq,
+            'images' => $image,
+            'travelers' => $travelers,
+        ]);
     }
+
+    #[Route('/blog/{slug}/adventure/{id}', name: 'adventure_detail')]
+    public function adventure_detail(int $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
+    {
+        $user = $userRepository->findOneBy(['pageNom' => $slug]);
+
+        // Si la page n'existe pas, lancer une exception
+        if (!$user) {
+            return $this->redirectToRoute('app_error404');
+        }
+        $sections = $user->getSections();
+
+        $coverImage = null;
+
+        // Parcourir les sections pour trouver l'image de couverture
+        foreach ($sections as $section) {
+            if ($section->getType() === 'Couverture') {
+                $coverImage = $section->getImage();
+                break;
+            }
+        }
+
+        $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
+        $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
+        $aventureClic = $aventureRepository->find($id); // Change here to find a single adventure
+        $podcasts = $podcastRepository->findBy(['idUser' => $user]);
+        $images = $imageRepository->findBy(['idAventure' => $id]); // Change variable name to match
+        $users = $userRepository->findAll();
+        $travelers = [];
+
+        foreach ($users as $useri) {
+            $photoProfile = null;
+
+            // Iterate through the user's sections to find the profile photo
+            foreach ($useri->getSections() as $section) {
+                if ($section->getType() === 'PhotoProfile') {
+                    // Check if the image name matches the expected pattern
+                    $expectedImageName = $useri->getId() . 'PhotoProfile.jpg';
+                    $sectionImage = $section->getImage();
+                    if ($expectedImageName === $sectionImage) {
+                        $photoProfile = $sectionImage;
+                        break;
+                    }
+                }
+            }
+
+            // Store the traveler's data in the array
+            $travelers[] = [
+                'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
+                'profilePhoto' => $photoProfile
+            ];
+
+        }
+
+        // Get country only for the clicked adventure
+        $country = null;
+        if ($aventureClic) {
+            $country = $aventureClic->getIdPays();
+        }
+        $countries = [];
+        if ($country) {
+            $flagUrl = $this->fetchCountryFlag($country->getNom());
+            $countries[$country->getId()] = [
+                'name' => $country->getNom(),
+                'flag' => $flagUrl
+            ];
+        }
+
+        // Extract the video ID from the URL
+        $videoUrl = $aventureClic->getVideo();
+        preg_match('/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^\&\?\/]+)/', $videoUrl, $matches);
+        $videoId = $matches[1] ?? null;
+
+
+        return $this->render('blog/Adventure.html.twig', [
+            'user' => $user,
+            'sections' => $sections,
+            'coverImage' => $coverImage,
+            'countries' => $countries,
+            'podcasts' => $podcasts,
+            'adventures' => $aventures,
+            'adventureClic' => $aventureClic,
+            'adventuresReq' => $aventuresReq,
+            'images' => $images,
+            'travelers' => $travelers,
+            'videoId' => $videoId,
+        ]);
+    }
+
+
 
 }
