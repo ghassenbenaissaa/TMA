@@ -168,7 +168,7 @@
                 {% if travelers|length > 0 %}
                     <div class="card travelers-card">
                         <div class="card-block">
-                            <h2>Discover Other Travelers</h2>
+                            <h2 style="margin-bottom: 10px">Discover Other Travelers</h2>
                             <div id="travelers-carousel" class="carousel slide" data-ride="carousel">
                                 <!-- Wrapper for slides -->
                                 <div class="carousel-inner" role="listbox">
@@ -177,22 +177,29 @@
                                     {% set total_slides = ((total_travelers / travelers_per_slide) | round(0, 'ceil')) %}
                                     {% for i in 0..total_slides - 1 %}
                                         <div class="item {% if i == 0 %}active{% endif %}">
-                                            <div class="row">
+                                            <div class="row" style="margin-left: 40px; margin-right: 40px">
                                                 {% for j in 0..travelers_per_slide - 1 %}
                                                     {% set index = i * travelers_per_slide + j %}
                                                     {% if index < total_travelers %}
                                                         {% set traveler = travelers[index] %}
-                                                        <div class="col-md-2"> <!-- Change col-md-4 to col-md-2 for 6 items per row -->
-                                                            <div class="traveler-wrapper">
-                                                                <div class="profile-photo-wrapper" style="overflow: hidden; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 10px;">
-                                                                    {% if traveler.profilePhoto %}
-                                                                        <img src="{{ asset('logoClient/' ~ traveler.profilePhoto) }}" class="img-responsive" alt="{{ traveler.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                                    {% else %}
-                                                                        <img src="{{ asset('default-profile.png') }}" class="img-responsive" alt="{{ traveler.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                                    {% endif %}
+                                                        <div class="col-md-2">
+                                                            <a href="{{ path('app_blog', {'slug': traveler.page }) }}" class="traveler-link" style="text-decoration: none; color: inherit;">
+                                                                <div class="traveler-wrapper">
+                                                                    <div class="profile-photo-wrapper" style="overflow: hidden; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 10px;">
+                                                                        {% if traveler.profilePhoto %}
+                                                                            <img src="{{ asset('logoClient/' ~ traveler.profilePhoto) }}" class="img-responsive" alt="{{ traveler.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                        {% else %}
+                                                                            <img src="{{ asset('default-profile.png') }}" class="img-responsive" alt="{{ traveler.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <h3 class="h5 text-center traveler-name">{{ traveler.name }}</h3>
+                                                                    <p class="text-center traveler-name" style="margin-top: 2px ">
+                                                                        {% for i in 1..traveler.star %}
+                                                                            <i class="fas fa-star small-stars"></i>
+                                                                        {% endfor %}
+                                                                    <p>
                                                                 </div>
-                                                                <h3 class="h5 text-center traveler-name " >{{ traveler.name }}</h3>
-                                                            </div>
+                                                            </a>
                                                         </div>
                                                     {% endif %}
                                                 {% endfor %}

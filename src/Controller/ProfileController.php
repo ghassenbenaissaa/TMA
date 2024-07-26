@@ -640,6 +640,7 @@ class ProfileController extends AbstractController
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
+        $this->calculateAndSetStars($userId, $userRepository, $entityManager);
         foreach ($user->getSections() as $section) {
             if ("PhotoProfile" == $section->getType()) {
                 $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
@@ -734,6 +735,24 @@ class ProfileController extends AbstractController
             $this->addFlash('success', 'Adventure added successfully.');
             return $this->redirectToRoute('app_ShowAdventures', ['userId' => $userId]);
         }
+        $totalAdventures = $entityManager->getRepository(Aventure::class)->count(['IdUser' => $userId]);
+
+        // Déterminer le nombre d'étoiles
+        if ($totalAdventures > 50) {
+            $stars = 5;
+
+        } elseif ($totalAdventures > 40) {
+            $stars = 4;
+        } elseif ($totalAdventures > 30) {
+            $stars = 3;
+        } elseif ($totalAdventures > 15) {
+            $stars = 2;
+        } elseif ($totalAdventures > 5) {
+            $stars = 1;
+        } else {
+            $stars = 0;
+        }
+
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
         foreach ($friendRequests as $request) {
@@ -767,6 +786,37 @@ class ProfileController extends AbstractController
             'notifications' => $notifications,
         ]);
     }
+    public function calculateAndSetStars(int $userId, UserRepository $userRepository, EntityManagerInterface $entityManager): void
+    {
+        // Récupérer l'utilisateur
+        $user = $userRepository->find($userId);
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        // Compter le nombre total d'aventures de l'utilisateur
+        $totalAdventures = $entityManager->getRepository(Aventure::class)->count(['IdUser' => $userId]);
+
+        // Déterminer le nombre d'étoiles
+        if ($totalAdventures > 50) {
+            $user->setStar(5);
+        } elseif ($totalAdventures > 40) {
+            $user->setStar(4);
+        } elseif ($totalAdventures > 30) {
+            $user->setStar(3);
+        } elseif ($totalAdventures > 15) {
+            $user->setStar(2);
+        } elseif ($totalAdventures > 5) {
+            $user->setStar(1);
+        } else {
+            $user->setStar(0);
+        }
+
+        // Enregistrer les modifications
+        $entityManager->persist($user);
+        $entityManager->flush();
+    }
+
 
     function addWatermarks(File $imagePath, string $watermarkPath1, string $watermarkPath2, string $outputPath, int $numWatermarks = 5): void
     {

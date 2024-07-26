@@ -131,7 +131,8 @@ class BlogController extends AbstractController
             $travelers[] = [
                 'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
                 'profilePhoto' => $photoProfile,
-                'page' => $useri->getPageNom()
+                'page' => $useri->getPageNom(),
+                'star' => $useri->getStar(),
             ];
 
         }
@@ -250,7 +251,9 @@ class BlogController extends AbstractController
             // Store the traveler's data in the array
             $travelers[] = [
                 'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
-                'profilePhoto' => $photoProfile
+                'profilePhoto' => $photoProfile,
+                'page' => $useri->getPageNom(),
+                'star' => $useri->getStar(),
             ];
 
         }
@@ -384,7 +387,9 @@ class BlogController extends AbstractController
             // Store the traveler's data in the array
             $travelers[] = [
                 'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
-                'profilePhoto' => $photoProfile
+                'profilePhoto' => $photoProfile,
+                'page' => $useri->getPageNom(),
+                'star' => $useri->getStar(),
             ];
 
         }
@@ -518,7 +523,9 @@ class BlogController extends AbstractController
             // Store the traveler's data in the array
             $travelers[] = [
                 'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
-                'profilePhoto' => $photoProfile
+                'profilePhoto' => $photoProfile,
+                'page' => $useri->getPageNom(),
+                'star' => $useri->getStar(),
             ];
 
         }
@@ -597,7 +604,9 @@ class BlogController extends AbstractController
             // Store the traveler's data in the array
             $travelers[] = [
                 'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
-                'profilePhoto' => $photoProfile
+                'profilePhoto' => $photoProfile,
+                'page' => $useri->getPageNom(),
+                'star' => $useri->getStar(),
             ];
 
         }
@@ -686,7 +695,9 @@ class BlogController extends AbstractController
             // Store the traveler's data in the array
             $travelers[] = [
                 'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
-                'profilePhoto' => $photoProfile
+                'profilePhoto' => $photoProfile,
+                'page' => $useri->getPageNom(),
+                'star' => $useri->getStar(),
             ];
 
         }
@@ -808,7 +819,9 @@ class BlogController extends AbstractController
             // Store the traveler's data in the array
             $travelers[] = [
                 'name' => $useri->getNom() . ' ' . $useri->getPrenom(), // Nom and Prenom with a space between
-                'profilePhoto' => $photoProfile
+                'profilePhoto' => $photoProfile,
+                'page' => $useri->getPageNom(),
+                'star' => $useri->getStar(),
             ];
 
         }

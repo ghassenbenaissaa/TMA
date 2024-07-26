@@ -111,6 +111,9 @@ private ?string $mdp = null;
     #[ORM\OneToMany(targetEntity: AddFriend::class, mappedBy: 'User_id')]
     private Collection $addFriends;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $Star = null;
+
     public function __construct()
     {
         $this->sections = new ArrayCollection();
@@ -443,6 +446,18 @@ private ?string $mdp = null;
                 $addFriend->setUserId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStar(): ?int
+    {
+        return $this->Star;
+    }
+
+    public function setStar(?int $Star): static
+    {
+        $this->Star = $Star;
 
         return $this;
     }

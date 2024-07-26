@@ -595,5 +595,10 @@ audio {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+.small-stars {
+    font-size: 14px;
+    margin-right: 2px;
+}
+
 
 
