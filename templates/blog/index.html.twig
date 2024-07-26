@@ -366,7 +366,7 @@
                                     {% set total_slides = ((total_travelers / travelers_per_slide) | round(0, 'ceil')) %}
                                     {% for i in 0..total_slides - 1 %}
                                         <div class="item {% if i == 0 %}active{% endif %}">
-                                            <div class="row">
+                                            <div class="row" style="margin-left: 40px; margin-right: 40px">
                                                 {% for j in 0..travelers_per_slide - 1 %}
                                                     {% set index = i * travelers_per_slide + j %}
                                                     {% if index < total_travelers %}
