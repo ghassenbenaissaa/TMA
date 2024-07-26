@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\AddFriend;
 use App\Entity\Pays;
 use App\Repository\AventureRepository;
 use App\Repository\ImageRepository;
 use App\Repository\PodcastRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,8 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class BlogController extends AbstractController
 {
     #[Route('/blog/{slug}', name: 'app_blog')]
-    public function index(string $slug, UserRepository $userRepository,ImageRepository $imageRepository,PodcastRepository $podcastRepository, AventureRepository $aventureRepository, SessionInterface $session): Response
+    public function index(string $slug, UserRepository $userRepository, EntityManagerInterface $entityManager, ImageRepository $imageRepository,PodcastRepository $podcastRepository, AventureRepository $aventureRepository, SessionInterface $session): Response
     {
+        $currentUser = $session->get('user');
 
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
@@ -46,8 +49,63 @@ class BlogController extends AbstractController
                 break;
             }
         }
-        $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
-        $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
+        if ($currentUser) {
+            if ($currentUser === $user->getId()) {
+                $aventuresReq = $aventureRepository->findBy([
+                    'IdUser' => $user->getId(),
+                    'recommander' => 1
+                ]);
+                $aventures = $aventureRepository->findBy([
+                    'IdUser' => $user->getId()
+                ]);
+            } else {
+                // Vérifiez les amitiés pour déterminer les aventures à afficher
+                $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
+                        'user_id2' => $currentUser,
+                        'User_id' => $user->getId(),
+                        'confirmation' => 1
+                    ]) + $entityManager->getRepository(AddFriend::class)->findBy([
+                        'User_id' => $currentUser,
+                        'user_id2' => $user->getId(),
+                        'confirmation' => 1
+                    ]);
+
+                if ($friendships) {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => ['Friends', 'public']
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => ['Friends', 'public']
+                    ]);
+                } else {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => 'public'
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => 'public'
+                    ]);
+                }
+            }
+        } else {
+            // Si aucun utilisateur courant, afficher uniquement les aventures publiques
+            $aventuresReq = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'recommander' => 1,
+                'audiance' => 'public'
+            ]);
+            $aventures = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'audiance' => 'public'
+            ]);
+        }
+
+
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);
         $image = $imageRepository->findAll();
         $users = $userRepository->findAll();
@@ -224,8 +282,9 @@ class BlogController extends AbstractController
     }
 
     #[Route('/blog/{slug}/countries', name: 'all_countries')]
-    public function all_countries(string $slug,UserRepository $userRepository, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository): Response
+    public function all_countries(string $slug,UserRepository $userRepository, EntityManagerInterface $entityManager, SessionInterface $session, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository): Response
     {
+        $currentUser = $session->get('user');
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
         // Si la page n'existe pas, lancer une exception
@@ -246,8 +305,61 @@ class BlogController extends AbstractController
             }
         }
 
-        $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
-        $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
+        if ($currentUser) {
+            if ($currentUser === $user->getId()) {
+                $aventuresReq = $aventureRepository->findBy([
+                    'IdUser' => $user->getId(),
+                    'recommander' => 1
+                ]);
+                $aventures = $aventureRepository->findBy([
+                    'IdUser' => $user->getId()
+                ]);
+            } else {
+                // Vérifiez les amitiés pour déterminer les aventures à afficher
+                $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
+                        'user_id2' => $currentUser,
+                        'User_id' => $user->getId(),
+                        'confirmation' => 1
+                    ]) + $entityManager->getRepository(AddFriend::class)->findBy([
+                        'User_id' => $currentUser,
+                        'user_id2' => $user->getId(),
+                        'confirmation' => 1
+                    ]);
+
+                if ($friendships) {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => ['Friends', 'public']
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => ['Friends', 'public']
+                    ]);
+                } else {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => 'public'
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => 'public'
+                    ]);
+                }
+            }
+        } else {
+            // Si aucun utilisateur courant, afficher uniquement les aventures publiques
+            $aventuresReq = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'recommander' => 1,
+                'audiance' => 'public'
+            ]);
+            $aventures = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'audiance' => 'public'
+            ]);
+        }
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);
         $image = $imageRepository->findAll();
         $users = $userRepository->findAll();
@@ -305,10 +417,10 @@ class BlogController extends AbstractController
     }
 
     #[Route('/blog/{slug}/adventures', name: 'all_adventures')]
-    public function all_adventures(string $slug,UserRepository $userRepository, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository ): Response
+    public function all_adventures(string $slug,UserRepository $userRepository,SessionInterface $session,EntityManagerInterface $entityManager, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository ): Response
     {
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
-
+        $currentUser = $session->get('user');
         // Si la page n'existe pas, lancer une exception
         if (!$user) {
             return $this->redirectToRoute('app_error404');
@@ -327,8 +439,61 @@ class BlogController extends AbstractController
             }
         }
 
-        $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
-        $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
+        if ($currentUser) {
+            if ($currentUser === $user->getId()) {
+                $aventuresReq = $aventureRepository->findBy([
+                    'IdUser' => $user->getId(),
+                    'recommander' => 1
+                ]);
+                $aventures = $aventureRepository->findBy([
+                    'IdUser' => $user->getId()
+                ]);
+            } else {
+                // Vérifiez les amitiés pour déterminer les aventures à afficher
+                $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
+                        'user_id2' => $currentUser,
+                        'User_id' => $user->getId(),
+                        'confirmation' => 1
+                    ]) + $entityManager->getRepository(AddFriend::class)->findBy([
+                        'User_id' => $currentUser,
+                        'user_id2' => $user->getId(),
+                        'confirmation' => 1
+                    ]);
+
+                if ($friendships) {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => ['Friends', 'public']
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => ['Friends', 'public']
+                    ]);
+                } else {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => 'public'
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => 'public'
+                    ]);
+                }
+            }
+        } else {
+            // Si aucun utilisateur courant, afficher uniquement les aventures publiques
+            $aventuresReq = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'recommander' => 1,
+                'audiance' => 'public'
+            ]);
+            $aventures = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'audiance' => 'public'
+            ]);
+        }
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);
         $image = $imageRepository->findAll();
         $users = $userRepository->findAll();
@@ -542,8 +707,9 @@ class BlogController extends AbstractController
     }
 
     #[Route('/blog/{slug}/country/{id}', name: 'country_detail')]
-    public function country_detail(int $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
+    public function country_detail(int $id, UserRepository $userRepository, EntityManagerInterface $entityManager, SessionInterface $session, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
     {
+        $currentUser = $session->get('user');
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
         // Si la page n'existe pas, lancer une exception
@@ -563,9 +729,61 @@ class BlogController extends AbstractController
                 break;
             }
         }
+        if ($currentUser) {
+            if ($currentUser === $user->getId()) {
+                $aventuresReq = $aventureRepository->findBy([
+                    'IdUser' => $user->getId(),
+                    'recommander' => 1
+                ]);
+                $aventures = $aventureRepository->findBy([
+                    'IdUser' => $user->getId(), 'id_pays' => $id
+                ]);
+            } else {
+                // Vérifiez les amitiés pour déterminer les aventures à afficher
+                $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
+                        'user_id2' => $currentUser,
+                        'User_id' => $user->getId(),
+                        'confirmation' => 1
+                    ]) + $entityManager->getRepository(AddFriend::class)->findBy([
+                        'User_id' => $currentUser,
+                        'user_id2' => $user->getId(),
+                        'confirmation' => 1
+                    ]);
 
-        $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
-        $aventures = $aventureRepository->findBy(['IdUser' => $user->getId(), 'id_pays' => $id]);
+                if ($friendships) {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => ['Friends', 'public']
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => ['Friends', 'public'], 'id_pays' => $id
+                    ]);
+                } else {
+                    $aventuresReq = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'recommander' => 1,
+                        'audiance' => 'public'
+                    ]);
+                    $aventures = $aventureRepository->findBy([
+                        'IdUser' => $user->getId(),
+                        'audiance' => 'public', 'id_pays' => $id
+                    ]);
+                }
+            }
+        } else {
+            // Si aucun utilisateur courant, afficher uniquement les aventures publiques
+            $aventuresReq = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'recommander' => 1,
+                'audiance' => 'public'
+            ]);
+            $aventures = $aventureRepository->findBy([
+                'IdUser' => $user->getId(),
+                'audiance' => 'public', 'id_pays' => $id
+            ]);
+        }
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);
         $image = $imageRepository->findAll();
         $users = $userRepository->findAll();

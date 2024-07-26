@@ -40,6 +40,9 @@ class HomeController extends AbstractController
     {
         $session = $this->get('session');
         $user_id = $session->get('user');
+        if (!$session->has('user')) {
+            return $this->redirectToRoute('app_home_unauthenticated');
+        }
         return $this->render('home/index1.html.twig', [
             'userId' => $user_id,
         ]);
