@@ -151,13 +151,13 @@
     <orderEntry type="library" name="bootstrap" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="jquery-3.3.1" level="application" />
-    <orderEntry type="library" name="sweetalert2" level="application" />
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
     <orderEntry type="library" name="jquery-3.3.1.slim" level="application" />
     <orderEntry type="library" name="bootstrap-datepicker" level="application" />
     <orderEntry type="library" name="moment.js" level="application" />
     <orderEntry type="library" name="mapbox-gl" level="application" />
     <orderEntry type="library" name="@mdi/font" level="application" />
+    <orderEntry type="library" name="font-awesome" level="application" />
     <orderEntry type="library" name="sweetalert2" level="application" />
     <orderEntry type="library" name="font-awesome" level="application" />
   </component>

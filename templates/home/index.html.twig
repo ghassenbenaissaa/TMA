@@ -24,6 +24,8 @@
         <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}">
         <link href="{{asset('images/favicon.ico')}}" rel="icon">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,600,400italic,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
         <!-- Animate.css -->
         <link rel="stylesheet" href="{{asset('css/animate.css')}}">
@@ -211,9 +213,9 @@
                             <li>AI Integration</li>
                             <li>Watermark feature</li>
                             <li>Post podcasts</li>
-                            <li>With Pub</li>
+                            <li style="color: #fa4a4a">Includes Ads <i class="fas fa-ad fa-lg"></i></li>
                         </ul>
-                        <a href="#" class="btn btn-default btn-sm">Get started</a>
+                        <a href="{{ path('app_signup') }}" class="btn btn-default btn-sm">Get started</a>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 animate-box">
@@ -224,10 +226,10 @@
                         <hr>
                         <ul class="pricing-info">
                             <li>Enjoy all Travel Memory App features without limitations</li>
-                            <br>
+                            <li style="color: #fa4a4a; margin-left: 35px; margin-bottom: 7px;">No Ads <i class="fas fa-ad fa-lg" style="margin-left: 5px;"></i> <i class="fas fa-ban" style="color: rgba(73,73,73,0.97); font-size: 1.9em; position: relative; bottom: -0.2em; left: -1em;"></i></li>
                             <br>
                         </ul>
-                        <a href="#" class="btn btn-primary btn-sm">Get started</a>
+                        <a href="{{ path('app_signup') }}" class="btn btn-primary btn-sm">Get started</a>
                     </div>
                 </div>
             </div>
