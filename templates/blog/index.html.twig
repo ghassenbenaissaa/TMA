@@ -493,12 +493,14 @@
                         swalOptions.html = `
                         <p>${message}</p><br>
                         <button onclick="sendFriendRequest(${userId})" class="swal2-confirm swal2-styled">Send a friend request</button>
+                        <button onclick="Swal.close()" class="swal2-cancel swal2-styled">Cancel</button>
                     `;
                     } else if (message.includes('Log in to view all published adventures')) {
                         swalOptions.title = 'Please Log In';
                         swalOptions.html = `
                         ${message}<br><br>
                         <button onclick="window.location.href='/login'" class="swal2-confirm swal2-styled">Log In</button>
+                        <button onclick="Swal.close()" class="swal2-cancel swal2-styled">Cancel</button>
                     `;
                     }
                 }
