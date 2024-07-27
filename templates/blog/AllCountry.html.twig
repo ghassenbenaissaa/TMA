@@ -85,7 +85,9 @@
                                                     <img src="{{ country.flag }}" class="img-responsive" alt="{{ country.name }}" style="width: 100%; height: auto; object-fit: cover;">
                                                 </div>
                                             {% else %}
-                                                <p>No flag available for {{ country.name }}</p>
+                                                    <div class="image-wrapper">
+                                                        <img src="{{ asset('images/default-image-adv.jpg') }}" class="img-responsive" alt="{{ country.name }}" style="width: 100%; height: auto; object-fit: cover;">
+                                                    </div>
                                             {% endif %}
                                             <h3 class="h5">{{ country.name }}</h3>
                                         </div>

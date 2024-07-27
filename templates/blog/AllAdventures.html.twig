@@ -87,6 +87,11 @@
                                                         {% set imageFound = true %}
                                                     {% endif %}
                                                 {% endfor %}
+                                                {% if not imageFound %}
+                                                    <div class="image-wrapper">
+                                                    <img src="{{ asset('images/default-image-adv.jpg') }}" class="img-responsive" alt="{{ adventure.nom }}">
+                                                </div>
+                                                {% endif %}
                                                 <h3 class="h5">{{ adventure.nom }}</h3>
                                                 <p>{{ adventure.getDateDebut|date('F Y') }}</p>
                                             </div>

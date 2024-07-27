@@ -120,11 +120,14 @@
 
                                             <!-- Images -->
                                             <div class="image-gallery">
-                                                {% for img in images %}
-                                                    <div class="gallery-item">
-                                                        <img src="{{ asset('AdvClient/' ~ img.nom) }}" alt="Adventure Image" class="gallery-image" onclick="openLightbox('{{ asset('AdvClient/' ~ img.nom) }}')">
-                                                    </div>
-                                                {% endfor %}
+                                                {% if images %}
+                                                    {% for img in images %}
+                                                        <div class="gallery-item">
+                                                            <img src="{{ asset('AdvClient/' ~ img.nom) }}" alt="Adventure Image" class="gallery-image" onclick="openLightbox('{{ asset('AdvClient/' ~ img.nom) }}')">
+                                                        </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                {% endif %}
                                             </div>
 
                                         </div>

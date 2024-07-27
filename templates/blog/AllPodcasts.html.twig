@@ -88,6 +88,11 @@
                                                         {% set imageFound = true %}
                                                     {% endif %}
                                                 {% endfor %}
+                                                {% if not imageFound %}
+                                                    <div class="image-wrapper">
+                                                        <img src="{{ asset('images/default-image-adv.jpg') }}" class="img-responsive" alt="{{ podcast.name }}">
+                                                    </div>
+                                                {% endif %}
                                                 <h3 class="h5">{{ podcast.name }}</h3>
                                             </div>
                                         </a>
