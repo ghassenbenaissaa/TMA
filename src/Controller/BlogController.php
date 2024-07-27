@@ -59,8 +59,8 @@ class BlogController extends AbstractController
                     'IdUser' => $user->getId()
                 ]);
             } else {
-                // Vérifiez les amitiés pour déterminer les aventures à afficher
-                $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
+                // Vérifiez les amitiés confirmées
+                $confirmedFriendships = $entityManager->getRepository(AddFriend::class)->findBy([
                         'user_id2' => $currentUser,
                         'User_id' => $user->getId(),
                         'confirmation' => 1
@@ -70,7 +70,7 @@ class BlogController extends AbstractController
                         'confirmation' => 1
                     ]);
 
-                if ($friendships) {
+                if ($confirmedFriendships) {
                     $aventuresReq = $aventureRepository->findBy([
                         'IdUser' => $user->getId(),
                         'recommander' => 1,
@@ -81,6 +81,23 @@ class BlogController extends AbstractController
                         'audiance' => ['Friends', 'public']
                     ]);
                 } else {
+                    // Vérifiez les demandes d'amitié non confirmées
+                    $pendingFriendship = $entityManager->getRepository(AddFriend::class)->findOneBy([
+                        'user_id2' => $currentUser,
+                        'User_id' => $user->getId(),
+                        'confirmation' => 0
+                    ]) ?? $entityManager->getRepository(AddFriend::class)->findOneBy([
+                        'User_id' => $currentUser,
+                        'user_id2' => $user->getId(),
+                        'confirmation' => 0
+                    ]);
+
+                    if ($pendingFriendship) {
+                        $this->addFlash('info', 'A friend request is pending approval.');
+                    } else {
+                        $this->addFlash('warning', 'To view all published adventures, please send a friend request.');
+                    }
+
                     $aventuresReq = $aventureRepository->findBy([
                         'IdUser' => $user->getId(),
                         'recommander' => 1,
@@ -93,6 +110,7 @@ class BlogController extends AbstractController
                 }
             }
         } else {
+            $this->addFlash('warning', 'Please Log in to view all published adventures.');
             // Si aucun utilisateur courant, afficher uniquement les aventures publiques
             $aventuresReq = $aventureRepository->findBy([
                 'IdUser' => $user->getId(),
@@ -104,6 +122,7 @@ class BlogController extends AbstractController
                 'audiance' => 'public'
             ]);
         }
+
 
 
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);

@@ -19,6 +19,7 @@
     <link href="{{asset('css/blog.css')}}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
@@ -436,18 +437,130 @@
                     <a class="fa-icon fa-icon-2x" href="{{ path('app_home') }}" title="">
                         <i class="fab fa-dribbble"></i>
                     </a>
-
                 </p>
             </div>
         </div>
     </div>
 </footer>
 
+<div id="flash-messages-container" style="display: none;">
+    {% for label, messages in app.flashes %}
+        <div class="flash-messages" data-label="{{ label }}" data-user-id="{{ user.id }}">
+            {% for message in messages %}
+                <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function (event) {
         scrollRevelation('.card');
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const flashMessages = document.querySelectorAll('.flash-messages');
+
+        flashMessages.forEach(function (flashMessageContainer) {
+            const label = flashMessageContainer.getAttribute('data-label');
+            const userId = flashMessageContainer.getAttribute('data-user-id');
+            const messages = flashMessageContainer.querySelectorAll('.flash-message');
+
+            messages.forEach(function (messageElement) {
+                const message = messageElement.textContent;
+
+                // Configure SweetAlert based on the type of message
+                let swalOptions = {
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 2000, // Adjust the time as needed
+                    customClass: {
+                        popup: 'swal-popup-custom', // Custom class for popup
+                        title: 'swal-title-custom', // Custom class for title
+                        content: 'swal-text-custom', // Custom class for text
+                        confirmButton: 'swal-button-custom' // Custom class for confirm button
+                    }
+                };
+
+                if (label === 'success') {
+                    swalOptions.icon = 'success';
+                } else if (label === 'info') {
+                    swalOptions.icon = 'info';
+                } else if (label === 'error') {
+                    swalOptions.icon = 'error';
+                } else if (label === 'warning') {
+                    swalOptions.icon = 'warning';
+                    swalOptions.html = message;
+                    swalOptions.timer = null; // No auto-dismissal for warnings
+                    if (message.includes('send a friend request')) {
+                        swalOptions.title = 'Please Note';
+                        swalOptions.html = `
+                        <p>${message}</p><br>
+                        <button onclick="sendFriendRequest(${userId})" class="swal2-confirm swal2-styled">Send a friend request</button>
+                    `;
+                    } else if (message.includes('Log in to view all published adventures')) {
+                        swalOptions.title = 'Please Log In';
+                        swalOptions.html = `
+                        ${message}<br><br>
+                        <button onclick="window.location.href='/login'" class="swal2-confirm swal2-styled">Log In</button>
+                    `;
+                    }
+                }
+
+                // Display SweetAlert
+                Swal.fire(swalOptions);
+            });
+        });
+    });
+
+    function sendFriendRequest(userId) {
+        // Create a form element
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/profile/addFriendRequest2/${userId}`;
+
+        // Include CSRF token if necessary
+        const csrfToken = '{{ csrf_token('add_friend_request2') }}'; // Adjust if necessary
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = '_csrf_token';
+        input.value = csrfToken;
+        form.appendChild(input);
+
+        // Include the previous URL
+        const previousUrl = document.createElement('input');
+        previousUrl.type = 'hidden';
+        previousUrl.name = 'previousUrl';
+        previousUrl.value = document.referrer; // Get the previous URL
+        form.appendChild(previousUrl);
+
+        // Append form to the body and submit it
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
 </script>
---><script type="text/javascript" src="{{asset('BlogSite/main.bc58148c.js')}}"></script></body>
+<style>
+    div:where(.swal2-container) div:where(.swal2-popup) {
+        display: none;
+        position: relative;
+        box-sizing: border-box;
+        grid-template-columns: minmax(0, 100%);
+        width: 32em;
+        max-width: 100%;
+        padding: 0 0 1.25em;
+        border: none;
+        border-radius: 5px;
+        background: #fff;
+        color: #545454;
+        font-family: inherit;
+        font-size:1.5rem;
+    }
+</style>
+<script type="text/javascript" src="{{asset('BlogSite/main.bc58148c.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+</body>
 
 </html>

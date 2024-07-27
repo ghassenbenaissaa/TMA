@@ -2279,6 +2279,47 @@ class ProfileController extends AbstractController
         return $this->json(['success' => true, 'message' => 'Friend request sent.']);
     }
 
+    #[Route('/profile/addFriendRequest2/{userId}', name: 'app_add_friend_request2', methods: ['POST'])]
+    public function addFriendRequest2(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, AddFriendRepository $addFriendRepository, int $userId): Response
+    {
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            return $this->json(['success' => false, 'message' => 'User not logged in.']);
+        }
+
+        $currentUser = $session->get('user'); // Assurez-vous que vous obtenez l'utilisateur connecté
+        $user = $userRepository->find($currentUser); // Assurez-vous que vous utilisez le bon ID
+
+        if (!$user) {
+            return $this->json(['success' => false, 'message' => 'Current user not found.']);
+        }
+
+        // Vérifiez si une demande d'ami existe déjà dans un sens ou l'autre
+        $existingFriendRequest = $addFriendRepository->findOneBy([
+            'User_id' => $user,
+            'user_id2' => $userId
+        ]) ?? $addFriendRepository->findOneBy([
+            'User_id' => $userId,
+            'user_id2' => $currentUser
+        ]);
+
+        if ($existingFriendRequest) {
+            return $this->json(['success' => false, 'message' => 'Friend request already exists.']);
+        }
+
+        // Création d'une nouvelle demande d'ami
+        $addFriend = new AddFriend();
+        $addFriend->setUserId($user);
+        $addFriend->setUserId2($userId);
+        $addFriend->setConfirmation(0);
+
+        $entityManager->persist($addFriend);
+        $entityManager->flush();
+
+        $previousUrl = $request->request->get('previousUrl', $this->generateUrl('app_profile', ['userId' => $currentUser]));
+        return $this->redirect($previousUrl);
+    }
+
     #[Route('/profile/respondToFriendRequest/{requestId}/{action}', name: 'app_respond_to_friend_request')]
     public function respondToFriendRequest(
         int $requestId,
