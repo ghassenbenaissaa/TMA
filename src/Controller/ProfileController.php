@@ -2289,6 +2289,7 @@ class ProfileController extends AbstractController
 
         $currentUser = $session->get('user'); // Assurez-vous que vous obtenez l'utilisateur connecté
         $user = $userRepository->find($currentUser); // Assurez-vous que vous utilisez le bon ID
+        $user2 = $userRepository->find($userId); // Assurez-vous que vous utilisez le bon ID
 
         if (!$user) {
             return $this->json(['success' => false, 'message' => 'Current user not found.']);
@@ -2316,9 +2317,15 @@ class ProfileController extends AbstractController
         $entityManager->persist($addFriend);
         $entityManager->flush();
 
-        $previousUrl = $request->request->get('previousUrl', $this->generateUrl('app_profile', ['userId' => $currentUser]));
+        // Redirigez vers l'URL précédente ou une URL par défaut
+        $previousUrl = $request->request->get('previousUrl');
+        if (empty($previousUrl)) {
+            $previousUrl = $this->generateUrl('app_blog', ['slug' => $user2->getPageNom()]); // Changez 'app_profile' selon vos besoins
+        }
+
         return $this->redirect($previousUrl);
     }
+
 
     #[Route('/profile/respondToFriendRequest/{requestId}/{action}', name: 'app_respond_to_friend_request')]
     public function respondToFriendRequest(
