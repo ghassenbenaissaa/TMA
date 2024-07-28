@@ -114,6 +114,9 @@ private ?string $mdp = null;
     #[ORM\Column(nullable: true)]
     private ?int $Star = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $Subscription = null;
+
     public function __construct()
     {
         $this->sections = new ArrayCollection();
@@ -458,6 +461,18 @@ private ?string $mdp = null;
     public function setStar(?int $Star): static
     {
         $this->Star = $Star;
+
+        return $this;
+    }
+
+    public function getSubscription(): ?int
+    {
+        return $this->Subscription;
+    }
+
+    public function setSubscription(?int $Subscription): static
+    {
+        $this->Subscription = $Subscription;
 
         return $this;
     }

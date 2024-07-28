@@ -85,6 +85,10 @@ class HomeController extends AbstractController
                 return $this->redirectToRoute('app_login');
             }
 
+            if (is_null($user->getSubscription()) ) {
+                return $this->redirectToRoute('app_form4', ['userId' => $user->getId()]);
+            }
+
             // Vérifier si le type ou le thème est null
             if (is_null($user->getType()) || is_null($user->getTheme())) {
                 return $this->redirectToRoute('app_form1', ['userId' => $user->getId()]);
@@ -285,6 +289,39 @@ class HomeController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/signup4/{userId}', name: 'app_form4', methods: ['GET', 'POST'])]
+    public function form4(int $userId, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    {
+        $user = $userRepository->find($userId);
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        if ($request->isMethod('POST')) {
+            $subscriptionType = $request->request->get('subscription');
+
+            if ($subscriptionType !== null) {
+                // Assuming you have a 'subscription' field in the User entity
+                $user->setSubscription($subscriptionType);
+                $entityManager->flush();
+                if ($subscriptionType==1){
+                    $this->addFlash('info', 'For now, our website is free just for testing purposes.');
+                    return $this->redirectToRoute('app_form1', ['userId' => $userId]);
+                }else{
+                    return $this->redirectToRoute('app_form1', ['userId' => $userId]);
+                }
+            }
+
+            return $this->redirectToRoute('app_form4', ['userId' => $userId]);
+        }
+
+        return $this->render('home/form4.html.twig', [
+            'userId' => $userId,
+        ]);
+    }
+
 
 
 
