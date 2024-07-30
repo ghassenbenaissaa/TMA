@@ -2111,36 +2111,45 @@ class ProfileController extends AbstractController
         $friends = [];
         $entityManager = $this->getDoctrine()->getManager();
 
-        // Rechercher les amitiés où l'utilisateur actuel est l'initiateur de la demande
+        // Fetch friendships where the current user initiated the request
         $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
-            'User_id' => $userId,
-            'confirmation' => 1
+            'User_id' => $userId
         ]);
 
         foreach ($friendships as $friendship) {
             $friendId = $friendship->getUserId2();
             $friend = $userRepository->find($friendId);
             if ($friend) {
-                $friends[] = $friend;
+                $friends[] = [
+                    'friend' => $friend,
+                    'etat' => $friendship->getEtat(),
+                    'etat2' => "0",
+                    'idRequest' => $friendship->getId(),
+                ];
             }
         }
 
-        // Rechercher les amitiés où l'utilisateur actuel a reçu la demande
+        // Fetch friendships where the current user received the request
         $friendships = $entityManager->getRepository(AddFriend::class)->findBy([
-            'user_id2' => $userId,
-            'confirmation' => 1
+            'user_id2' => $userId
         ]);
 
         foreach ($friendships as $friendship) {
             $friendId = $friendship->getUserId()->getId();
             $friend = $userRepository->find($friendId);
             if ($friend) {
-                $friends[] = $friend;
+                $friends[] = [
+                    'friend' => $friend,
+                    'etat' => $friendship->getEtat(),
+                    'etat2' => "1",
+                    'idRequest' => $friendship->getId(),
+                ];
             }
         }
 
         return $friends;
     }
+
 
 
     #[Route('/profile/removeFriend/{friendId}', name: 'app_remove_friend')]
@@ -2272,6 +2281,8 @@ class ProfileController extends AbstractController
         $addFriend->setUserId($user);
         $addFriend->setUserId2($userId);
         $addFriend->setConfirmation(0);
+        $addFriend->setEtat("Pending");
+        $addFriend->setNotification(0);
 
         $entityManager->persist($addFriend);
         $entityManager->flush();
@@ -2313,6 +2324,7 @@ class ProfileController extends AbstractController
         $addFriend->setUserId($user);
         $addFriend->setUserId2($userId);
         $addFriend->setConfirmation(0);
+        $addFriend->setEtat("Pending");
 
         $entityManager->persist($addFriend);
         $entityManager->flush();
@@ -2349,6 +2361,7 @@ class ProfileController extends AbstractController
         if ($action === 'accept') {
             // Mettre à jour la demande pour indiquer l'acceptation
             $friendRequest->setConfirmation(1);
+            $friendRequest->setEtat("Accepted");
             $entityManager->persist($friendRequest);
             $entityManager->flush();
             $this->addFlash('success', 'Request accepted.');

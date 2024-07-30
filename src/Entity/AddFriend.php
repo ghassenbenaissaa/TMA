@@ -23,6 +23,12 @@ class AddFriend
     #[ORM\Column]
     private ?int $confirmation = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $etat = null;
+
+    #[ORM\Column]
+    private ?int $notification = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +66,30 @@ class AddFriend
     public function setConfirmation(int $confirmation): static
     {
         $this->confirmation = $confirmation;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(string $etat): static
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getNotification(): ?int
+    {
+        return $this->notification;
+    }
+
+    public function setNotification(int $notification): static
+    {
+        $this->notification = $notification;
 
         return $this;
     }
