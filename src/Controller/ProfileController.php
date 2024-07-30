@@ -48,7 +48,7 @@ use OpenAI;
 class ProfileController extends AbstractController
 {
     #[Route('/profile/{userId}', name: 'app_profile')]
-    public function index(UserRepository $userRepository, int $userId, AddFriendRepository $addFriendRepository): Response
+    public function index(UserRepository $userRepository, int $userId, AddFriendRepository $addFriendRepository, ): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -137,7 +137,8 @@ class ProfileController extends AbstractController
             ];
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0, 'notification' => 0]);
+
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -159,8 +160,15 @@ class ProfileController extends AbstractController
                     'prenom' => $sender->getPrenom(),
                     'photo' => $photo,
                 ];
+
+                // Update the notification attribute to 1
+                $entityManager = $this->getDoctrine()->getManager();
+                $request->setNotification(1);
+                $entityManager->persist($request);
+                $entityManager->flush();
             }
         }
+
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,
@@ -233,7 +241,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_editProfile', ['userId' => $userId]);
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0, 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -327,7 +335,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_CPassword', ['userId' => $userId]);
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -394,7 +402,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -585,7 +593,7 @@ class ProfileController extends AbstractController
         }
 
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -754,7 +762,7 @@ class ProfileController extends AbstractController
         }
 
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1347,7 +1355,7 @@ class ProfileController extends AbstractController
         }
         $image = $imageRepository->findAll();
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1513,7 +1521,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1613,7 +1621,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_Website', ['userId' => $userId]);
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1683,7 +1691,7 @@ class ProfileController extends AbstractController
         }
         $image = $imageRepository->findAll();
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1819,7 +1827,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_ShowPodcast', ['userId' => $userId]);
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1934,7 +1942,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_ShowPodcast', ['userId' => $userId]);
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -2073,7 +2081,7 @@ class ProfileController extends AbstractController
 
         $friends = $this->getFriends($userId, $userRepository);
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -2214,7 +2222,7 @@ class ProfileController extends AbstractController
         }, $users);
         $usersJson = json_encode($usersArray);
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
