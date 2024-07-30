@@ -16,7 +16,7 @@
 }
 
 .social-buttons a:hover {
-    color: #f85454;
+    color: #4a90e2;
     transform: scale(1.1);
 }
 
@@ -257,7 +257,7 @@ h2 {
 }
 
 .nav-link:hover {
-    color: #ff7777; /* Couleur de survol */
+    color: #4a90e2; /* Couleur de survol */
     transform: scale(1.2); /* Agrandissement du texte */
 }
 
@@ -480,7 +480,7 @@ h2 {
 .date-item i {
     font-size: 20px;
     margin-right: 8px;
-    color: #fd2366; /* Blue color for icons */
+    color: #002F5D; /* Blue color for icons */
 }
 
 .date-item .label {
