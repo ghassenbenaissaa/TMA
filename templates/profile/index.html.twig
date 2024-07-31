@@ -507,6 +507,12 @@
                         swalOptions.timer = null; // No auto-dismissal for errors
                     } else if (label === 'warning') {
                         swalOptions.icon = 'warning';
+                    } else if (label === 'info') {
+                        swalOptions.icon = 'info';
+                        swalOptions.title = 'Information';
+                        swalOptions.html = message;
+                        swalOptions.showConfirmButton = true;
+                        swalOptions.timer = null;
                     }
 
                     // Display SweetAlert

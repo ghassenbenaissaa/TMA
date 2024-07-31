@@ -335,9 +335,17 @@ class HomeController extends AbstractController
                 $entityManager->flush();
                 if ($subscriptionType==1){
                     $this->addFlash('info', 'For now, our website is free just for testing purposes.');
-                    return $this->redirectToRoute('app_form1');
+                    if (is_null($user->getType()) || is_null($user->getTheme())) {
+                        $session->set('user', $user->getId());
+                        return $this->redirectToRoute('app_form1');
+                    }
+                    return $this->redirectToRoute('app_profile');
                 }else{
-                    return $this->redirectToRoute('app_form1');
+                    if (is_null($user->getType()) || is_null($user->getTheme())) {
+                        $session->set('user', $user->getId());
+                        return $this->redirectToRoute('app_form1');
+                    }
+                    return $this->redirectToRoute('app_profile');
                 }
             }
 
