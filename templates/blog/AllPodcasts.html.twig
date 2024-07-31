@@ -77,7 +77,7 @@
                                 <div class="row">
                                     {% for podcast in podcasts %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('podcast_detail', {'id': podcast.id, 'slug': user.pageNom}) }}" class="podcast-link">
+                                        <a href="{{ path('podcast_detail', {'id': podcast.name, 'slug': user.pageNom}) }}" class="podcast-link">
                                             <div class="podcast-wrapper All-podcasts-card">
                                                 {% set imageFound = false %}
                                                 {% for image in images %}

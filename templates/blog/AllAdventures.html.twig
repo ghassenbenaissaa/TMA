@@ -76,7 +76,7 @@
                                 <div class="row">
                                     {% for adventure in adventures %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('adventure_detail', {'id': adventure.id, 'slug': user.pageNom}) }}" class="adventure-link">
+                                        <a href="{{ path('adventure_detail', {'id': adventure.nom, 'slug': user.pageNom}) }}" class="adventure-link">
                                             <div class="adventure-wrapper">
                                                 {% set imageFound = false %}
                                                 {% for image in images %}

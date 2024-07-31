@@ -116,7 +116,7 @@
                                                         {% if index < total_adventures %}
                                                             {% set adventure = adventuresReq[index] %}
                                                             <div class="col-md-4 mb-4">
-                                                                <a href="{{ path('adventure_detail', {'id': adventure.id, 'slug': user.pageNom}) }}" class="adventure-link">
+                                                                <a href="{{ path('adventure_detail', {'id': adventure.nom, 'slug': user.pageNom}) }}" class="adventure-link">
                                                                     <div class="adventure-wrapper All-adventures-card">
                                                                         {% set imageFound = false %}
                                                                         {% for image in images %}
@@ -178,7 +178,7 @@
                                     {% for adventure in adventures %}
                                     {% if adventure_count < 9 %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('adventure_detail', {'id': adventure.id, 'slug': user.pageNom}) }}" class="adventure-link">
+                                        <a href="{{ path('adventure_detail', {'id': adventure.nom, 'slug': user.pageNom}) }}" class="adventure-link">
                                             <div class="adventure-wrapper All-adventures-card">
                                                 {% set imageFound = false %}
                                                 {% for image in images %}
@@ -227,7 +227,7 @@
                                     {% for country in countries %}
                                     {% if country_count < 9 %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('country_detail', {'id': country.id, 'slug': user.pageNom}) }}" class="country-link">
+                                        <a href="{{ path('country_detail', {'id': country.name, 'slug': user.pageNom}) }}" class="country-link">
                                             <div class="country-wrapper All-countries-card">
                                                 {% if country.flag %}
                                                     <div class="flag-wrapper">
@@ -273,7 +273,7 @@
                                     {% for podcast in podcasts %}
                                     {% if podcast_count < 9 %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('podcast_detail', {'id': podcast.id, 'slug': user.pageNom}) }}" class="podcast-link">
+                                        <a href="{{ path('podcast_detail', {'id': podcast.name, 'slug': user.pageNom}) }}" class="podcast-link">
                                             <div class="podcast-wrapper All-podcasts-card">
                                                 {% set imageFound = false %}
                                                 {% for image in images %}

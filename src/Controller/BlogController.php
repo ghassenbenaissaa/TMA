@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
 {
-    #[Route('/blog/{slug}', name: 'app_blog')]
+    #[Route('/Blog/{slug}', name: 'app_blog')]
     public function index(string $slug, UserRepository $userRepository, EntityManagerInterface $entityManager, ImageRepository $imageRepository,PodcastRepository $podcastRepository, AventureRepository $aventureRepository, SessionInterface $session): Response
     {
         $currentUser = $session->get('user');
@@ -221,7 +221,7 @@ class BlogController extends AbstractController
     }
 
 
-    #[Route('/blog/{slug}/podcasts', name: 'all_podcasts')]
+    #[Route('/Blog/{slug}/Podcasts', name: 'all_podcasts')]
     public function all_podcasts(string $slug,UserRepository $userRepository, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository): Response
     {
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
@@ -303,7 +303,7 @@ class BlogController extends AbstractController
         ]);
     }
 
-    #[Route('/blog/{slug}/countries', name: 'all_countries')]
+    #[Route('/Blog/{slug}/Countries', name: 'all_countries')]
     public function all_countries(string $slug,UserRepository $userRepository, EntityManagerInterface $entityManager, SessionInterface $session, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository): Response
     {
         $currentUser = $session->get('user');
@@ -440,7 +440,7 @@ class BlogController extends AbstractController
         ]);
     }
 
-    #[Route('/blog/{slug}/adventures', name: 'all_adventures')]
+    #[Route('/Blog/{slug}/Adventures', name: 'all_adventures')]
     public function all_adventures(string $slug,UserRepository $userRepository,SessionInterface $session,EntityManagerInterface $entityManager, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository ): Response
     {
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
@@ -575,8 +575,8 @@ class BlogController extends AbstractController
         ]);
     }
 
-    #[Route('/blog/{slug}/adventure/{id}', name: 'adventure_detail')]
-    public function adventure_detail(int $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
+    #[Route('/Blog/{slug}/Adventure/{id}', name: 'adventure_detail')]
+    public function adventure_detail(string $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
     {
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
@@ -598,9 +598,9 @@ class BlogController extends AbstractController
 
         $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
         $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
-        $aventureClic = $aventureRepository->find($id); // Change here to find a single adventure
+        $aventureClic = $aventureRepository->findOneBy(['nom' => $id]);
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);
-        $images = $imageRepository->findBy(['idAventure' => $id]); // Change variable name to match
+        $images = $imageRepository->findBy(['idAventure' => $aventureClic->getId()]); // Change variable name to match
         $users = $userRepository->findAll();
         $travelers = [];
 
@@ -665,8 +665,8 @@ class BlogController extends AbstractController
         ]);
     }
 
-    #[Route('/blog/{slug}/podcast/{id}', name: 'podcast_detail')]
-    public function podcast_detail(int $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
+    #[Route('/Blog/{slug}/Podcast/{id}', name: 'podcast_detail')]
+    public function podcast_detail(string $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
     {
 
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
@@ -689,9 +689,9 @@ class BlogController extends AbstractController
 
         $aventuresReq = $aventureRepository->findBy(['IdUser' => $user->getId(), 'recommander' => 1]);
         $aventures = $aventureRepository->findBy(['IdUser' => $user->getId()]);
-        $podcastsClic = $podcastRepository->find($id); // Change here to find a single adventure
+        $podcastsClic = $podcastRepository->findOneBy(['name'=> $id]); // Change here to find a single adventure
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);
-        $images = $imageRepository->findBy(['idPodcast' => $id]); // Change variable name to match
+        $images = $imageRepository->findBy(['idPodcast' => $podcastsClic->getId()]); // Change variable name to match
         $users = $userRepository->findAll();
         $travelers = [];
 
@@ -736,8 +736,8 @@ class BlogController extends AbstractController
 
     }
 
-    #[Route('/blog/{slug}/country/{id}', name: 'country_detail')]
-    public function country_detail(int $id, UserRepository $userRepository, EntityManagerInterface $entityManager, SessionInterface $session, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
+    #[Route('/Blog/{slug}/Country/{id}', name: 'country_detail')]
+    public function country_detail(string $id, UserRepository $userRepository, EntityManagerInterface $entityManager, SessionInterface $session, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
     {
         $currentUser = $session->get('user');
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
@@ -751,6 +751,7 @@ class BlogController extends AbstractController
         $sections = $user->getSections();
 
         $coverImage = null;
+        $pays = $entityManager->getRepository(Pays::class)->findOneBy(['nom'=> $id]);
 
         // Parcourir les sections pour trouver l'image de couverture
         foreach ($sections as $section) {
@@ -766,7 +767,7 @@ class BlogController extends AbstractController
                     'recommander' => 1
                 ]);
                 $aventures = $aventureRepository->findBy([
-                    'IdUser' => $user->getId(), 'id_pays' => $id
+                    'IdUser' => $user->getId(), 'id_pays' => $pays->getId()
                 ]);
             } else {
                 // Vérifiez les amitiés pour déterminer les aventures à afficher
@@ -788,7 +789,7 @@ class BlogController extends AbstractController
                     ]);
                     $aventures = $aventureRepository->findBy([
                         'IdUser' => $user->getId(),
-                        'audiance' => ['Friends', 'public'], 'id_pays' => $id
+                        'audiance' => ['Friends', 'public'], 'id_pays' => $pays->getId()
                     ]);
                 } else {
                     $aventuresReq = $aventureRepository->findBy([
@@ -798,7 +799,7 @@ class BlogController extends AbstractController
                     ]);
                     $aventures = $aventureRepository->findBy([
                         'IdUser' => $user->getId(),
-                        'audiance' => 'public', 'id_pays' => $id
+                        'audiance' => 'public', 'id_pays' => $pays->getId()
                     ]);
                 }
             }
@@ -811,7 +812,7 @@ class BlogController extends AbstractController
             ]);
             $aventures = $aventureRepository->findBy([
                 'IdUser' => $user->getId(),
-                'audiance' => 'public', 'id_pays' => $id
+                'audiance' => 'public', 'id_pays' => $pays->getId()
             ]);
         }
         $podcasts = $podcastRepository->findBy(['idUser' => $user]);

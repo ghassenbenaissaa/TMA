@@ -78,7 +78,7 @@
                                 {% for country in countries %}
                                 {% if country_count < 9 %}
                                 <div class="col-md-4 mb-4">
-                                    <a href="{{ path('country_detail', {'id': country.id, 'slug': user.pageNom}) }}" class="country-link">
+                                    <a href="{{ path('country_detail', {'id': country.name, 'slug': user.pageNom}) }}" class="country-link">
                                         <div class="country-wrapper All-countries-card">
                                             {% if country.flag %}
                                                 <div class="flag-wrapper">
