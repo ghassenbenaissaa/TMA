@@ -47,8 +47,8 @@ use OpenAI;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/profile/{userId}', name: 'app_profile')]
-    public function index(UserRepository $userRepository, int $userId, AddFriendRepository $addFriendRepository, ): Response
+    #[Route('/profile', name: 'app_profile')]
+    public function index(UserRepository $userRepository, AddFriendRepository $addFriendRepository, ): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
@@ -56,7 +56,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
         $currentUser = $session->get('user');
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if ($session->has('current_slug')) {
             $current_slug = $session->get('current_slug');
             if ($current_slug == $user->getPageNom()){
@@ -183,17 +183,17 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/edit/{userId}', name: 'app_editProfile')]
-    public function editProfile(Request $request,AddFriendRepository $addFriendRepository, ParameterBagInterface $params, int $userId): Response
+    #[Route('/profile/edit', name: 'app_editProfile')]
+    public function editProfile(Request $request,AddFriendRepository $addFriendRepository, ParameterBagInterface $params): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
-
+        $currentUser = $session->get('user');
         $entityManager = $this->getDoctrine()->getManager();
-        $user = $entityManager->getRepository(User::class)->find($userId);
+        $user = $entityManager->getRepository(User::class)->find($currentUser);
         $logos_directory = $params->get('logos_directory');
 
         if (!$user) {
@@ -220,7 +220,7 @@ class ProfileController extends AbstractController
                 // Vérifier l'extension du fichier
                 if ($logoFile->guessExtension() !== 'png') {
                     $this->addFlash('error', 'The file is not compatible. Only PNG files are allowed.');
-                    return $this->redirectToRoute('app_editProfile', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_editProfile');
                 }
 
                 $newFilename = $user->getPageNom() . '.' . $logoFile->guessExtension();
@@ -228,7 +228,7 @@ class ProfileController extends AbstractController
                     $logoFile->move($logos_directory, $newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the file.');
-                    return $this->redirectToRoute('app_editProfile', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_editProfile');
                 }
                 $user->setLogo($newFilename);
             }
@@ -238,10 +238,10 @@ class ProfileController extends AbstractController
                 $this->addFlash('success', 'Profile updated successfully.');
 
 
-            return $this->redirectToRoute('app_editProfile', ['userId' => $userId]);
+            return $this->redirectToRoute('app_editProfile');
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0, 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0, 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -274,16 +274,16 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/CPassword/{userId}', name: 'app_CPassword')]
-    public function index2(Request $request, UserPasswordEncoderInterface $passwordEncoder,AddFriendRepository $addFriendRepository, UserRepository $userRepository, int $userId): Response
+    #[Route('/profile/Change-Password', name: 'app_CPassword')]
+    public function index2(Request $request, UserPasswordEncoderInterface $passwordEncoder,AddFriendRepository $addFriendRepository, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
-
-        $user = $userRepository->find($userId);
+        $currentUser = $session->get('user');
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -307,7 +307,7 @@ class ProfileController extends AbstractController
             $oldPassword = $data['Omdp'];
             if (!$passwordEncoder->isPasswordValid($user, $oldPassword)) {
                 $this->addFlash('error', 'Invalid current password.');
-                return $this->redirectToRoute('app_CPassword', ['userId' => $userId]);
+                return $this->redirectToRoute('app_CPassword');
             }
 
             $newPassword = $data['mdp'];
@@ -315,12 +315,12 @@ class ProfileController extends AbstractController
 
             if ($oldPassword == $newPassword) {
                 $this->addFlash('error', 'New password must be different from the old password.');
-                return $this->redirectToRoute('app_CPassword', ['userId' => $userId]);
+                return $this->redirectToRoute('app_CPassword');
             }
 
             if ($newPassword !== $confirmedPassword) {
                 $this->addFlash('error', 'New passwords do not match.');
-                return $this->redirectToRoute('app_CPassword', ['userId' => $userId]);
+                return $this->redirectToRoute('app_CPassword');
             }
 
 
@@ -332,10 +332,10 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Password updated successfully.');
-            return $this->redirectToRoute('app_CPassword', ['userId' => $userId]);
+            return $this->redirectToRoute('app_CPassword');
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -368,16 +368,17 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/DAccount/{userId}', name: 'app_DAccount')]
-    public function index3(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, int $userId): Response
+    #[Route('/profile/Delete-Account', name: 'app_DAccount')]
+    public function index3(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -402,7 +403,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -435,20 +436,21 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/MainSections/{userId}', name: 'app_Msections')]
-    public function index4(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, SectionRepository $sectionRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, int $userId): Response
+    #[Route('/profile/MainSections', name: 'app_Msections')]
+    public function index4(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, SectionRepository $sectionRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         $logos_directory = $params->get('logos_directory');
-        $aboutMeSection = $sectionRepository->findOneBy(['id_user' => $userId, 'type' => 'AboutMe']);
-        $CoverSection = $sectionRepository->findOneBy(['id_user' => $userId, 'type' => 'Couverture']);
-        $ProfilePhotoSection = $sectionRepository->findOneBy(['id_user' => $userId, 'type' => 'PhotoProfile']);
+        $aboutMeSection = $sectionRepository->findOneBy(['id_user' => $currentUser, 'type' => 'AboutMe']);
+        $CoverSection = $sectionRepository->findOneBy(['id_user' => $currentUser, 'type' => 'Couverture']);
+        $ProfilePhotoSection = $sectionRepository->findOneBy(['id_user' => $currentUser, 'type' => 'PhotoProfile']);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -503,7 +505,7 @@ class ProfileController extends AbstractController
                 } catch (FileException $e) {
                     $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                     $this->addFlash('error', $errorMessage);
-                    return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_Msections');
                 }
 
             }
@@ -516,7 +518,7 @@ class ProfileController extends AbstractController
                 } catch (FileException $e) {
                     $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                     $this->addFlash('error', $errorMessage);
-                    return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_Msections');
                 }
 
             }
@@ -539,7 +541,7 @@ class ProfileController extends AbstractController
                     $aboutMeSection->setImage($newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the file.');
-                    return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_Msections');
                 }
             }
 
@@ -557,11 +559,11 @@ class ProfileController extends AbstractController
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Section updated successfully.');
-                return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                return $this->redirectToRoute('app_Msections');
             } catch (FileException $e) {
                 $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                 $this->addFlash('error', $errorMessage);
-                return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                return $this->redirectToRoute('app_Msections');
             }
         }
         else if ($formSocialMedia->isSubmitted()) {
@@ -585,15 +587,15 @@ class ProfileController extends AbstractController
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Section updated successfully.');
-                return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                return $this->redirectToRoute('app_Msections');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'An error occurred while saving.');
-                return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                return $this->redirectToRoute('app_Msections');
             }
         }
 
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -634,21 +636,22 @@ class ProfileController extends AbstractController
 
 
 
-    #[Route('/profile/AddAdventure/{userId}', name: 'app_AddAdventure')]
-    public function index5(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId): Response
+    #[Route('/profile/AddAdventure', name: 'app_AddAdventure')]
+    public function index5(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
         $logos_directory = $params->get('Adv_directory');
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
-        $this->calculateAndSetStars($userId, $userRepository, $entityManager);
+        $this->calculateAndSetStars($currentUser, $userRepository, $entityManager);
         foreach ($user->getSections() as $section) {
             if ("PhotoProfile" == $section->getType()) {
                 $expectedImageName = $user->getId() . 'PhotoProfile.jpg';
@@ -673,7 +676,7 @@ class ProfileController extends AbstractController
                 // Vérifier que la date de fin n'est pas avant la date de début
                 if ($dateDebutString > $dateFinString) {
                     $this->addFlash('error', 'End Date cannot be before Start Date. Start Date: ' . $dateFinString);
-                    return $this->redirectToRoute('app_AddAdventure', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_AddAdventure');
                 }
                 $dateDebut = \DateTime::createFromFormat('m-d-Y', $dateDebutString);
                 $dateFin = \DateTime::createFromFormat('m-d-Y', $dateFinString);
@@ -692,7 +695,7 @@ class ProfileController extends AbstractController
                     }
                     catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
-                        return $this->redirectToRoute('app_AddAdventure', ['userId' => $userId]);
+                        return $this->redirectToRoute('app_AddAdventure');
                     }
                     $image = new Image();
                     $image->setNom($newFilename);
@@ -741,9 +744,9 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Adventure added successfully.');
-            return $this->redirectToRoute('app_ShowAdventures', ['userId' => $userId]);
+            return $this->redirectToRoute('app_ShowAdventures');
         }
-        $totalAdventures = $entityManager->getRepository(Aventure::class)->count(['IdUser' => $userId]);
+        $totalAdventures = $entityManager->getRepository(Aventure::class)->count(['IdUser' => $currentUser]);
 
         // Déterminer le nombre d'étoiles
         if ($totalAdventures > 50) {
@@ -762,7 +765,7 @@ class ProfileController extends AbstractController
         }
 
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1317,16 +1320,17 @@ class ProfileController extends AbstractController
         return $abbreviations[$abrege] ?? $abrege;
     }
 
-    #[Route('/profile/ShowAdventures/{userId}', name: 'app_ShowAdventures')]
-    public function index6(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository,ImageRepository $imageRepository, int $userId): Response
+    #[Route('/profile/ShowAdventures', name: 'app_ShowAdventures')]
+    public function index6(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository,ImageRepository $imageRepository): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1355,7 +1359,7 @@ class ProfileController extends AbstractController
         }
         $image = $imageRepository->findAll();
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1388,16 +1392,17 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/ShowAdventures/{AvId}/{userId}', name: 'app_DAdventures')]
-    public function index7(UserRepository $userRepository,AventureRepository $adventureRepository, EntityManagerInterface $entityManager, int $AvId,  int $userId): Response
+    #[Route('/profile/ShowAdventures/{AvId}', name: 'app_DAdventures')]
+    public function index7(UserRepository $userRepository,AventureRepository $adventureRepository, EntityManagerInterface $entityManager, int $AvId   ): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1410,20 +1415,21 @@ class ProfileController extends AbstractController
         $entityManager->remove($aventure);
         $entityManager->flush();
         $this->addFlash('success', 'Your adventure has been deleted successfully.');
-        return $this->redirectToRoute('app_ShowAdventures', ['userId' => $userId]);
+        return $this->redirectToRoute('app_ShowAdventures');
     }
 
-    #[Route('/profile/EditAdventure/{AvId}/{userId}', name: 'app_EditAdventure')]
-    public function index8(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository, int $userId, int $AvId): Response
+    #[Route('/profile/EditAdventure/{AvId}', name: 'app_EditAdventure')]
+    public function index8(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository , int $AvId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
         $logos_directory = $params->get('Adv_directory');
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1455,7 +1461,7 @@ class ProfileController extends AbstractController
                 // Vérifier que la date de fin n'est pas avant la date de début
                 if ($dateDebutString > $dateFinString) {
                     $this->addFlash('error', 'End Date cannot be before Start Date. Start Date: ' . $dateFinString);
-                    return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
+                    return $this->redirectToRoute('app_EditAdventure', ['AvId' => $AvId]);
                 }
                 $dateDebut = \DateTime::createFromFormat('m-d-Y', $dateDebutString);
                 $dateFin = \DateTime::createFromFormat('m-d-Y', $dateFinString);
@@ -1472,7 +1478,7 @@ class ProfileController extends AbstractController
                         $this->addWatermarks(new File($temporaryFilePath), $watermarkPath1, $watermarkPath2, $temporaryFilePath, 5);
                     } catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
-                        return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
+                        return $this->redirectToRoute('app_EditAdventure', ['AvId' => $AvId]);
                     }
                     $image = new Image();
                     $image->setNom($newFilename);
@@ -1518,10 +1524,10 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Adventure updated successfully.');
-            return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
+            return $this->redirectToRoute('app_EditAdventure', [ 'AvId' => $AvId]);
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1555,16 +1561,17 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/delete/image/{AvId}/{userId}/{imageId}', name: 'delete_image')]
-    public function deleteImage(Request $request, EntityManagerInterface $entityManager, ImageRepository $imageRepository, UserRepository $userRepository, AventureRepository $aventureRepository, int $userId, int $AvId,int $imageId): Response
+    #[Route('/profile/delete/image/{AvId}/{imageId}', name: 'delete_image')]
+    public function deleteImage(Request $request, EntityManagerInterface $entityManager, ImageRepository $imageRepository, UserRepository $userRepository, AventureRepository $aventureRepository , int $AvId,int $imageId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1583,20 +1590,21 @@ class ProfileController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Adventure updated successfully.');
 
-        return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'AvId' => $AvId]);
+        return $this->redirectToRoute('app_EditAdventure', ['AvId' => $AvId]);
     }
 
 
-    #[Route('/profile/EditSiteWeb/{userId}', name: 'app_Website', methods: ['GET', 'POST'])]
-    public function editSite(int $userId, Request $request, AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    #[Route('/profile/EditSiteWeb', name: 'app_Website', methods: ['GET', 'POST'])]
+    public function editSite( Request $request, AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -1618,10 +1626,10 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted()) {
             $entityManager->flush();
             $this->addFlash('success', 'Site web updated successfully.');
-            return $this->redirectToRoute('app_Website', ['userId' => $userId]);
+            return $this->redirectToRoute('app_Website');
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1654,16 +1662,17 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/ShowPodcast/{userId}', name: 'app_ShowPodcast')]
-    public function showPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, PodcastRepository $podcastRepository, ImageRepository $imageRepository, int $userId): Response
+    #[Route('/profile/ShowPodcast', name: 'app_ShowPodcast')]
+    public function showPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, PodcastRepository $podcastRepository, ImageRepository $imageRepository ): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1691,7 +1700,7 @@ class ProfileController extends AbstractController
         }
         $image = $imageRepository->findAll();
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1724,16 +1733,17 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/ShowPodcast/{PdId}/{userId}', name: 'app_DPodcast')]
-    public function deletePodcast(UserRepository $userRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, int $PdId,  int $userId): Response
+    #[Route('/profile/ShowPodcast/{PdId}', name: 'app_DPodcast')]
+    public function deletePodcast(UserRepository $userRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, int $PdId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1747,20 +1757,21 @@ class ProfileController extends AbstractController
         $entityManager->remove($podcast);
         $entityManager->flush();
         $this->addFlash('success', 'Your Podcast has been deleted successfully.');
-        return $this->redirectToRoute('app_ShowPodcast', ['userId' => $userId]);
+        return $this->redirectToRoute('app_ShowPodcast');
     }
 
-    #[Route('/profile/AddPodcast/{userId}', name: 'app_AddPodcast')]
-    public function addPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId): Response
+    #[Route('/profile/AddPodcast', name: 'app_AddPodcast')]
+    public function addPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params  ): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
         $podcast_directory = $params->get('Podcast_directory');
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1796,7 +1807,7 @@ class ProfileController extends AbstractController
                     }
                     catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
-                        return $this->redirectToRoute('app_AddPodcast', ['userId' => $userId]);
+                        return $this->redirectToRoute('app_AddPodcast');
                     }
                     $image = new Image();
                     $image->setNom($newFilename);
@@ -1817,17 +1828,17 @@ class ProfileController extends AbstractController
                     $podcast->setSource($newFilename); // Set the filename to the podcast entity
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the podcast file.');
-                    return $this->redirectToRoute('app_AddPodcast', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_AddPodcast');
                 }
             }
             $entityManager->persist($podcast);
             $entityManager->flush();
 
             $this->addFlash('success', 'Podcast added successfully.');
-            return $this->redirectToRoute('app_ShowPodcast', ['userId' => $userId]);
+            return $this->redirectToRoute('app_ShowPodcast');
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1861,17 +1872,18 @@ class ProfileController extends AbstractController
     }
 
 
-    #[Route('/profile/EditPodcast/{PdId}/{userId}', name: 'app_EditPodcast')]
-    public function editPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params, int $userId,int $PdId): Response
+    #[Route('/profile/EditPodcast/{PdId}', name: 'app_EditPodcast')]
+    public function editPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params ,int $PdId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
         $podcast_directory = $params->get('Podcast_directory');
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -1907,7 +1919,7 @@ class ProfileController extends AbstractController
                         $this->addWatermarks(new File($temporaryFilePath), $watermarkPath1, $watermarkPath2, $temporaryFilePath, 5);
                     } catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
-                        return $this->redirectToRoute('app_EditAdventure', ['userId' => $userId, 'PdId' => $PdId]);
+                        return $this->redirectToRoute('app_EditPodcast', ['PdId' => $PdId]);
                     }
                     $image = new Image();
                     $image->setNom($newFilename);
@@ -1932,17 +1944,17 @@ class ProfileController extends AbstractController
                     $podcast->setSource($newFilename); // Set the filename to the podcast entity
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the podcast file.');
-                    return $this->redirectToRoute('app_AddPodcast', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_AddPodcast');
                 }
             }
             $entityManager->persist($podcast);
             $entityManager->flush();
 
             $this->addFlash('success', 'Podcast edited successfully.');
-            return $this->redirectToRoute('app_ShowPodcast', ['userId' => $userId]);
+            return $this->redirectToRoute('app_ShowPodcast');
         }
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -1975,16 +1987,17 @@ class ProfileController extends AbstractController
             'notifications' => $notifications,
         ]);
     }
-    #[Route('/profile/delete/image2/{PdId}/{userId}/{imageId}', name: 'delete_image2')]
-    public function deleteImage2(Request $request, EntityManagerInterface $entityManager, ImageRepository $imageRepository, UserRepository $userRepository, PodcastRepository $podcastRepository, int $userId, int $PdId,int $imageId): Response
+    #[Route('/profile/delete/image2/{PdId}/{imageId}', name: 'delete_image2')]
+    public function deleteImage2(Request $request, EntityManagerInterface $entityManager, ImageRepository $imageRepository, UserRepository $userRepository, PodcastRepository $podcastRepository , int $PdId,int $imageId): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -2004,7 +2017,7 @@ class ProfileController extends AbstractController
         $entityManager->flush();
         $this->addFlash('success', 'Adventure updated successfully.');
 
-        return $this->redirectToRoute('app_EditPodcast', ['userId' => $userId, 'PdId' => $PdId]);
+        return $this->redirectToRoute('app_EditPodcast', ['PdId' => $PdId]);
     }
 
     #[Route('/api/reformulate', name: 'api_reformulate', methods: ['POST'])]
@@ -2055,16 +2068,17 @@ class ProfileController extends AbstractController
         }
     }
 
-    #[Route('/profile/ShowFriends/{userId}', name: 'app_friends')]
-    public function showFriends( UserRepository $userRepository, AddFriendRepository $addFriendRepository, int $userId): Response
+    #[Route('/profile/ShowFriends', name: 'app_friends')]
+    public function showFriends( UserRepository $userRepository, AddFriendRepository $addFriendRepository ): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -2079,9 +2093,9 @@ class ProfileController extends AbstractController
             }
         }
 
-        $friends = $this->getFriends($userId, $userRepository);
+        $friends = $this->getFriends($currentUser, $userRepository);
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -2191,16 +2205,17 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('app_friends', ['userId' => $loggedInUserId]);
     }
 
-    #[Route('/profile/AddFriends/{userId}', name: 'app_addfriends')]
-    public function addFriends(UserRepository $userRepository,AddFriendRepository $addFriendRepository, int $userId): Response
+    #[Route('/profile/AddFriends', name: 'app_addfriends')]
+    public function addFriends(UserRepository $userRepository,AddFriendRepository $addFriendRepository): Response
     {
         $session = $this->get('session');
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
             return $this->redirectToRoute('app_login');
         }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
@@ -2222,7 +2237,7 @@ class ProfileController extends AbstractController
         }, $users);
         $usersJson = json_encode($usersArray);
         $notifications = [];
-        $friendRequests = $addFriendRepository->findBy(['user_id2' => $userId, 'confirmation' => 0 , 'notification' => 0]);
+        $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
         foreach ($friendRequests as $request) {
             $sender = $request->getUserId();
             $photo = null;
@@ -2251,7 +2266,7 @@ class ProfileController extends AbstractController
             'user' => $user,
             'usersJson' => $usersJson,
             'photoProfile' => $photoProfile,
-            'userId' => $userId,
+            'userId' => $currentUser,
             'notifications' => $notifications,
         ]);
     }

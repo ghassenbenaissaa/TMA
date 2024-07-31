@@ -86,17 +86,20 @@ class HomeController extends AbstractController
             }
 
             if (is_null($user->getSubscription()) ) {
-                return $this->redirectToRoute('app_form4', ['userId' => $user->getId()]);
+                $session->set('user', $user->getId());
+                return $this->redirectToRoute('app_form4');
             }
 
             // Vérifier si le type ou le thème est null
             if (is_null($user->getType()) || is_null($user->getTheme())) {
-                return $this->redirectToRoute('app_form1', ['userId' => $user->getId()]);
+                $session->set('user', $user->getId());
+                return $this->redirectToRoute('app_form1');
             }
 
             // Vérifier si le nom de la page ou le logo est null
             if (is_null($user->getPageNom()) || is_null($user->getLogo())) {
-                return $this->redirectToRoute('app_form2', ['userId' => $user->getId()]);
+                $session->set('user', $user->getId());
+                return $this->redirectToRoute('app_form2');
             }
 
             $photoProfile = null;
@@ -112,10 +115,11 @@ class HomeController extends AbstractController
                 }
             }
             if (is_null($photoProfile)) {
-                return $this->redirectToRoute('app_form3', ['userId' => $user->getId()]);
+                $session->set('user', $user->getId());
+                return $this->redirectToRoute('app_form3');
             }
             $session->set('user', $user->getId());
-            return $this->redirectToRoute('app_profile', ['userId' => $user->getId()]);
+            return $this->redirectToRoute('app_profile');
         }
 
         return $this->render('home/login.html.twig', [
@@ -169,10 +173,16 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup1/{userId}', name: 'app_form1', methods: ['GET', 'POST'])]
-    public function form1(int $userId, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository , SessionInterface $session): Response
+    #[Route('/signup1', name: 'app_form1', methods: ['GET', 'POST'])]
+    public function form1( Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository , SessionInterface $session): Response
     {
-        $user = $userRepository->find($userId);
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+        $currentUser = $session->get('user');
+        $user = $userRepository->find($currentUser);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -183,7 +193,7 @@ class HomeController extends AbstractController
 
         if ($form->isSubmitted()) {
             $entityManager->flush();
-            return $this->redirectToRoute('app_form2', ['userId' => $userId]);
+            return $this->redirectToRoute('app_form2');
         }
 
         return $this->render('home/form1.html.twig', [
@@ -191,11 +201,17 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup2/{userId}', name: 'app_form2', methods: ['GET', 'POST'])]
-    public function form2(int $userId, Request $request, UserRepository $userRepository,ParameterBagInterface $params , SessionInterface $session): Response {
+    #[Route('/signup2', name: 'app_form2', methods: ['GET', 'POST'])]
+    public function form2( Request $request, UserRepository $userRepository,ParameterBagInterface $params , SessionInterface $session): Response {
         $logos_directory = $params->get('logos_directory');
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+        $currentUser = $session->get('user');
 
-        $user = $userRepository->find($userId);
+        $user = $userRepository->find($currentUser);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -219,7 +235,7 @@ class HomeController extends AbstractController
                 // Vérifier l'extension du fichier
                 if ($logoFile->guessExtension() !== 'png') {
                     $this->addFlash('error', 'The file is not compatible. Only PNG files are allowed.');
-                    return $this->redirectToRoute('app_form2', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_form2');
                 }
 
                 $newFilename = $user->getPageNom() . $user->getId() . '.' . $logoFile->guessExtension();
@@ -227,7 +243,7 @@ class HomeController extends AbstractController
                     $logoFile->move($logos_directory, $newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the file.');
-                    return $this->redirectToRoute('app_form2', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_form2');
                 }
                 $user->setLogo($newFilename);
             }
@@ -235,7 +251,7 @@ class HomeController extends AbstractController
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
-            return $this->redirectToRoute('app_form3', ['userId' => $userId]);
+            return $this->redirectToRoute('app_form3');
         }
 
         return $this->render('home/form2.html.twig', [
@@ -243,12 +259,17 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup3/{userId}', name: 'app_form3', methods: ['GET', 'POST'])]
-    public function form3(int $userId,EntityManagerInterface $entityManager, Request $request, UserRepository $userRepository,SectionRepository $sectionRepository, ParameterBagInterface $params , SessionInterface $session): Response {
+    #[Route('/signup3', name: 'app_form3', methods: ['GET', 'POST'])]
+    public function form3(EntityManagerInterface $entityManager, Request $request, UserRepository $userRepository,SectionRepository $sectionRepository, ParameterBagInterface $params , SessionInterface $session): Response {
         $logos_directory = $params->get('logos_directory');
-
-        $user = $userRepository->find($userId);
-        $ProfilePhotoSection = $sectionRepository->findOneBy(['id_user' => $userId, 'type' => 'PhotoProfile']);
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+        $currentUser = $session->get('user');
+        $user = $userRepository->find($currentUser);
+        $ProfilePhotoSection = $sectionRepository->findOneBy(['id_user' => $currentUser, 'type' => 'PhotoProfile']);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -274,7 +295,7 @@ class HomeController extends AbstractController
                 } catch (FileException $e) {
                     $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                     $this->addFlash('error', $errorMessage);
-                    return $this->redirectToRoute('app_Msections', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_form3');
                 }
 
             }
@@ -282,7 +303,7 @@ class HomeController extends AbstractController
             $entityManager->persist($ProfilePhotoSection);
             $entityManager->flush();
             $session->set('user', $user->getId());
-            return $this->redirectToRoute('app_profile', ['userId' => $user->getId()]);
+            return $this->redirectToRoute('app_profile');
         }
 
         return $this->render('home/form3.html.twig', [
@@ -290,10 +311,16 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup4/{userId}', name: 'app_form4', methods: ['GET', 'POST'])]
-    public function form4(int $userId, Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    #[Route('/signup4', name: 'app_form4', methods: ['GET', 'POST'])]
+    public function form4(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
-        $user = $userRepository->find($userId);
+        $session = $this->get('session');
+        if (!$session->has('user')) {
+            // Rediriger vers la page de connexion ou une autre page
+            return $this->redirectToRoute('app_login');
+        }
+        $currentUser = $session->get('user');
+        $user = $userRepository->find($currentUser);
 
         if (!$user) {
             throw $this->createNotFoundException('User not found');
@@ -308,17 +335,17 @@ class HomeController extends AbstractController
                 $entityManager->flush();
                 if ($subscriptionType==1){
                     $this->addFlash('info', 'For now, our website is free just for testing purposes.');
-                    return $this->redirectToRoute('app_form1', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_form1');
                 }else{
-                    return $this->redirectToRoute('app_form1', ['userId' => $userId]);
+                    return $this->redirectToRoute('app_form1');
                 }
             }
 
-            return $this->redirectToRoute('app_form4', ['userId' => $userId]);
+            return $this->redirectToRoute('app_form4');
         }
 
         return $this->render('home/form4.html.twig', [
-            'userId' => $userId,
+            'userId' => $currentUser,
         ]);
     }
 

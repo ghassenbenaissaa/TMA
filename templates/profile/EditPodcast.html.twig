@@ -221,7 +221,7 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{{ path('app_profile', {'userId': user.id}) }}">
+                    <a class="nav-link" href="{{ path('app_profile') }}">
                         <span class="menu-title">Profile</span>
                         <i class="mdi mdi-home menu-icon"></i>
                     </a>
@@ -235,22 +235,22 @@
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_editProfile', {'userId': user.id}) }}">
+                                <a class="nav-link" href="{{ path('app_editProfile') }}">
                                     <i class="fas fa-user-edit  me-2"></i> Edit Profile
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_CPassword', {'userId': user.id}) }}">
+                                <a class="nav-link" href="{{ path('app_CPassword') }}">
                                     <i class="fas fa-key  me-2"></i> Change Password
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_friends', {'userId': user.id}) }}">
+                                <a class="nav-link" href="{{ path('app_friends') }}">
                                     <i class="fas fa-users me-2"></i> Friends
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_DAccount', {'userId': user.id}) }}">
+                                <a class="nav-link" href="{{ path('app_DAccount') }}">
                                     <i class="fas fa-user-times  me-2"></i> Delete Account
                                 </a>
                             </li>
@@ -266,22 +266,22 @@
                     <div class="collapse" id="ui-pages">
                         <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Website', {'userId': user.id}) }}">
+                                <a class="nav-link" href="{{ path('app_Website') }}">
                                     <i class="fas fa-edit me-2"></i> Edit Website
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Msections', {'userId': user.id}) }}">
+                                <a class="nav-link" href="{{ path('app_Msections') }}">
                                     <i class="fas fa-th-large me-2"></i> Main Sections
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_ShowAdventures', {'userId': user.id}) }}">
+                                <a class="nav-link" href="{{ path('app_ShowAdventures') }}">
                                     <i class="fas fa-mountain me-2"></i> Show Adventures
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" style="color: #f85454" href="{{ path('app_ShowPodcast', {'userId': user.id}) }}">
+                                <a class="nav-link" style="color: #f85454" href="{{ path('app_ShowPodcast') }}">
                                     <i class="fas fa-podcast me-2"></i> Show Podcasts
                                 </a>
                             </li>
@@ -354,7 +354,7 @@
                                                 <div style="width: 100%; padding-bottom: 100%; position: relative;">
                                                     <img src="{{ asset('PodcastClient/' ~ image.nom) }}" alt="Image" style="max-width: 100%; max-height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; border: 1px solid #ccc; border-radius: 5px;">
                                                 </div>
-                                                <form id="deleteForm_{{ image.id }}" action="{{ path('delete_image2', {'PdId': podcast.id, 'userId': user.id, 'imageId': image.id}) }}" method="post" style="margin-top: 5px;">
+                                                <form id="deleteForm_{{ image.id }}" action="{{ path('delete_image2', {'PdId': podcast.id, 'imageId': image.id}) }}" method="post" style="margin-top: 5px;">
                                                     <button type="button" class="btn btn-danger btn-sm delete-button" data-form-id="deleteForm_{{ image.id }}">X</button>
                                                 </form>
                                             </div>
