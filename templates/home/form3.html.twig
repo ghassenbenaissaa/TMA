@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %}Sign Up{% endblock %}</title>
+    <title>{% block title %}{{ 'Sign up'|trans|raw }}-TMA{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Découvrez les meilleures aventures de voyage avec nous. Explorez des destinations uniques et préparez-vous pour des expéditions inoubliables.">
     <meta name="keywords" content="voyage, voyages, voyager, voyages de noël, voyages de vacances, voyages de famille, voyages de travail, voyages de vacances, voyages de noël, voyages de famille, voyages de travail">
@@ -17,6 +17,8 @@
         <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}">
         <link href="{{asset('images/favicon.ico')}}" rel="icon">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,600,400italic,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+
 
         <!-- Animate.css -->
         <link rel="stylesheet" href="{{asset('css/animate.css')}}">
@@ -43,7 +45,61 @@
 </head>
 
 <body>
+<style>
 
+    .nav-item.dropdown .nav-link::after {
+        content: "";
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        border-top: 0.3em solid;
+        border-right: 0.3em solid transparent;
+        border-bottom: 0;
+        border-left: 0.3em solid transparent;
+        transition: transform 0.2s;
+    }
+
+    .nav-item.dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        color: black;
+    }
+
+    .nav-item.dropdown .dropdown-item .flag-icon {
+        margin-right: 0.5rem;
+    }
+
+    .nav-item.dropdown .nav-link img {
+        width: 1.5rem;
+        height: auto;
+    }
+
+    .nav-item.dropdown .nav-link .flag-icon {
+        margin: 0;
+    }
+
+    .nav-item.dropdown .nav-link.dropdown-toggle {
+        background: none;
+        border: none;
+        padding: 0;
+        color: black;
+    }
+
+    .nav-item.dropdown.show .dropdown-menu {
+        display: block;
+    }
+
+    .nav-item.dropdown .dropdown-menu a {
+        color: black;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+    }
+
+    .nav-item.dropdown .dropdown-menu a:hover {
+        background-color: #ff7777;
+    }
+
+</style>
 <!-- Loader -->
 <div class="fh5co-loader"></div>
 
@@ -52,15 +108,32 @@
         <div class="container">
             <nav role="navigation">
                 <ul class="pull-left left-menu">
-                    <li><a href="{{ path('app_home') }}#fh5co-about">About</a></li>
-                    <li><a href="{{ path('app_home') }}#fh5co-features-2">Features</a></li>
-                    <li><a href="{{ path('app_home') }}#fh5co-pricing">Pricing</a></li>
+                    <li><a href="{{ path('app_home', {'_locale' : langue}) }}#fh5co-about">{{ 'About'|trans|raw }}</a></li>
+                    <li><a href="{{ path('app_home', {'_locale' : langue}) }}#fh5co-features-2">{{ 'Features'|trans|raw }}</a></li>
+                    <li><a href="{{ path('app_home', {'_locale' : langue}) }}#fh5co-pricing">{{ 'Pricing'|trans|raw }}</a></li>
                 </ul>
                 <h1 id="fh5co-logo">
-                    <a href="{{ path('app_home') }}">
+                    <a href="{{ path('app_home', {'_locale' : langue}) }}">
                         <img src="{{ asset('images/logo.png') }}" style="width: 100px" alt="Logo"><span>.</span>
                     </a>
                 </h1>
+                <ul class="pull-right right-menu">
+                    <li><a href="{{ path('app_login', {'_locale' : langue}) }}">{{ 'Login'|trans|raw }}</a></li>
+                    <li class="fh5co-cta-btn"><a href="{{ path('app_signup', {'_locale' : langue}) }}">{{ 'Sign up'|trans|raw }}</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="flag-icon {{ app.request.locale == 'en' ? 'flag-icon-gb' : 'flag-icon-fr' }}"></span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale', { 'url': url ,'locale': 'en'} ) }}">
+                                <span class="flag-icon flag-icon-gb"></span> English
+                            </a>
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale', {'url': url, 'locale': 'fr'}) }}">
+                                <span class="flag-icon flag-icon-fr"></span> Français
+                            </a>
+                        </div>
+                    </li>
+                </ul>
             </nav>
         </div>
     </section>
@@ -71,7 +144,7 @@
         <div class="fh5co-intro js-fullheight" style="padding-top: 10px">
             <section id="custom-connexion">
                 <div class="custom-container2">
-                    <p class="custom-heading">Profile photo</p>
+                    <p class="custom-heading">{{ 'Profile photo'|trans|raw }}</p>
                     {# Afficher les messages flash d'erreur #}
                     {% for flashMessage in app.flashes('error') %}
                         <div class="error-message">
@@ -83,11 +156,11 @@
 
                     <div class="custom-form-row">
                         <div class="custom-form-group half-width">
-                            {{ form_widget(form.PhotoProfile, {'attr': {'class': 'custom-form-control', 'placeholder': 'Logo'}}) }}
+                            {{ form_widget(form.PhotoProfile, {'attr': {'class': 'custom-form-control', 'placeholder': 'Logo'|trans|raw}}) }}
                         </div>
                     </div>
                     <div class="custom-form-group">
-                        <input type="submit" value="Submit" class="custom-btn">
+                        <input type="submit" value="{{ 'Submit'|trans|raw }}" class="custom-btn">
                     </div>
                     {{ form_end(form) }}
                 </div>

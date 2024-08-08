@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %}Sign Up{% endblock %}</title>
+    <title>{% block title %}{{ 'Sign up'|trans|raw }}-TMA{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Découvrez les meilleures aventures de voyage avec nous. Explorez des destinations uniques et préparez-vous pour des expéditions inoubliables.">
     <meta name="keywords" content="voyage, voyages, voyager, voyages de noël, voyages de vacances, voyages de famille, voyages de travail, voyages de vacances, voyages de noël, voyages de famille, voyages de travail">
@@ -18,6 +18,7 @@
         <link href="{{asset('images/favicon.ico')}}" rel="icon">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,600,400italic,700' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
 
         <!-- Animate.css -->
         <link rel="stylesheet" href="{{asset('css/animate.css')}}">
@@ -53,15 +54,32 @@
         <div class="container">
             <nav role="navigation">
                 <ul class="pull-left left-menu">
-                    <li><a href="{{ path('app_home') }}#fh5co-about">About</a></li>
-                    <li><a href="{{ path('app_home') }}#fh5co-features-2">Features</a></li>
-                    <li><a href="{{ path('app_home') }}#fh5co-pricing">Pricing</a></li>
+                    <li><a href="{{ path('app_home', {'_locale' : langue}) }}#fh5co-about">{{ 'About'|trans|raw }}</a></li>
+                    <li><a href="{{ path('app_home', {'_locale' : langue}) }}#fh5co-features-2">{{ 'Features'|trans|raw }}</a></li>
+                    <li><a href="{{ path('app_home', {'_locale' : langue}) }}#fh5co-pricing">{{ 'Pricing'|trans|raw }}</a></li>
                 </ul>
                 <h1 id="fh5co-logo">
-                    <a href="{{ path('app_home') }}">
+                    <a href="{{ path('app_home', {'_locale' : langue}) }}">
                         <img src="{{ asset('images/logo.png') }}" style="width: 100px" alt="Logo"><span>.</span>
                     </a>
                 </h1>
+                <ul class="pull-right right-menu">
+                    <li><a href="{{ path('app_login', {'_locale' : langue}) }}">{{ 'Login'|trans|raw }}</a></li>
+                    <li class="fh5co-cta-btn"><a href="{{ path('app_signup', {'_locale' : langue}) }}">{{ 'Sign up'|trans|raw }}</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="flag-icon {{ app.request.locale == 'en' ? 'flag-icon-gb' : 'flag-icon-fr' }}"></span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale', { 'url': url ,'locale': 'en'} ) }}">
+                                <span class="flag-icon flag-icon-gb"></span> English
+                            </a>
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale', {'url': url, 'locale': 'fr'}) }}">
+                                <span class="flag-icon flag-icon-fr"></span> Français
+                            </a>
+                        </div>
+                    </li>
+                </ul>
             </nav>
         </div>
     </section>
@@ -72,7 +90,7 @@
         <div class="fh5co-intro js-fullheight" style="padding-top: 10px">
             <section id="custom-connexion">
                 <div class="custom-container2">
-                    <p class="custom-heading">Choose Your Subscription</p>
+                    <p class="custom-heading">{{ 'Choose Your Subscription'|trans|raw }}</p>
                     {% for flashMessage in app.flashes('error') %}
                         <div class="error-message">
                             <span class="emoji">&#9888;</span>
@@ -87,30 +105,30 @@
                                     <div class="price">FREE</div>
                                     <hr>
                                     <ul class="pricing-info" style="list-style-type: none; align-content: center;">
-                                        <li>Unlimitted Adventures</li>
-                                        <li>AI Integration</li>
-                                        <li>Watermark feature</li>
-                                        <li>Post podcasts</li>
-                                        <li style="color: #fa4a4a">Includes Ads <i class="fas fa-ad fa-lg"></i></li>
+                                        <li>{{ 'Unlimitted Adventures'|trans|raw }}</li>
+                                        <li>{{ 'AI Integration'|trans|raw }}</li>
+                                        <li>{{ 'Watermark feature'|trans|raw }}</li>
+                                        <li>{{ 'Post podcasts'|trans|raw }}</li>
+                                        <li style="color: #fa4a4a">{{ 'Includes Ads'|trans|raw }}<i class="fas fa-ad fa-lg"></i></li>
                                     </ul>
-                                    <form method="post" action="{{ path('app_form4', {'userId': userId}) }}">
+                                    <form method="post" action="{{ path('app_form4', {'_locale' : langue}) }}">
                                         <input type="hidden" name="subscription" value="0">
-                                        <button type="submit" class="btn btn-default btn-sm">Get started</button>
+                                        <button type="submit" class="btn btn-default btn-sm">{{ 'Get started'|trans|raw }}</button>
                                     </form>
                                 </div>
                             </div>
                             <div class="col-md-3 col-sm-6 animate-box" style="width: 300px;">
                                 <div class="price-box popular">
-                                    <h2 class="pricing-plan" style="font-size: 17px; text-transform: uppercase; font-weight: bold;">Globetrotter</h2>
+                                    <h2 class="pricing-plan" style="font-size: 17px; text-transform: uppercase; font-weight: bold;">{{ 'Globetrotter'|trans|raw }}</h2>
                                     <div class="price"><sup class="currency">TND</sup>20<small>/mo</small></div>
                                     <hr>
                                     <ul class="pricing-info" style="list-style-type: none; align-content: center;">
-                                        <li>Enjoy all Travel Memory App features without limitations</li>
-                                        <li style="color: #fa4a4a; margin-left: 35px; margin-bottom: 45px;">No Ads <i class="fas fa-ad fa-lg" style="margin-left: 5px;"></i> <i class="fas fa-ban" style="color: rgba(73,73,73,0.97); font-size: 1.9em; position: relative; bottom: -0.2em; left: -1em;"></i></li>
+                                        <li>{{ 'Enjoy all Travel Memory App features without limitations'|trans|raw }}</li>
+                                        <li style="color: #fa4a4a; margin-left: 35px; margin-bottom: 45px;">{{ 'No Ads'|trans|raw }} <i class="fas fa-ad fa-lg" style="margin-left: 5px;"></i> <i class="fas fa-ban" style="color: rgba(73,73,73,0.97); font-size: 1.9em; position: relative; bottom: -0.2em; left: -1em;"></i></li>
                                     </ul>
-                                    <form method="post" action="{{ path('app_form4', {'userId': userId}) }}">
+                                    <form method="post" action="{{ path('app_form4', {'_locale' : langue}) }}">
                                         <input type="hidden" name="subscription" value="1">
-                                        <button type="submit" class="btn btn-primary btn-sm">Get started</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">{{ 'Get started'|trans|raw }}</button>
                                     </form>
                                 </div>
                             </div>

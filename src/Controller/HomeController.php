@@ -15,11 +15,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Security;
 
 
@@ -29,30 +31,50 @@ class HomeController extends AbstractController
     public function index0(Security $security): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
         if ($session->has('user')) {
-            return $this->redirectToRoute('app_home_authenticated');
+            return $this->redirectToRoute('app_home_authenticated', ['_locale' => $langue]);
         }
-        return $this->redirectToRoute('app_home_unauthenticated');
+        return $this->redirectToRoute('app_home_unauthenticated', ['_locale' => $langue]);
     }
 
-    #[Route('/home', name: 'app_home_authenticated')]
+    #[Route('/home/{_locale}', name: 'app_home_authenticated', defaults: ['_locale' => 'en'])]
     public function index00(): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_home_authenticated';
         $user_id = $session->get('user');
         if (!$session->has('user')) {
-            return $this->redirectToRoute('app_home_unauthenticated');
+            return $this->redirectToRoute('app_home_unauthenticated', ['_locale' => $langue]);
         }
         return $this->render('home/index1.html.twig', [
             'userId' => $user_id,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/homeA', name: 'app_home_unauthenticated')]
+    #[Route('/change-locale/{locale}/{url}', name: 'change_locale')]
+    public function changeLocale($locale, $url, Request $request)
+    {
+        $request->getSession()->set('_locale', $locale);
+
+        return $this->redirectToRoute($url, [
+            '_locale' => $locale,
+        ]);
+    }
+
+    #[Route('/homeA/{_locale}', name: 'app_home_unauthenticated', defaults: ['_locale' => 'en'])]
     public function index000(): Response
     {
+        $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_home_unauthenticated';
         return $this->render('home/index.html.twig', [
             'controller_name' => 'HomeController',
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
@@ -63,9 +85,14 @@ class HomeController extends AbstractController
     }
 
 
-    #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
+    #[Route('/login/{_locale}', name: 'app_login', defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function login(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, SessionInterface $session): Response
     {
+        $session = $this->get('session');
+        $langue = $session->get('_locale');
+        if (!$langue)
+            $langue = 'en';
+        $url = 'app_login';
         $form = $this->createForm(LoginType::class);
         $form->handleRequest($request);
 
@@ -77,29 +104,29 @@ class HomeController extends AbstractController
 
             if (!$user) {
                 $this->addFlash('error', 'Email not found');
-                return $this->redirectToRoute('app_login');
+                return $this->redirectToRoute('app_login', ['_locale' => $langue] );
             }
 
             if (!$passwordHasher->isPasswordValid($user, $password)) {
                 $this->addFlash('error', 'Invalid password');
-                return $this->redirectToRoute('app_login');
+                return $this->redirectToRoute('app_login', ['_locale' => $langue]);
             }
 
             if (is_null($user->getSubscription()) ) {
                 $session->set('user', $user->getId());
-                return $this->redirectToRoute('app_form4');
+                return $this->redirectToRoute('app_form4', ['_locale' => $langue]);
             }
 
             // Vérifier si le type ou le thème est null
             if (is_null($user->getType()) || is_null($user->getTheme())) {
                 $session->set('user', $user->getId());
-                return $this->redirectToRoute('app_form1');
+                return $this->redirectToRoute('app_form1', ['_locale' => $langue]);
             }
 
             // Vérifier si le nom de la page ou le logo est null
             if (is_null($user->getPageNom()) || is_null($user->getLogo())) {
                 $session->set('user', $user->getId());
-                return $this->redirectToRoute('app_form2');
+                return $this->redirectToRoute('app_form2', ['_locale' => $langue]);
             }
 
             $photoProfile = null;
@@ -116,21 +143,26 @@ class HomeController extends AbstractController
             }
             if (is_null($photoProfile)) {
                 $session->set('user', $user->getId());
-                return $this->redirectToRoute('app_form3');
+                return $this->redirectToRoute('app_form3', ['_locale' => $langue]);
             }
             $session->set('user', $user->getId());
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_profile', ['_locale' => $langue]);
         }
 
         return $this->render('home/login.html.twig', [
             'form' => $form->createView(),
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
 
-    #[Route('/signup', name: 'app_signup', methods: ['GET', 'POST'])]
+    #[Route('/signup/{_locale}', name: 'app_signup', methods: ['GET', 'POST'])]
     public function signup(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository , SessionInterface $session): Response
     {
+        $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_signup';
         $form = $this->createForm(SignUpType::class);
         $form->handleRequest($request);
 
@@ -144,6 +176,8 @@ class HomeController extends AbstractController
                 $this->addFlash('error', 'The email already exists.');
                 return $this->render('home/SignUp.html.twig', [
                     'form' => $form->createView(),
+                    'url' => $url,
+                    'langue' => $langue,
                 ]);
             }
 
@@ -154,6 +188,8 @@ class HomeController extends AbstractController
                 $this->addFlash('error', 'The passwords do not match.');
                 return $this->render('home/SignUp.html.twig', [
                     'form' => $form->createView(),
+                    'url' => $url,
+                    'langue' => $langue,
                 ]);
             }
 
@@ -165,21 +201,25 @@ class HomeController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login', ['_locale' => $langue]);
         }
 
         return $this->render('home/SignUp.html.twig', [
             'form' => $form->createView(),
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/signup1', name: 'app_form1', methods: ['GET', 'POST'])]
+    #[Route('/signup1/{_locale}', name: 'app_form1', methods: ['GET', 'POST'])]
     public function form1( Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository , SessionInterface $session): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_form1';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login', ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
         $user = $userRepository->find($currentUser);
@@ -193,21 +233,25 @@ class HomeController extends AbstractController
 
         if ($form->isSubmitted()) {
             $entityManager->flush();
-            return $this->redirectToRoute('app_form2');
+            return $this->redirectToRoute('app_form2', ['_locale' => $langue]);
         }
 
         return $this->render('home/form1.html.twig', [
             'form' => $form->createView(),
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/signup2', name: 'app_form2', methods: ['GET', 'POST'])]
+    #[Route('/signup2/{_locale}', name: 'app_form2', methods: ['GET', 'POST'])]
     public function form2( Request $request, UserRepository $userRepository,ParameterBagInterface $params , SessionInterface $session): Response {
         $logos_directory = $params->get('logos_directory');
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_form2';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login', ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -227,6 +271,8 @@ class HomeController extends AbstractController
                 $this->addFlash('error', 'The page name already exists.');
                 return $this->render('home/form2.html.twig', [
                     'form' => $form->createView(),
+                    'url' => $url,
+                    'langue' => $langue,
                 ]);
             }
 
@@ -235,7 +281,7 @@ class HomeController extends AbstractController
                 // Vérifier l'extension du fichier
                 if ($logoFile->guessExtension() !== 'png') {
                     $this->addFlash('error', 'The file is not compatible. Only PNG files are allowed.');
-                    return $this->redirectToRoute('app_form2');
+                    return $this->redirectToRoute('app_form2' , ['_locale' => $langue]);
                 }
 
                 $newFilename = $user->getPageNom() . $user->getId() . '.' . $logoFile->guessExtension();
@@ -243,7 +289,7 @@ class HomeController extends AbstractController
                     $logoFile->move($logos_directory, $newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the file.');
-                    return $this->redirectToRoute('app_form2');
+                    return $this->redirectToRoute('app_form2' , ['_locale' => $langue]);
                 }
                 $user->setLogo($newFilename);
             }
@@ -251,21 +297,25 @@ class HomeController extends AbstractController
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
-            return $this->redirectToRoute('app_form3');
+            return $this->redirectToRoute('app_form3' , ['_locale' => $langue]);
         }
 
         return $this->render('home/form2.html.twig', [
             'form' => $form->createView(),
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/signup3', name: 'app_form3', methods: ['GET', 'POST'])]
+    #[Route('/signup3/{_locale}', name: 'app_form3', methods: ['GET', 'POST'])]
     public function form3(EntityManagerInterface $entityManager, Request $request, UserRepository $userRepository,SectionRepository $sectionRepository, ParameterBagInterface $params , SessionInterface $session): Response {
         $logos_directory = $params->get('logos_directory');
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_form3';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
         $user = $userRepository->find($currentUser);
@@ -295,7 +345,7 @@ class HomeController extends AbstractController
                 } catch (FileException $e) {
                     $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                     $this->addFlash('error', $errorMessage);
-                    return $this->redirectToRoute('app_form3');
+                    return $this->redirectToRoute('app_form3' , ['_locale' => $langue]);
                 }
 
             }
@@ -303,21 +353,25 @@ class HomeController extends AbstractController
             $entityManager->persist($ProfilePhotoSection);
             $entityManager->flush();
             $session->set('user', $user->getId());
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_profile' , ['_locale' => $langue]);
         }
 
         return $this->render('home/form3.html.twig', [
             'form' => $form->createView(),
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/signup4', name: 'app_form4', methods: ['GET', 'POST'])]
+    #[Route('/signup4/{_locale}', name: 'app_form4', methods: ['GET', 'POST'])]
     public function form4(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_form4';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
         $user = $userRepository->find($currentUser);
@@ -337,23 +391,25 @@ class HomeController extends AbstractController
                     $this->addFlash('info', 'For now, our website is free just for testing purposes.');
                     if (is_null($user->getType()) || is_null($user->getTheme())) {
                         $session->set('user', $user->getId());
-                        return $this->redirectToRoute('app_form1');
+                        return $this->redirectToRoute('app_form1' , ['_locale' => $langue]);
                     }
-                    return $this->redirectToRoute('app_profile');
+                    return $this->redirectToRoute('app_profile' , ['_locale' => $langue]);
                 }else{
                     if (is_null($user->getType()) || is_null($user->getTheme())) {
                         $session->set('user', $user->getId());
-                        return $this->redirectToRoute('app_form1');
+                        return $this->redirectToRoute('app_form1' , ['_locale' => $langue]);
                     }
-                    return $this->redirectToRoute('app_profile');
+                    return $this->redirectToRoute('app_profile' , ['_locale' => $langue]);
                 }
             }
 
-            return $this->redirectToRoute('app_form4');
+            return $this->redirectToRoute('app_form4' , ['_locale' => $langue]);
         }
 
         return $this->render('home/form4.html.twig', [
             'userId' => $currentUser,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 

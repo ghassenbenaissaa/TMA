@@ -17,6 +17,8 @@
         <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}">
         <link href="{{asset('images/favicon.ico')}}" rel="icon">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,600,400italic,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
 
         <!-- Animate.css -->
         <link rel="stylesheet" href="{{asset('css/animate.css')}}">
@@ -43,7 +45,61 @@
 </head>
 
 <body>
+<style>
 
+    .nav-item.dropdown .nav-link::after {
+        content: "";
+        display: inline-block;
+        margin-left: 0.255em;
+        vertical-align: 0.255em;
+        border-top: 0.3em solid;
+        border-right: 0.3em solid transparent;
+        border-bottom: 0;
+        border-left: 0.3em solid transparent;
+        transition: transform 0.2s;
+    }
+
+    .nav-item.dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        color: black;
+    }
+
+    .nav-item.dropdown .dropdown-item .flag-icon {
+        margin-right: 0.5rem;
+    }
+
+    .nav-item.dropdown .nav-link img {
+        width: 1.5rem;
+        height: auto;
+    }
+
+    .nav-item.dropdown .nav-link .flag-icon {
+        margin: 0;
+    }
+
+    .nav-item.dropdown .nav-link.dropdown-toggle {
+        background: none;
+        border: none;
+        padding: 0;
+        color: black;
+    }
+
+    .nav-item.dropdown.show .dropdown-menu {
+        display: block;
+    }
+
+    .nav-item.dropdown .dropdown-menu a {
+        color: black;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+    }
+
+    .nav-item.dropdown .dropdown-menu a:hover {
+        background-color: #ff7777;
+    }
+
+</style>
 <!-- Loader -->
 <div class="fh5co-loader"></div>
 
@@ -52,13 +108,26 @@
         <div class="container">
             <nav role="navigation">
                 <ul class="pull-left left-menu">
-                    <li><a href="#fh5co-about">About</a></li>
-                    <li><a href="#fh5co-features-2">Features</a></li>
-                    <li><a href="#fh5co-pricing">Pricing</a></li>
+                    <li><a href="#fh5co-about">{{ 'About'|trans|raw }}</a></li>
+                    <li><a href="#fh5co-features-2">{{ 'Features'|trans|raw  }}</a></li>
+                    <li><a href="#fh5co-pricing">{{ 'Pricing'|trans|raw }}</a></li>
                 </ul>
-                <h1 id="fh5co-logo"><a href="{{ path('app_home') }}"><img src="images/logo.png" style="width: 100px" ><span>.</span></a></h1>
+                <h1 id="fh5co-logo"><a href="{{ path('app_home', {'_locale' : langue}) }}"><img src="{{asset('images/logo.png')}}"  style="width: 100px"  alt="logo"><span>.</span></a></h1>
                 <ul class="pull-right right-menu">
-                    <li class="fh5co-cta-btn"><a href="{{ path('app_profile') }}">Profile</a></li>
+                    <li class="fh5co-cta-btn"><a href="{{ path('app_profile', {'_locale' : langue}) }}">{{ 'Profile'|trans|raw }}</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="flag-icon {{ app.request.locale == 'en' ? 'flag-icon-gb' : 'flag-icon-fr' }}"></span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale', { 'url': url ,'locale': 'en'} ) }}">
+                                <span class="flag-icon flag-icon-gb"></span> English
+                            </a>
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale', {'url': url, 'locale': 'fr'}) }}">
+                                <span class="flag-icon flag-icon-fr"></span> Français
+                            </a>
+                        </div>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -71,15 +140,16 @@
             <div class="fh5co-intro js-fullheight">
                 <div class="fh5co-intro-text">
                     <div class="fh5co-left-position">
-                        <h2 class="animate-box" style="margin-bottom: 5px">Illuminate Your Journey</h2>
-                        <h3 class="animate-box">Join our community to share your journey and make new friends around the globe.</h3>
+                        <h2 class="animate-box" style="margin-bottom: 5px">{{ 'Illuminate Your Journey'|trans|raw }}</h2>
+                        <h3 class="animate-box">{{ 'Join our community to share your journey and make new friends around the globe.'|trans|raw }}</h3>
+                        <p class="animate-box"><a href="{{ path('app_signup', {'_locale' : langue}) }}" class="btn btn-primary">{{ 'Sign up'|trans|raw }}</a></p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="fh5co-learn-more animate-box">
             <a href="#" class="scroll-btn">
-                <span class="text">Explore more about us</span>
+                <span class="text">{{ 'Explore more about us'|trans|raw }}</span>
                 <span class="arrow"><i class="icon-chevron-down"></i></span>
             </a>
         </div>
@@ -91,14 +161,14 @@
             <div class="row row-bottom-padded-lg">
                 <div class="col-md-6">
                     <figure class="animate-box">
-                        <img src="images/logo2.png" class="img-responsive">
+                        <img src="{{asset('images/logo2.png')}}"  class="img-responsive">
                     </figure>
                 </div>
                 <div class="col-md-6">
                     <br>
                     <br><br><br>
-                    <h2 class="fh5co-lead animate-box">Welcome to Travel Memory App</h2>
-                    <p class="fh5co-sub-lead animate-box">At TMA, we believe that every journey should be an extraordinary experience, illuminating the path to new adventures and unforgettable memories. Our mission is to provide a personalized platform for avid travelers to share their stories, explore new destinations, and connect with a community of like-minded adventurers.</p>
+                    <h2 class="fh5co-lead animate-box">{{ 'Welcome to Travel Memory App'|trans|raw }}</h2>
+                    <p class="fh5co-sub-lead animate-box"> {{ 'At TMA, we believe that every journey should be an extraordinary experience, illuminating the path to new adventures and unforgettable memories. Our mission is to provide a personalized platform for avid travelers to share their stories, explore new destinations, and connect with a community of like-minded adventurers.'|trans|raw }}</p>
                 </div>
             </div>
         </div>
@@ -112,26 +182,26 @@
                 </figure>
             </div>
             <div class="col-md-6 col-md-pull-6">
-                <h2 class="fh5co-lead animate-box">What We Offer</h2>
+                <h2 class="fh5co-lead animate-box">{{ 'What We Offer'|trans|raw }}</h2>
                 <div class="fh5co-feature">
                     <div class="fh5co-icon animate-box"><i class="icon-check2"></i></div>
                     <div class="fh5co-text animate-box">
-                        <h3>Customizable Travel Blogs</h3>
-                        <p>Create your own personalized travel journal, tailored to your unique experiences and preferences. Choose from a variety of themes, layouts, and features to make your story truly yours. </p>
+                        <h3>{{ 'Customizable Travel Blogs'|trans|raw }}</h3>
+                        <p>{{ 'Create your own personalized travel journal, tailored to your unique experiences and preferences. Choose from a variety of themes, layouts, and features to make your story truly yours.'|trans|raw }}</p>
                     </div>
                 </div>
                 <div class="fh5co-feature">
                     <div class="fh5co-icon animate-box"><i class="icon-check2"></i></div>
                     <div class="fh5co-text animate-box">
-                        <h3>AI Integration</h3>
-                        <p>Enhance your writing with our integrated AI tools, designed to help you refine and correct your paragraphs effortlessly.</p>
+                        <h3>{{ 'AI Integration'|trans|raw }}</h3>
+                        <p>{{ 'Enhance your writing with our integrated AI tools, designed to help you refine and correct your paragraphs effortlessly.'|trans|raw }}</p>
                     </div>
                 </div>
                 <div class="fh5co-feature">
                     <div class="fh5co-icon animate-box"><i class="icon-check2"></i></div>
                     <div class="fh5co-text animate-box">
-                        <h3>Photo Protection</h3>
-                        <p>Safeguard your precious travel photos with our watermark feature, ensuring your images are protected when shared with the world. </p>
+                        <h3>{{ 'Photo Protection'|trans|raw }}</h3>
+                        <p>{{ 'Safeguard your precious travel photos with our watermark feature, ensuring your images are protected when shared with the world.'|trans|raw }} </p>
                     </div>
                 </div>
 
@@ -143,8 +213,8 @@
         <div class="container">
             <div class="row row-bottom-padded-md">
                 <div class="col-md-6 col-md-offset-3 text-center">
-                    <h2 class="fh5co-lead animate-box">Choose Your Theme</h2>
-                    <p class="fh5co-sub-lead animate-box">We offer three distinct themes for you to personalize your travel blog. Each theme is designed to reflect different aspects of your journey, allowing you to create a blog that truly represents your unique experiences.</p>
+                    <h2 class="fh5co-lead animate-box">{{ 'Choose Your Theme'|trans|raw }}</h2>
+                    <p class="fh5co-sub-lead animate-box">{{ 'We offer three distinct themes for you to personalize your travel blog. Each theme is designed to reflect different aspects of your journey, allowing you to create a blog that truly represents your unique experiences.'|trans|raw }}</p>
                 </div>
             </div>
             <div class="row">
@@ -153,8 +223,8 @@
                     <a href="{{asset('images/dark.png')}}" class="fh5co-project-item image-popup">
                         <img src="{{asset('images/dark.png')}}" alt="Image" class="img-responsive">
                         <div class="fh5co-text">
-                            <h2>Dark Theme</h2>
-                            <p>The Dark Theme is perfect for those who prefer a sleek and sophisticated look. With its elegant black background and clean design, your travel stories will stand out with a touch of class.</p>
+                            <h2>{{ 'Dark Theme'|trans|raw }}</h2>
+                            <p>{{ 'The Dark Theme is perfect for those who prefer a sleek and sophisticated look. With its elegant black background and clean design, your travel stories will stand out with a touch of class.'|trans|raw }}</p>
                         </div>
                     </a>
                 </div>
@@ -163,8 +233,8 @@
                     <a href="{{asset('images/blue.png')}}" class="fh5co-project-item image-popup">
                         <img src="{{asset('images/blue.png')}}" alt="Image" class="img-responsive">
                         <div class="fh5co-text">
-                            <h2>Marine Blue Theme</h2>
-                            <p>Dive into the depths of your adventures with the Marine Blue Theme. This theme features a rich navy blue background, evoking the mystery and allure of the open sea.</p>
+                            <h2>{{ 'Marine Blue Theme'|trans|raw }}</h2>
+                            <p>{{ 'Dive into the depths of your adventures with the Marine Blue Theme. This theme features a rich navy blue background, evoking the mystery and allure of the open sea.'|trans|raw }}</p>
                         </div>
                     </a>
                 </div>
@@ -173,8 +243,8 @@
                     <a href="{{asset('images/pestachio.png')}}" class="fh5co-project-item image-popup">
                         <img src="{{asset('images/pestachio.png')}}" alt="Image" class="img-responsive">
                         <div class="fh5co-text">
-                            <h2>Pistachio Green Theme</h2>
-                            <p>Embrace the freshness of nature with the Pistachio Green Theme. This vibrant and lively theme brings the essence of lush landscapes and natural beauty to your blog</p>
+                            <h2>{{ 'Pistachio Green Theme'|trans|raw }}</h2>
+                            <p>{{ 'Embrace the freshness of nature with the Pistachio Green Theme. This vibrant and lively theme brings the essence of lush landscapes and natural beauty to your blog'|trans|raw }}</p>
                         </div>
                     </a>
                 </div>
@@ -185,8 +255,8 @@
 
     <section id="fh5co-pricing">
         <div class="col-md-6 col-md-offset-3 text-center">
-            <h2 class="fh5co-lead animate-box">Our Packages</h2>
-            <p class="fh5co-sub-lead animate-box">We offer a range of subscription packages designed to suit every traveler’s needs. To enjoy all our features and make the most out of your travel blog, choose the package that best fits your adventure style.</p>
+            <h2 class="fh5co-lead animate-box">{{ 'Our Packages'|trans|raw }}</h2>
+            <p class="fh5co-sub-lead animate-box">{{ 'We offer a range of subscription packages designed to suit every traveler’s needs. To enjoy all our features and make the most out of your travel blog, choose the package that best fits your adventure style.'|trans|raw }}</p>
         </div>
         <div class="container">
             <div class="row">
@@ -195,30 +265,30 @@
                 <div class="col-md-3 col-sm-6 animate-box">
                     <div class="price-box">
                         <h2 class="pricing-plan">TMA Elite</h2>
-                        <div class="price">FREE</div>
+                        <div class="price">{{ 'FREE'|trans|raw }}</div>
                         <hr>
                         <ul class="pricing-info">
-                            <li>Unlimitted Adventures</li>
-                            <li>AI Integration</li>
-                            <li>Watermark feature</li>
-                            <li>Post podcasts</li>
-                            <li style="color: #fa4a4a">Includes Ads <i class="fas fa-ad fa-lg"></i></li>
+                            <li>{{ 'Unlimitted Adventures'|trans|raw }}</li>
+                            <li>{{ 'AI Integration'|trans|raw }}</li>
+                            <li>{{ 'Watermark feature'|trans|raw }}</li>
+                            <li>{{ 'Post podcasts'|trans|raw }}</li>
+                            <li style="color: #fa4a4a">{{ 'Includes Ads'|trans|raw }} <i class="fas fa-ad fa-lg"></i></li>
                         </ul>
-                        <a href="{{ path('app_signup') }}" class="btn btn-default btn-sm">Get started</a>
+                        <a href="{{ path('app_signup', {'_locale' : langue}) }}" class="btn btn-default btn-sm">{{ 'Get started'|trans|raw }}</a>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6 animate-box">
                     <div class="price-box popular">
-                        <div class="popular-text">Best value</div>
-                        <h2 class="pricing-plan">Globetrotter</h2>
+                        <div class="popular-text">{{ 'Best value'|trans|raw }}</div>
+                        <h2 class="pricing-plan">{{ 'Globetrotter'|trans|raw }}</h2>
                         <div class="price"><sup class="currency">TND</sup>20<small>/mo</small></div>
                         <hr>
                         <ul class="pricing-info">
-                            <li>Enjoy all Travel Memory App features without limitations</li>
-                            <li style="color: #fa4a4a; margin-left: 35px; margin-bottom: 7px;">No Ads <i class="fas fa-ad fa-lg" style="margin-left: 5px;"></i> <i class="fas fa-ban" style="color: rgba(73,73,73,0.97); font-size: 1.9em; position: relative; bottom: -0.2em; left: -1em;"></i></li>
+                            <li>{{ 'Enjoy all Travel Memory App features without limitations'|trans|raw }}</li>
+                            <li style="color: #fa4a4a; margin-left: 35px; margin-bottom: 7px;">{{ 'No Ads'|trans|raw }} <i class="fas fa-ad fa-lg" style="margin-left: 5px;"></i> <i class="fas fa-ban" style="color: rgba(73,73,73,0.97); font-size: 1.9em; position: relative; bottom: -0.2em; left: -1em;"></i></li>
                             <br>
                         </ul>
-                        <a href="{{ path('app_signup') }}" class="btn btn-primary btn-sm">Get started</a>
+                        <a href="{{ path('app_signup', {'_locale' : langue}) }}" class="btn btn-primary btn-sm">{{ 'Get started'|trans|raw }}</a>
                     </div>
                 </div>
             </div>
