@@ -8,7 +8,7 @@
     <meta name="keywords" content="voyage, voyages, voyager, voyages de noël, voyages de vacances, voyages de famille, voyages de travail, voyages de vacances, voyages de noël, voyages de famille, voyages de travail">
     <meta name="author" content="Ghassen Ben Aissa">
 
-    <title>{% block title %}TMA-Profile{% endblock %}</title>
+    <title>{% block title %}{{ 'Profile'|trans|raw }}-TMA{% endblock %}</title>
     {% block stylesheets %}
         <!-- plugins:css -->
         <link rel="stylesheet" href="{{asset('vendorsProfile/mdi/css/materialdesignicons.min.css')}}">
@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="{{asset('vendorsProfile/font-awesome/css/font-awesome.min.css')}}" />
         <link rel="stylesheet" href="{{asset('vendorsProfile/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
         <!-- End plugin css for this page -->
         <!-- inject:css -->
         <!-- endinject -->
@@ -124,8 +125,8 @@
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-            <a class="navbar-brand brand-logo" href="{{ path('app_home') }}"><img src="{{ asset('images/logo33.png') }}" alt="logo" /></a>
-            <a class="navbar-brand brand-logo-mini" href="{{ path('app_home') }}"><img src="{{ asset('images/apple-touch-icon.png') }}" alt="logo" /></a>
+            <a class="navbar-brand brand-logo" href="{{ path('app_home', {'_locale' : langue}) }}"><img src="{{ asset('images/logo33.png') }}" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="{{ path('app_home', {'_locale' : langue}) }}"><img src="{{ asset('images/apple-touch-icon.png') }}" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -156,7 +157,7 @@
                         {% endif %}
                     </a>
                     <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                        <h6 class="p-3 mb-0">Notifications</h6>
+                        <h6 class="p-3 mb-0">{{ 'Notifications'|trans|raw }}</h6>
                         <div class="dropdown-divider"></div>
                         {% if notifications is empty %}
                             <a class="dropdown-item preview-item">
@@ -166,7 +167,7 @@
                                     </div>
                                 </div>
                                 <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-                                    <h6 class="preview-subject font-weight-normal mb-1">No notifications</h6>
+                                    <h6 class="preview-subject font-weight-normal mb-1">{{ 'No notifications'|trans|raw }}</h6>
                                 </div>
                             </a>
                         {% else %}
@@ -178,7 +179,7 @@
                                         </div>
                                     </div>
                                     <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-                                        <h6 class="preview-subject font-weight-normal mb-1">New request</h6>
+                                        <h6 class="preview-subject font-weight-normal mb-1">{{ 'New request'|trans|raw }}</h6>
                                         <p class="text-gray ellipsis mb-0"> From {{ notification.nom }} {{ notification.prenom }}</p>
                                     </div>
                                     <div class="d-flex align-items-center mt-2">
@@ -193,8 +194,6 @@
                                             </button>
                                         </form>
                                     </div>
-
-
                                 </a>
                                 <div class="dropdown-divider"></div>
                             {% endfor %}
@@ -206,8 +205,22 @@
                         <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
                     </a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+                        <i class="flag-icon {{ app.request.locale == 'en' ? 'flag-icon-gb' : 'flag-icon-fr' }}"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" style="color: black" href="{{ path('change_locale', { 'url': url ,'locale': 'en'} ) }}">
+                            <span class="flag-icon flag-icon-gb"></span> English
+                        </a>
+                        <a class="dropdown-item" style="color: black" href="{{ path('change_locale', {'url': url, 'locale': 'fr'}) }}">
+                            <span class="flag-icon flag-icon-fr"></span> Français
+                        </a>
+                    </div>
+                </li>
                 <li class="nav-item nav-logout d-none d-lg-block">
-                    <a class="nav-link" href="{{ path('app_logout') }}">
+                    <a class="nav-link" href="{{ path('app_logout', {'_locale' : langue}) }}">
                         <i class="mdi mdi-power"></i>
                     </a>
                 </li>
@@ -223,37 +236,37 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{{ path('app_profile') }}">
-                        <span class="menu-title">Profile</span>
+                    <a class="nav-link" href="{{ path('app_profile', {'_locale' : langue}) }}">
+                        <span class="menu-title">{{ 'Profile'|trans|raw }}</span>
                         <i class="mdi mdi-home menu-icon"></i>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                        <span class="menu-title">Settings</span>
+                        <span class="menu-title">{{ 'Settings'|trans|raw }}</span>
                         <i class="menu-arrow"></i>
                         <i class="fa fa-gear menu-icon"></i>
                     </a>
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_editProfile') }}">
-                                    <i class="fas fa-user-edit  me-2"></i> Edit Profile
+                                <a class="nav-link" href="{{ path('app_editProfile', {'_locale' : langue}) }}">
+                                    <i class="fas fa-user-edit  me-2"></i> {{ 'Edit Profile'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_CPassword') }}">
-                                    <i class="fas fa-key  me-2"></i> Change Password
+                                <a class="nav-link" href="{{ path('app_CPassword', {'_locale' : langue}) }}">
+                                    <i class="fas fa-key  me-2"></i> {{ 'Change Password'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_friends') }}">
-                                    <i class="fas fa-users me-2"></i> Friends
+                                <a class="nav-link" href="{{ path('app_friends', {'_locale' : langue}) }}">
+                                    <i class="fas fa-users me-2"></i> {{ 'Friends'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_DAccount') }}">
-                                    <i class="fas fa-user-times  me-2"></i> Delete Account
+                                <a class="nav-link" href="{{ path('app_DAccount', {'_locale' : langue}) }}">
+                                    <i class="fas fa-user-times  me-2"></i> {{ 'Delete Account'|trans|raw }}
                                 </a>
                             </li>
                         </ul>
@@ -268,23 +281,23 @@
                     <div class="collapse" id="ui-pages">
                         <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Website') }}">
-                                    <i class="fas fa-edit me-2"></i> Edit Website
+                                <a class="nav-link" href="{{ path('app_Website', {'_locale' : langue}) }}">
+                                    <i class="fas fa-edit me-2"></i> {{ 'Edit Website'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Msections') }}">
-                                    <i class="fas fa-th-large me-2"></i> Main Sections
+                                <a class="nav-link" href="{{ path('app_Msections', {'_locale' : langue}) }}">
+                                    <i class="fas fa-th-large me-2"></i> {{ 'Main Sections'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_ShowAdventures') }}">
-                                    <i class="fas fa-mountain me-2"></i> Show Adventures
+                                <a class="nav-link"  href="{{ path('app_ShowAdventures', {'_locale' : langue}) }}">
+                                    <i class="fas fa-mountain me-2"></i> {{ 'Show Adventures'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" style="color: #f85454" href="{{ path('app_ShowPodcast') }}">
-                                    <i class="fas fa-podcast me-2"></i> Show Podcasts
+                                <a class="nav-link" style="color: #f85454" href="{{ path('app_ShowPodcast', {'_locale' : langue}) }}">
+                                    <i class="fas fa-podcast me-2"></i> {{ 'Show Podcasts'|trans|raw }}
                                 </a>
                             </li>
                         </ul>
@@ -299,33 +312,28 @@
                     <div class="col-12 grid-margin">
                         <div class="card">
                             <div class="card-body">
-                                <h2 class="custom-heading" style="padding-bottom: 15px;">Add Podcast</h2>
+                                <h2 class="custom-heading" style="padding-bottom: 15px;">{{ 'Add Podcast'|trans|raw }}</h2>
 
                                 {% for flashMessage in app.flashes('error') %}
                                     <div class="alert alert-danger" role="alert">
-                                        <span class="emoji">&#9888;</span> {{ flashMessage }}
+                                        <span class="emoji">&#9888;</span> {{ flashMessage|trans|raw  }}
                                     </div>
                                 {% endfor %}
 
-                                {% for flashMessage in app.flashes('success') %}
-                                    <div class="alert alert-success" role="alert">
-                                        <span class="emoji">&#x1F44C;</span> Sections updated successfully.
-                                    </div>
-                                {% endfor %}
                                 {{ form_start(form, {'attr': {'class': 'custom-form', 'style': 'text-align: center;', 'enctype': 'multipart/form-data'}}) }}
                                 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                                     <div class="custom-form-group" style="width: 50%; margin-bottom: 20px;">
-                                        {{ form_widget(form.name, {'attr': {'class': 'custom-form-control', 'placeholder': 'Podcast name*', 'style': 'width: 100%; padding: 10px;'}}) }}
+                                        {{ form_widget(form.name, {'attr': {'class': 'custom-form-control', 'placeholder': 'Podcast name*'|trans|raw, 'style': 'width: 100%; padding: 10px;'}}) }}
                                     </div>
                                     <div class="custom-form-group" style="width: 50%; margin-bottom: 20px;">
-                                        {{ form_widget(form.description, {'attr': {'class': 'custom-form-control', 'placeholder': 'Description*', 'style': 'width: 100%; padding: 10px;'}}) }}
+                                        {{ form_widget(form.description, {'attr': {'class': 'custom-form-control', 'placeholder': 'Description*'|trans|raw, 'style': 'width: 100%; padding: 10px;'}}) }}
                                     </div>
                                     <div class="custom-form-group" style="width: 50%; margin-bottom: 20px; border: 1px solid #676767;">
                                         <label for="audio-upload" class="btn btn-primary">
-                                            <i class="fa fa-upload"></i> Select Audio File
+                                            <i class="fa fa-upload"></i> {{ 'Select Audio File'|trans|raw }}
                                         </label>
                                         {{ form_widget(form.source, {'attr': {'class': 'custom-file-input', 'style': 'display: none;'}}) }}
-                                        <span id="file-upload-info" style="margin-left: 10px;">No file selected</span>
+                                        <span id="file-upload-info" style="margin-left: 10px;">{{ 'No file selected'|trans|raw }}</span>
                                         <input type="file" id="audio-upload" name="audio" style="opacity: 0; top: 0; left: 0; width: 0%; height: 0%;" accept=".mp3,.wav" required>
                                     </div>
                                     <div id="audio-preview" style="margin-bottom: 20px;"></div>
@@ -334,17 +342,17 @@
                                         {{ form_widget(form.images, {'attr': {'style': 'display: none;', 'multiple': 'multiple'}}) }}
                                         <div style="position: relative; display: inline-block;">
                                             <button type="button" id="custom-file-upload" class="btn btn-primary" style="margin-right: 10px;">
-                                                <i class="fa fa-upload"></i> Select Images
+                                                <i class="fa fa-upload"></i> {{ 'Select Images'|trans|raw }}
                                             </button>
                                             <input type="file" id="images" name="images[]" multiple style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
                                         </div>
 
-                                        <span id="file-upload-info" style="display: inline-block; vertical-align: middle; margin-left: 10px;">No files selected</span>
+                                        <span id="file-upload-info" style="display: inline-block; vertical-align: middle; margin-left: 10px;">{{ 'No files selected'|trans|raw }}</span>
 
                                         <div id="image-preview-container" style="margin-top: 20px; display: flex; flex-wrap: wrap;"></div>
                                     </div>
                                     <div class="form-group">
-                                        <input type="submit" value="Submit" class="btn btn-primary">
+                                        <input type="submit" value="{{ 'Submit'|trans|raw }}" class="btn btn-primary">
                                     </div>
                                 </div>
                                 {{ form_end(form) }}

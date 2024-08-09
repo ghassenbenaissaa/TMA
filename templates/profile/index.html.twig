@@ -8,7 +8,7 @@
     <meta name="keywords" content="voyage, voyages, voyager, voyages de noël, voyages de vacances, voyages de famille, voyages de travail, voyages de vacances, voyages de noël, voyages de famille, voyages de travail">
     <meta name="author" content="Ghassen Ben Aissa">
 
-    <title>{% block title %}TMA-Profile{% endblock %}</title>
+    <title>{% block title %}{{ 'Profile'|trans|raw }}-TMA{% endblock %}</title>
     {% block stylesheets %}
         <!-- plugins:css -->
         <link rel="stylesheet" href="{{asset('vendorsProfile/mdi/css/materialdesignicons.min.css')}}">
@@ -19,6 +19,8 @@
         <!-- Plugin css for this page -->
         <link rel="stylesheet" href="{{asset('vendorsProfile/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+
         <link rel="stylesheet" href="{{asset('cssProfile/style.css')}}">
         <!-- End layout styles -->
         <link rel="shortcut icon" href="{{asset('images/favicon-32x32.png')}}" />
@@ -42,8 +44,8 @@
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-            <a class="navbar-brand brand-logo" href="{{ path('app_home') }}"><img src="{{ asset('images/logo33.png') }}" alt="logo" /></a>
-            <a class="navbar-brand brand-logo-mini" href="{{ path('app_home') }}"><img src="{{ asset('images/apple-touch-icon.png') }}" alt="logo" /></a>
+            <a class="navbar-brand brand-logo" href="{{ path('app_home', {'_locale' : langue}) }}"><img src="{{ asset('images/logo33.png') }}" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-mini" href="{{ path('app_home', {'_locale' : langue}) }}"><img src="{{ asset('images/apple-touch-icon.png') }}" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -74,7 +76,7 @@
                         {% endif %}
                     </a>
                     <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                        <h6 class="p-3 mb-0">Notifications</h6>
+                        <h6 class="p-3 mb-0">{{ 'Notifications'|trans|raw }}</h6>
                         <div class="dropdown-divider"></div>
                         {% if notifications is empty %}
                         <a class="dropdown-item preview-item">
@@ -84,7 +86,7 @@
                                 </div>
                             </div>
                             <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-                                <h6 class="preview-subject font-weight-normal mb-1">No notifications</h6>
+                                <h6 class="preview-subject font-weight-normal mb-1">{{ 'No notifications'|trans|raw }}</h6>
                             </div>
                         </a>
                         {% else %}
@@ -96,8 +98,8 @@
                                         </div>
                                     </div>
                                     <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
-                                        <h6 class="preview-subject font-weight-normal mb-1">New request</h6>
-                                        <p class="text-gray ellipsis mb-0"> From {{ notification.nom }} {{ notification.prenom }}</p>
+                                        <h6 class="preview-subject font-weight-normal mb-1">{{ 'New request'|trans|raw }}</h6>
+                                        <p class="text-gray ellipsis mb-0"> {{ 'From'|trans|raw }} {{ notification.nom }} {{ notification.prenom }}</p>
                                     </div>
                                     <div class="d-flex align-items-center mt-2">
                                         <form action="{{ path('app_respond_to_friend_request', {'requestId': notification.requestId , 'action': 'accept'}) }}" method="post">
@@ -124,8 +126,22 @@
                         <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
                     </a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+                        <i class="flag-icon {{ app.request.locale == 'en' ? 'flag-icon-gb' : 'flag-icon-fr' }}"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" style="color: black" href="{{ path('change_locale', { 'url': url ,'locale': 'en'} ) }}">
+                            <span class="flag-icon flag-icon-gb"></span> English
+                        </a>
+                        <a class="dropdown-item" style="color: black" href="{{ path('change_locale', {'url': url, 'locale': 'fr'}) }}">
+                            <span class="flag-icon flag-icon-fr"></span> Français
+                        </a>
+                    </div>
+                </li>
                 <li class="nav-item nav-logout d-none d-lg-block">
-                    <a class="nav-link" href="{{ path('app_logout') }}">
+                    <a class="nav-link" href="{{ path('app_logout', {'_locale' : langue}) }}">
                         <i class="mdi mdi-power"></i>
                     </a>
                 </li>
@@ -142,37 +158,37 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{{ path('app_profile') }}">
-                        <span class="menu-title" style="color: #f85454">Profile</span>
+                    <a class="nav-link" href="{{ path('app_profile', {'_locale' : langue}) }}">
+                        <span class="menu-title" style="color: #f85454">{{ 'Profile'|trans|raw }}</span>
                         <i class="mdi mdi-home menu-icon"></i>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                        <span class="menu-title">Settings</span>
+                        <span class="menu-title">{{ 'Settings'|trans|raw }}</span>
                         <i class="menu-arrow"></i>
                         <i class="fa fa-gear menu-icon"></i>
                     </a>
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_editProfile') }}">
-                                    <i class="fas fa-user-edit  me-2"></i> Edit Profile
+                                <a class="nav-link" href="{{ path('app_editProfile', {'_locale' : langue}) }}">
+                                    <i class="fas fa-user-edit  me-2"></i> {{ 'Edit Profile'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_CPassword') }}">
-                                    <i class="fas fa-key  me-2"></i> Change Password
+                                <a class="nav-link" href="{{ path('app_CPassword', {'_locale' : langue}) }}">
+                                    <i class="fas fa-key  me-2"></i> {{ 'Change Password'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_friends') }}">
-                                    <i class="fas fa-users me-2"></i> Friends
+                                <a class="nav-link" href="{{ path('app_friends', {'_locale' : langue}) }}">
+                                    <i class="fas fa-users me-2"></i> {{ 'Friends'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_DAccount') }}">
-                                    <i class="fas fa-user-times  me-2"></i> Delete Account
+                                <a class="nav-link" href="{{ path('app_DAccount', {'_locale' : langue}) }}">
+                                    <i class="fas fa-user-times  me-2"></i> {{ 'Delete Account'|trans|raw }}
                                 </a>
                             </li>
                         </ul>
@@ -187,23 +203,23 @@
                     <div class="collapse" id="ui-pages">
                         <ul class="nav flex-column ">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Website') }}">
-                                    <i class="fas fa-edit me-2"></i> Edit Website
+                                <a class="nav-link" href="{{ path('app_Website', {'_locale' : langue}) }}">
+                                    <i class="fas fa-edit me-2"></i> {{ 'Edit Website'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_Msections') }}">
-                                    <i class="fas fa-th-large me-2"></i> Main Sections
+                                <a class="nav-link" href="{{ path('app_Msections', {'_locale' : langue}) }}">
+                                    <i class="fas fa-th-large me-2"></i> {{ 'Main Sections'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_ShowAdventures') }}">
-                                    <i class="fas fa-mountain me-2"></i> Show Adventures
+                                <a class="nav-link" href="{{ path('app_ShowAdventures', {'_locale' : langue}) }}">
+                                    <i class="fas fa-mountain me-2"></i> {{ 'Show Adventures'|trans|raw }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_ShowPodcast') }}">
-                                    <i class="fas fa-podcast me-2"></i> Show Podcasts
+                                <a class="nav-link" href="{{ path('app_ShowPodcast', {'_locale' : langue}) }}">
+                                    <i class="fas fa-podcast me-2"></i> {{ 'Show Podcasts'|trans|raw }}
                                 </a>
                             </li>
                         </ul>
@@ -221,13 +237,13 @@
                                 <div class="card-body text-center">
                                     <h4 class="subscription-title">
                                         <i class="mdi mdi-information-outline" style="color: #007bff; font-size: 2em;"></i>
-                                        Subscription Information
+                                        {{ 'Subscription Information'|trans|raw }}
                                     </h4>
-                                    <p class="mt-3">You have chosen the <strong>Free Plan</strong>, which includes ads.</p>
-                                    <p class="mb-4">Upgrade to a premium experience without ads anytime.</p>
-                                    <a href="{{ path('app_form4') }}" class="btn btn-outline-primary btn-lg">
+                                    <p class="mt-3">{{ 'You have chosen the'|trans|raw }} <strong>{{ 'Free Plan'|trans|raw }}</strong>, {{ 'which includes ads.'|trans|raw }}</p>
+                                    <p class="mb-4">{{ 'Upgrade to a premium experience without ads anytime.'|trans|raw }}</p>
+                                    <a href="{{ path('app_form4', {'_locale' : langue}) }}" class="btn btn-outline-primary btn-lg">
                                         <i class="mdi mdi-account-edit" style="margin-right: 5px;"></i>
-                                        Change Subscription
+                                        {{ 'Change Subscription'|trans|raw }}
                                     </a>
                                 </div>
                             </div>
@@ -240,13 +256,13 @@
                             <div class="card-body">
                                 <h2 class="welcome-title">
                                     <i class="mdi mdi-hand-wave welcome-icon"></i>
-                                    Welcome, {{ user.nom }}
+                                    {{ 'Welcome'|trans|raw }}, {{ user.nom }}
                                 </h2>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="user-info-section">
-                                            <h4><i class="mdi mdi-account-circle" style="color: #007bff;"></i>Your Information:</h4>
-                                            <p><i class="mdi mdi-email" style="color: #007bff;"></i>Email: {{ user.email }}</p>
+                                            <h4><i class="mdi mdi-account-circle" style="color: #007bff;"></i>{{ 'Your Information'|trans|raw }}:</h4>
+                                            <p><i class="mdi mdi-email" style="color: #007bff;"></i>{{ 'Email'|trans|raw }}: {{ user.email }}</p>
                                             <p>
                                                 {% if user.star == 5 %}
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
@@ -254,45 +270,45 @@
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
-                                                    You have 5 stars
+                                                    {{ 'You have 5 stars'|trans|raw }}
                                                 {% elseif user.star == 4 %}
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
-                                                    You have 4 stars
+                                                    {{ 'You have 4 stars'|trans|raw }}
                                                 {% elseif user.star == 3 %}
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
-                                                    You have 3 stars
+                                                    {{ 'You have 3 stars'|trans|raw }}
                                                 {% elseif user.star == 2 %}
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
-                                                    You have 2 stars
+                                                    {{ 'You have 2 stars'|trans|raw }}
                                                 {% elseif user.star == 1 %}
                                                     <i class="fas fa-star" style="color: #ffc107;"></i>
-                                                    You have 1 star
+                                                    {{ 'You have 1 star'|trans|raw }}
                                                 {% else %}
-                                                    No stars
+                                                    {{ 'No stars'|trans|raw }}
                                                 {% endif %}
                                             </p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="user-info-section">
-                                            <h4><i class="mdi mdi-web" style="color: #ffc107;"></i>Website Information:</h4>
-                                            <p><i class="mdi mdi-web" style="color: #ffc107;"></i>Name: {{ user.pageNom }}</p>
-                                            <p><i class="mdi mdi-format-list-bulleted" style="color: #ffc107;"></i>Type: {{ user.type }}</p>
-                                            <p><i class="mdi mdi-palette" style="color: #ffc107;"></i>Theme:
+                                            <h4><i class="mdi mdi-web" style="color: #ffc107;"></i>{{ 'Website Information'|trans|raw }}:</h4>
+                                            <p><i class="mdi mdi-web" style="color: #ffc107;"></i>{{ 'Name'|trans|raw }}: {{ user.pageNom }}</p>
+                                            <p><i class="mdi mdi-format-list-bulleted" style="color: #ffc107;"></i>{{ 'Type'|trans|raw }}: {{ user.type }}</p>
+                                            <p><i class="mdi mdi-palette" style="color: #ffc107;"></i>{{ 'Theme'|trans|raw }}:
                                                 {% if user.theme == 1 %}
-                                                    Dark Theme
+                                                    {{ 'Dark Theme'|trans|raw }}
                                                 {% elseif user.theme == 2 %}
-                                                    Maine Blue Theme
+                                                    {{ 'Maine Blue Theme'|trans|raw }}
                                                 {% elseif user.theme == 3 %}
-                                                    Pistachio Green Theme
+                                                    {{ 'Pistachio Green Theme'|trans|raw }}
                                                 {% else %}
-                                                    Unknown Theme
+                                                    {{ 'Unknown Theme'|trans|raw }}
                                                 {% endif %}
                                             </p>
                                         </div>
@@ -308,7 +324,7 @@
                             <div class="card-body2">
                                 <img src="{{ asset('images/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
                                 <img src="{{ asset('images/continents.svg') }}" class="card2-img2-absolute2" alt="circle-image" />
-                                <h4 class="font-weight-normal mb-3">Continents <i class="mdi mdi-earth mdi-24px float-end"></i>
+                                <h4 class="font-weight-normal mb-3">{{ 'Continents'|trans|raw }} <i class="mdi mdi-earth mdi-24px float-end"></i>
                                 </h4>
                                 <h2 class="mb-5">{{ totalContinentsVisited }}</h2>
                             </div>
@@ -319,7 +335,7 @@
                             <div class="card-body2">
                                 <img src="{{ asset('images/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
                                 <img src="{{ asset('images/road.svg') }}" class="card4-img4-absolute4" alt="circle-image" />
-                                <h4 class="font-weight-normal mb-3">Countries <i class="mdi mdi-flag-variant-outline mdi-24px float-end"></i>
+                                <h4 class="font-weight-normal mb-3">{{ 'Countries'|trans|raw }} <i class="mdi mdi-flag-variant-outline mdi-24px float-end"></i>
                                 </h4>
                                 <h2 class="mb-5">{{ totalCountriesVisited }}</h2>
                             </div>
@@ -330,7 +346,7 @@
                             <div class="card-body2">
                                 <img src="{{ asset('images/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
                                 <img src="{{ asset('images/adventures.png') }}" class="card3-img3-absolute3" alt="circle-image" />
-                                <h4 class="font-weight-normal mb-3">Adventures <i class="mdi mdi-compass-outline  mdi-24px float-end"></i>
+                                <h4 class="font-weight-normal mb-3">{{ 'Adventures'|trans|raw }} <i class="mdi mdi-compass-outline  mdi-24px float-end"></i>
                                 </h4>
                                 <h2 class="mb-5">{{ totalAdventures }}</h2>
                             </div>
@@ -342,15 +358,15 @@
                     <div class="col-12 grid-margin">
                         <div class="card">
                             <div class="card-body">
-                                <h1 class="card-title" style="font-size: 30px">Adventure Map</h1>
+                                <h1 class="card-title" style="font-size: 30px">{{ 'Adventure Map'|trans|raw }}</h1>
                                 <div id="map" style="height: 500px;"></div>
                                 <div class="legend-item" style="margin-bottom: 10px; margin-top: 10px; display: flex; align-items: center;">
                                     <div class="legend-color" style="width: 20px; height: 10px; background-color: #FFCCCC; margin-right: 10px;"></div>
-                                    <span style="font-size: 14px; margin-right: 20px;">1-10 adventures</span>
+                                    <span style="font-size: 14px; margin-right: 20px;">1-10 {{ 'Adventures'|trans|raw }}</span>
                                     <div class="legend-color" style="width: 20px; height: 10px; background-color: #FF6666; margin-right: 10px;"></div>
-                                    <span style="font-size: 14px; margin-right: 20px;">11-20 adventures</span>
+                                    <span style="font-size: 14px; margin-right: 20px;">11-20 {{ 'Adventures'|trans|raw }}</span>
                                     <div class="legend-color" style="width: 20px; height: 10px; background-color: #FF0000; margin-right: 10px;"></div>
-                                    <span style="font-size: 14px;">21+ adventures</span>
+                                    <span style="font-size: 14px;">21+ {{ 'Adventures'|trans|raw }}</span>
                                 </div>
                             </div>
                         </div>
@@ -361,15 +377,15 @@
                     <div class="col-md-7 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title" style="font-size: 25px">Countries level progression</h3>
+                                <h3 class="card-title" style="font-size: 25px">{{ 'Countries level progression'|trans|raw }}</h3>
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Countries</th>
-                                            <th>Number of Adventures</th>
-                                            <th>Progress</th>
+                                            <th>{{ 'Countries'|trans|raw }}</th>
+                                            <th>{{ 'Number of Adventures'|trans|raw }}</th>
+                                            <th>{{ 'Progress'|trans|raw }}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -403,18 +419,18 @@
                     <div class="col-md-5 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title" style="font-size: 25px;">Information</h3>
+                                <h3 class="card-title" style="font-size: 25px;">{{ 'Information'|trans|raw }}</h3>
                                 <div class="info-section" style="margin-top: 15px;">
                                     <p style="display: flex; align-items: center; font-size: 18px; margin-bottom: 15px;">
                                         <i class="mdi mdi-information-outline" style="font-size: 30px; margin-right: 15px; color: #007bff;"></i>
                                         <span style="line-height: 1.5;">
-                                            The color intensity of a country indicates the number of adventures in that country. The more adventures in a single country, the darker the color.
+                                            {{ 'The color intensity of a country indicates the number of adventures in that country. The more adventures in a single country, the darker the color.'|trans|raw }}
                                         </span>
                                     </p>
                                     <p style="display: flex; align-items: center; font-size: 18px;">
                                         <i class="mdi mdi-star-outline" style="font-size: 30px; margin-right: 15px; color: #ffc107;"></i>
                                         <span style="line-height: 1.5;">
-                                            Having more adventures overall increases your chances of being recommended across our site.
+                                            {{ 'Having more adventures overall increases your chances of being recommended across our site.'|trans|raw }}
                                         </span>
                                     </p>
                                 </div>
@@ -440,7 +456,7 @@
     {% for label, messages in app.flashes %}
         <div class="flash-messages" data-label="{{ label }}">
             {% for message in messages %}
-                <div class="flash-message">{{ message }}</div>
+                <div class="flash-message">{{ message|trans|raw  }}</div>
             {% endfor %}
         </div>
     {% endfor %}

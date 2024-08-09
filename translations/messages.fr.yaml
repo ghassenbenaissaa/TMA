@@ -65,3 +65,131 @@ Logo : Logo
 Profile photo : Photo de profil
 Choose Your Subscription : Choisissez votre abonnement
 For now, our website is free just for testing purposes. : Pour l'instant, notre site Web est gratuit seulement pour des fins de test.
+Notifications : Notifications
+No notifications : Pas de notifications
+New request : Nouvelle demande
+From : De
+Edit Profile : Modifier le profil
+Change Password : Modifier Mot de passe
+Friends : Amis
+Delete Account : Supprimer le compte
+Edit Website : Modifier le site Web
+Main Sections : Sections principales
+Show Adventures : Les aventures
+Show Podcasts : Les podcasts
+Settings : Paramètres
+Subscription Information : Informations sur l'abonnement
+You have chosen the : Vous avez choisi le
+Free Plan : Plan gratuit
+which includes ads. : qui comprend des pubs.
+Upgrade to a premium experience without ads anytime. : Mettez à niveau votre expérience premium sans pubs à tout moment.
+Change Subscription : Changer d'abonnement
+Website Information : Informations sur le site Web
+Name : Nom
+Continents : Continents
+Countries : Pays
+Adventures : Aventures
+Adventure Map : Carte des aventures
+Countries level progression : Progression au niveau des pays
+Number of Adventures : Nombre d'aventures
+Progress : Progression
+Information : Informations
+Your Information : Vos informations
+The color intensity of a country indicates the number of adventures in that country. The more adventures in a single country, the darker the color. : La luminosité du pays indique le nombre d'aventures dans ce pays. Plus il y a d'aventures dans un seul pays, plus sombre est la couleur.
+Having more adventures overall increases your chances of being recommended across our site. : Avoir plus d'aventures au niveau général augmente vos chances d'être recommandé sur notre site.
+No stars : Pas d'étoiles
+You have 5 stars : Vous avez 5 étoiles
+You have 4 stars : Vous avez 4 étoiles
+You have 3 stars : Vous avez 3 étoiles
+You have 2 stars : Vous avez 2 étoiles
+You have 1 star : Vous avez 1 étoile
+Welcome : Bienvenue
+Enter new email : Entrez votre nouvelle adresse e-mail
+No cover photo uploaded. : Pas de photo de couverture téléchargée.
+Select Image : Sélectionnez une image
+No files selected : Aucun fichier sélectionné
+Update : Mise à jour
+The file is not compatible. Only PNG files are allowed. : Le fichier n'est pas compatible. Seuls les fichiers PNG sont autorisés.
+An error occurred while uploading the file. : Une erreur s'est produite lors du téléchargement du fichier.
+Profile updated successfully. : Profil mis à jour avec succès.
+Make sure you remember the password to log in. : Assurez-vous de mémoriser le mot de passe pour vous connecter.
+Old password : Ancien mot de passe
+New password : Nouveau mot de passe
+Confirm new password : Confirmez le nouveau mot de passe
+Please add the main sections of your site (Cover Image, About Me, Description) and at least one adventure to make the page complete. : Veuillez ajouter les sections principales de votre site (Image de couverture, À propos de moi, Description) et au moins une aventure pour que la page soit complète.
+Invalid current password. : Mot de passe actuel invalide.
+New password must be different from the old password. : Le nouveau mot de passe doit être différent du mot de passe actuel.
+New passwords do not match. : Les nouveaux mots de passe ne correspondent pas.
+Password updated successfully. : Mot de passe mis à jour avec succès.
+Your account has been deleted successfully. : Votre compte a été supprimé avec succès.
+Delete your account : Supprimer votre compte
+All your profile and website data will be permanently deleted. : Toutes vos données de profil et de site Web seront définitivement supprimées.
+Delete this Account : Supprimer ce compte
+All your friends : Tous vos amis
+Add friends : Ajouter des amis
+Status : Statut
+Actions : Actions
+No friends found. : Aucun ami trouvé.
+All Users : Tous les utilisateurs
+Search users... : Rechercher des utilisateurs...
+No users found. : Aucun utilisateur trouvé.
+Start typing to search users... : Commencez à taper pour rechercher des utilisateurs...
+Friend removed successfully. : Amie supprimée avec succès.
+Friend not found. : Amie introuvable.
+User not logged in. : Utilisateur non connecté.
+Current user not found. : Utilisateur actuel introuvable.
+Friend request already exists. : Demande d'ami déjà existante.
+Friend request sent. : Demande d'ami envoyée.
+Request not found. : Demande introuvable.
+Request accepted. : Demande acceptée.
+Request decline. : Demande refusée.
+Invalid action. : Action invalide.
+Current : Actuel
+No profile photo uploaded. : Pas de photo de profil téléchargée.
+Cover photo : Photo de couverture
+No Image available. : Aucune image disponible.
+Social media : Médias sociaux
+Section updated successfully. : Section mise à jour avec succès.
+About you : À propos de vous
+Site web updated successfully. : Site Web mis à jour avec succès.
+Edit Site web : Modifier le site Web
+Display type : Type d'affichage
+Tell us about yourself. Share your interests, experiences... : Dites-nous en plus sur vous. Partagez vos intérêts, expériences...
+Your Facebook page : Votre page Facebook
+Your Instagram account : Votre compte Instagram
+Your Twitter account : Votre compte Twitter
+All Adventures : Toutes les aventures
+Add adventure : Ajouter une aventure
+Pays : Pays
+Description : Description
+Adventure added successfully. : Aventure ajoutée avec succès.
+Add Adventure : Ajouter une aventure
+Nom de l'Aventure* : Nom de l'Aventure*
+Description* : Description*
+Start Date* : Date de début*
+End Date* : Date de fin*
+Enter a YouTube video link : Entrez un lien de vidéo YouTube
+Audience : Public
+Recommendation : Recommandation
+It will be displayed in the recommendation section. : Il sera affiché dans la section de recommandation.
+Please enter a valid YouTube video link. : Veuillez entrer un lien de vidéo YouTube valide.
+Podcast edited successfully. : Podcast édité avec succès.
+An error occurred while uploading the podcast file. : Une erreur s'est produite lors du téléchargement du fichier podcast.
+An error occurred while uploading one of the images. : Une erreur s'est produite lors du téléchargement d'une des images.
+Podcast added successfully. : Podcast ajouté avec succès.
+All Podcasts : Tous les podcasts
+Add Podcast : Ajouter un podcast
+Yes, delete it! : Oui, le supprimer!
+Please note that there is no option to restore the podcast after deletion! : Veuillez noter que l'option de restauration du podcast n'est pas disponible après la suppression!
+Are you sure? : Êtes-vous sûr?
+Podcast name* : Nom du podcast*
+Select Audio File : Sélectionnez le fichier audio
+No file selected : Aucun fichier sélectionné
+Select Images : Sélectionnez les images
+Please note that there is no option to restore the adventure after deletion! : Veuillez noter que l'option de restauration de l'aventure n'est pas disponible après la suppression!
+Edit Adventure : Modifier l'aventure
+You won't be able to revert this! : Vous ne pourrez pas annuler cela!
+Adventure updated successfully. : Aventure mise à jour avec succès.
+End Date cannot be before Start Date. Start Date : Date de fin ne peut pas être avant la date de début. Date de début
+Edit Podcast : Modifier le podcast
+Your browser does not support the audio element. : Votre navigateur ne prend pas en charge l'élément audio.

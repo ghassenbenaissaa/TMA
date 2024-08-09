@@ -47,13 +47,15 @@ use OpenAI;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'app_profile')]
+    #[Route('/Profile/{_locale}', name: 'app_profile', defaults: ['_locale' => 'en'])]
     public function index(UserRepository $userRepository, AddFriendRepository $addFriendRepository, ): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_profile';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login', ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
         $user = $userRepository->find($currentUser);
@@ -180,16 +182,20 @@ class ProfileController extends AbstractController
             'countryAdventureList' => $countryAdventureList, // Pass the list to Twig
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/profile/edit', name: 'app_editProfile')]
+    #[Route('/profile/edit/{_locale}', name: 'app_editProfile', defaults: ['_locale' => 'en'])]
     public function editProfile(Request $request,AddFriendRepository $addFriendRepository, ParameterBagInterface $params): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_editProfile';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login', ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
         $entityManager = $this->getDoctrine()->getManager();
@@ -220,7 +226,7 @@ class ProfileController extends AbstractController
                 // Vérifier l'extension du fichier
                 if ($logoFile->guessExtension() !== 'png') {
                     $this->addFlash('error', 'The file is not compatible. Only PNG files are allowed.');
-                    return $this->redirectToRoute('app_editProfile');
+                    return $this->redirectToRoute('app_editProfile', ['_locale' => $langue]);
                 }
 
                 $newFilename = $user->getPageNom() . '.' . $logoFile->guessExtension();
@@ -228,7 +234,7 @@ class ProfileController extends AbstractController
                     $logoFile->move($logos_directory, $newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the file.');
-                    return $this->redirectToRoute('app_editProfile');
+                    return $this->redirectToRoute('app_editProfile', ['_locale' => $langue]);
                 }
                 $user->setLogo($newFilename);
             }
@@ -238,7 +244,7 @@ class ProfileController extends AbstractController
                 $this->addFlash('success', 'Profile updated successfully.');
 
 
-            return $this->redirectToRoute('app_editProfile');
+            return $this->redirectToRoute('app_editProfile', ['_locale' => $langue]);
         }
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0, 'notification' => 0]);
@@ -271,16 +277,20 @@ class ProfileController extends AbstractController
             'user' => $user,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/profile/Change-Password', name: 'app_CPassword')]
+    #[Route('/profile/Change-Password/{_locale}', name: 'app_CPassword', defaults: ['_locale' => 'en'])]
     public function index2(Request $request, UserPasswordEncoderInterface $passwordEncoder,AddFriendRepository $addFriendRepository, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_CPassword';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login', ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
         $user = $userRepository->find($currentUser);
@@ -307,7 +317,7 @@ class ProfileController extends AbstractController
             $oldPassword = $data['Omdp'];
             if (!$passwordEncoder->isPasswordValid($user, $oldPassword)) {
                 $this->addFlash('error', 'Invalid current password.');
-                return $this->redirectToRoute('app_CPassword');
+                return $this->redirectToRoute('app_CPassword', ['_locale' => $langue]);
             }
 
             $newPassword = $data['mdp'];
@@ -315,12 +325,12 @@ class ProfileController extends AbstractController
 
             if ($oldPassword == $newPassword) {
                 $this->addFlash('error', 'New password must be different from the old password.');
-                return $this->redirectToRoute('app_CPassword');
+                return $this->redirectToRoute('app_CPassword', ['_locale' => $langue]);
             }
 
             if ($newPassword !== $confirmedPassword) {
                 $this->addFlash('error', 'New passwords do not match.');
-                return $this->redirectToRoute('app_CPassword');
+                return $this->redirectToRoute('app_CPassword', ['_locale' => $langue]);
             }
 
 
@@ -332,7 +342,7 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Password updated successfully.');
-            return $this->redirectToRoute('app_CPassword');
+            return $this->redirectToRoute('app_CPassword', ['_locale' => $langue]);
         }
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
@@ -365,16 +375,20 @@ class ProfileController extends AbstractController
             'form' => $form->createView(),
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/profile/Delete-Account', name: 'app_DAccount')]
+    #[Route('/profile/Delete-Account/{_locale}', name: 'app_DAccount' , defaults: ['_locale' => 'en'])]
     public function index3(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_DAccount';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -400,7 +414,8 @@ class ProfileController extends AbstractController
             $entityManager->remove($user);
             $entityManager->flush();
             $this->addFlash('success', 'Your account has been deleted successfully.');
-            return $this->redirectToRoute('app_home');
+            $session->invalidate();
+            return $this->redirectToRoute('app_home' , ['_locale' => $langue]);
         }
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
@@ -433,16 +448,20 @@ class ProfileController extends AbstractController
             'delete_form' => $form->createView(),
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/profile/MainSections', name: 'app_Msections')]
+    #[Route('/profile/MainSections/{_locale}', name: 'app_Msections' , defaults: ['_locale' => 'en'])]
     public function index4(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, SectionRepository $sectionRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_Msections';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login', ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -505,7 +524,7 @@ class ProfileController extends AbstractController
                 } catch (FileException $e) {
                     $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                     $this->addFlash('error', $errorMessage);
-                    return $this->redirectToRoute('app_Msections');
+                    return $this->redirectToRoute('app_Msections', ['_locale' => $langue]);
                 }
 
             }
@@ -518,7 +537,7 @@ class ProfileController extends AbstractController
                 } catch (FileException $e) {
                     $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                     $this->addFlash('error', $errorMessage);
-                    return $this->redirectToRoute('app_Msections');
+                    return $this->redirectToRoute('app_Msections', ['_locale' => $langue]);
                 }
 
             }
@@ -541,7 +560,7 @@ class ProfileController extends AbstractController
                     $aboutMeSection->setImage($newFilename);
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the file.');
-                    return $this->redirectToRoute('app_Msections');
+                    return $this->redirectToRoute('app_Msections' , ['_locale' => $langue]);
                 }
             }
 
@@ -559,11 +578,11 @@ class ProfileController extends AbstractController
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Section updated successfully.');
-                return $this->redirectToRoute('app_Msections');
+                return $this->redirectToRoute('app_Msections' , ['_locale' => $langue]);
             } catch (FileException $e) {
                 $errorMessage = sprintf('An error occurred while uploading the file: %s', $e->getMessage());
                 $this->addFlash('error', $errorMessage);
-                return $this->redirectToRoute('app_Msections');
+                return $this->redirectToRoute('app_Msections' , ['_locale' => $langue]);
             }
         }
         else if ($formSocialMedia->isSubmitted()) {
@@ -631,18 +650,22 @@ class ProfileController extends AbstractController
             'ProfilePhotoSection' => $ProfilePhotoSection,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
 
 
-    #[Route('/profile/AddAdventure', name: 'app_AddAdventure')]
+    #[Route('/profile/AddAdventure/{_locale}', name: 'app_AddAdventure' , defaults: ['_locale' => 'en'])]
     public function index5(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_AddAdventure';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -676,7 +699,7 @@ class ProfileController extends AbstractController
                 // Vérifier que la date de fin n'est pas avant la date de début
                 if ($dateDebutString > $dateFinString) {
                     $this->addFlash('error', 'End Date cannot be before Start Date. Start Date: ' . $dateFinString);
-                    return $this->redirectToRoute('app_AddAdventure');
+                    return $this->redirectToRoute('app_AddAdventure', ['_locale' => $langue]);
                 }
                 $dateDebut = \DateTime::createFromFormat('m-d-Y', $dateDebutString);
                 $dateFin = \DateTime::createFromFormat('m-d-Y', $dateFinString);
@@ -695,7 +718,7 @@ class ProfileController extends AbstractController
                     }
                     catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
-                        return $this->redirectToRoute('app_AddAdventure');
+                        return $this->redirectToRoute('app_AddAdventure' , ['_locale' => $langue]);
                     }
                     $image = new Image();
                     $image->setNom($newFilename);
@@ -744,7 +767,7 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Adventure added successfully.');
-            return $this->redirectToRoute('app_ShowAdventures');
+            return $this->redirectToRoute('app_ShowAdventures' , ['_locale' => $langue]);
         }
         $totalAdventures = $entityManager->getRepository(Aventure::class)->count(['IdUser' => $currentUser]);
 
@@ -795,6 +818,8 @@ class ProfileController extends AbstractController
             'user' => $user,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
     public function calculateAndSetStars(int $userId, UserRepository $userRepository, EntityManagerInterface $entityManager): void
@@ -1320,13 +1345,15 @@ class ProfileController extends AbstractController
         return $abbreviations[$abrege] ?? $abrege;
     }
 
-    #[Route('/profile/ShowAdventures', name: 'app_ShowAdventures')]
+    #[Route('/profile/ShowAdventures/{_locale}', name: 'app_ShowAdventures' , defaults: ['_locale' => 'en'])]
     public function index6(Request $request, UserRepository $userRepository, AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository,ImageRepository $imageRepository): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_ShowAdventures';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -1389,10 +1416,12 @@ class ProfileController extends AbstractController
             'images' => $image,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/profile/ShowAdventures/{AvId}', name: 'app_DAdventures')]
+    #[Route('/profile/ShowAdventure/{AvId}', name: 'app_DAdventures')]
     public function index7(UserRepository $userRepository,AventureRepository $adventureRepository, EntityManagerInterface $entityManager, int $AvId   ): Response
     {
         $session = $this->get('session');
@@ -1418,13 +1447,15 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('app_ShowAdventures');
     }
 
-    #[Route('/profile/EditAdventure/{AvId}', name: 'app_EditAdventure')]
+    #[Route('/profile/EditAdventure/{AvId}/{_locale}', name: 'app_EditAdventure' , defaults: ['_locale' => 'en'])]
     public function index8(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, AventureRepository $aventureRepository, ParameterBagInterface $params, EntityManagerInterface $entityManager, PaysRepository $paysRepository, ContinentRepository $continentRepository , int $AvId): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_EditAdventure';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -1461,7 +1492,7 @@ class ProfileController extends AbstractController
                 // Vérifier que la date de fin n'est pas avant la date de début
                 if ($dateDebutString > $dateFinString) {
                     $this->addFlash('error', 'End Date cannot be before Start Date. Start Date: ' . $dateFinString);
-                    return $this->redirectToRoute('app_EditAdventure', ['AvId' => $AvId]);
+                    return $this->redirectToRoute('app_EditAdventure', ['AvId' => $AvId , '_locale' => $langue]);
                 }
                 $dateDebut = \DateTime::createFromFormat('m-d-Y', $dateDebutString);
                 $dateFin = \DateTime::createFromFormat('m-d-Y', $dateFinString);
@@ -1478,7 +1509,7 @@ class ProfileController extends AbstractController
                         $this->addWatermarks(new File($temporaryFilePath), $watermarkPath1, $watermarkPath2, $temporaryFilePath, 5);
                     } catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
-                        return $this->redirectToRoute('app_EditAdventure', ['AvId' => $AvId]);
+                        return $this->redirectToRoute('app_EditAdventure', ['AvId' => $AvId , '_locale' => $langue]);
                     }
                     $image = new Image();
                     $image->setNom($newFilename);
@@ -1524,7 +1555,7 @@ class ProfileController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Adventure updated successfully.');
-            return $this->redirectToRoute('app_EditAdventure', [ 'AvId' => $AvId]);
+            return $this->redirectToRoute('app_EditAdventure', [ 'AvId' => $AvId , '_locale' => $langue]);
         }
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
@@ -1558,6 +1589,8 @@ class ProfileController extends AbstractController
             'aventure' => $aventure,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
@@ -1594,13 +1627,15 @@ class ProfileController extends AbstractController
     }
 
 
-    #[Route('/profile/EditSiteWeb', name: 'app_Website', methods: ['GET', 'POST'])]
+    #[Route('/profile/EditSiteWeb/{_locale}', name: 'app_Website' , defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function editSite( Request $request, AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_Website';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -1626,7 +1661,7 @@ class ProfileController extends AbstractController
         if ($form->isSubmitted()) {
             $entityManager->flush();
             $this->addFlash('success', 'Site web updated successfully.');
-            return $this->redirectToRoute('app_Website');
+            return $this->redirectToRoute('app_Website' , ['_locale' => $langue]);
         }
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
@@ -1659,16 +1694,20 @@ class ProfileController extends AbstractController
             'user' => $user,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/profile/ShowPodcast', name: 'app_ShowPodcast')]
+    #[Route('/profile/ShowPodcast/{_locale}', name: 'app_ShowPodcast' , defaults: ['_locale' => 'en'])]
     public function showPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, PodcastRepository $podcastRepository, ImageRepository $imageRepository ): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_ShowPodcast';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -1730,6 +1769,8 @@ class ProfileController extends AbstractController
             'images' => $image,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
@@ -1760,13 +1801,15 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('app_ShowPodcast');
     }
 
-    #[Route('/profile/AddPodcast', name: 'app_AddPodcast')]
+    #[Route('/profile/AddPodcast/{_locale}', name: 'app_AddPodcast' , defaults: ['_locale' => 'en'])]
     public function addPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params  ): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_AddPodcast';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -1807,7 +1850,7 @@ class ProfileController extends AbstractController
                     }
                     catch (FileException $e) {
                         $this->addFlash('error', 'An error occurred while uploading one of the images.');
-                        return $this->redirectToRoute('app_AddPodcast');
+                        return $this->redirectToRoute('app_AddPodcast' , ['_locale' => $langue]);
                     }
                     $image = new Image();
                     $image->setNom($newFilename);
@@ -1828,14 +1871,14 @@ class ProfileController extends AbstractController
                     $podcast->setSource($newFilename); // Set the filename to the podcast entity
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the podcast file.');
-                    return $this->redirectToRoute('app_AddPodcast');
+                    return $this->redirectToRoute('app_AddPodcast' , ['_locale' => $langue]);
                 }
             }
             $entityManager->persist($podcast);
             $entityManager->flush();
 
             $this->addFlash('success', 'Podcast added successfully.');
-            return $this->redirectToRoute('app_ShowPodcast');
+            return $this->redirectToRoute('app_ShowPodcast' , ['_locale' => $langue]);
         }
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
@@ -1868,17 +1911,21 @@ class ProfileController extends AbstractController
             'user' => $user,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'langue' => $langue,
+            'url' => $url
         ]);
     }
 
 
-    #[Route('/profile/EditPodcast/{PdId}', name: 'app_EditPodcast')]
+    #[Route('/profile/EditPodcast/{PdId}/{_locale}', name: 'app_EditPodcast' , defaults: ['_locale' => 'en'])]
     public function editPodcast(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository,PodcastRepository $podcastRepository, EntityManagerInterface $entityManager, ParameterBagInterface $params ,int $PdId): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_EditPodcast';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -1944,14 +1991,14 @@ class ProfileController extends AbstractController
                     $podcast->setSource($newFilename); // Set the filename to the podcast entity
                 } catch (FileException $e) {
                     $this->addFlash('error', 'An error occurred while uploading the podcast file.');
-                    return $this->redirectToRoute('app_AddPodcast');
+                    return $this->redirectToRoute('app_AddPodcast' , ['_locale' => $langue]);
                 }
             }
             $entityManager->persist($podcast);
             $entityManager->flush();
 
             $this->addFlash('success', 'Podcast edited successfully.');
-            return $this->redirectToRoute('app_ShowPodcast');
+            return $this->redirectToRoute('app_ShowPodcast' , ['_locale' => $langue]);
         }
         $notifications = [];
         $friendRequests = $addFriendRepository->findBy(['user_id2' => $currentUser, 'confirmation' => 0 , 'notification' => 0]);
@@ -1985,6 +2032,8 @@ class ProfileController extends AbstractController
             'podcast' => $podcast,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
     #[Route('/profile/delete/image2/{PdId}/{imageId}', name: 'delete_image2')]
@@ -2068,13 +2117,15 @@ class ProfileController extends AbstractController
         }
     }
 
-    #[Route('/profile/ShowFriends', name: 'app_friends')]
+    #[Route('/profile/ShowFriends/{_locale}', name: 'app_friends' , defaults: ['_locale' => 'en'])]
     public function showFriends( UserRepository $userRepository, AddFriendRepository $addFriendRepository ): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_friends';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -2125,6 +2176,8 @@ class ProfileController extends AbstractController
             'friends' => $friends,
             'photoProfile' => $photoProfile,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue
         ]);
     }
 
@@ -2205,13 +2258,15 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute('app_friends', ['userId' => $loggedInUserId]);
     }
 
-    #[Route('/profile/AddFriends', name: 'app_addfriends')]
+    #[Route('/profile/AddFriends/{_locale}', name: 'app_addfriends' , defaults: ['_locale' => 'en'])]
     public function addFriends(UserRepository $userRepository,AddFriendRepository $addFriendRepository): Response
     {
         $session = $this->get('session');
+        $langue = $session->get('_locale');
+        $url = 'app_addfriends';
         if (!$session->has('user')) {
             // Rediriger vers la page de connexion ou une autre page
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login' , ['_locale' => $langue]);
         }
         $currentUser = $session->get('user');
 
@@ -2268,6 +2323,8 @@ class ProfileController extends AbstractController
             'photoProfile' => $photoProfile,
             'userId' => $currentUser,
             'notifications' => $notifications,
+            'url' => $url,
+            'langue' => $langue
         ]);
     }
 
