@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
 
 </head>
 
@@ -31,26 +32,72 @@
         <div class="collapse navbar-collapse" id="navbarNav" style="flex-grow: 0;">
             <ul class="navbar-nav" style="display: flex; justify-content: center; list-style: none; padding: 0;">
                 <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#about-me" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">About Me</a>
+                    <a class="nav-link" href="#about-me" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'About Me'|trans|raw }}</a>
                 </li>
                 {% if adventuresReq|length > 0 %}<li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#top-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Top Adventures</a>
+                    <a class="nav-link" href="#top-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Top Adventures'|trans|raw }}</a>
                 </li> {% endif %}
                 {% if adventures|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#all-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Adventures</a>
+                    <a class="nav-link" href="#all-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'All Adventures'|trans|raw }}</a>
                 </li> {% endif %}
                 {% if countries|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#countries-visited" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Countries Visited</a>
+                    <a class="nav-link" href="#countries-visited" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Countries Visited'|trans|raw }}</a>
                 </li> {% endif %}
                 {% if podcasts|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#all-podcasts" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Podcasts</a>
+                    <a class="nav-link" href="#all-podcasts" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'All Podcasts'|trans|raw }}</a>
                 </li> {% endif %}
                 <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#social-network" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Social Network</a>
+                    <a class="nav-link" href="#social-network" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Social Network'|trans|raw }}</a>
                 </li>
                 <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#contact" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Get in Touch</a>
+                    <a class="nav-link" href="#contact" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Get in Touch'|trans|raw }}</a>
                 </li>
+                <li class="nav-item dropdown" style="margin: 0 10px;">
+                    <a class="nav-link count-indicator dropdown-toggle" href="#" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="flag-icon {{ app.request.locale == 'en' ? 'flag-icon-gb' : 'flag-icon-fr' }}"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li>
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale_langue', { 'locale': 'en', 'url': url }) }}">
+                                <span class="flag-icon flag-icon-gb" style="font-size: 1.5rem;"></span> English
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" style="color: black" href="{{ path('change_locale_langue', { 'locale': 'fr', 'url': url }) }}">
+                                <span class="flag-icon flag-icon-fr" style="font-size: 1.5rem;"></span> Français
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <style>
+                    /* Styles pour afficher correctement le menu déroulant */
+                    .dropdown-menu {
+                        min-width: 8rem; /* Ajuste la largeur minimum */
+                    }
+
+                    .dropdown-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem; /* Espacement entre le drapeau et le texte */
+                    }
+
+                    /* Icône de langue sélectionnée plus grande */
+                    .nav-link .flag-icon {
+                        font-size: 2rem;
+                    }
+
+                    /* Affichage automatique du dropdown */
+                    .nav-item.dropdown:hover .dropdown-menu {
+                        display: block;
+                    }
+
+                    /* Affichage par défaut (caché) du dropdown */
+                    .dropdown-menu {
+                        display: none;
+                        position: absolute;
+                    }
+                </style>
             </ul>
         </div>
     </div>
@@ -65,8 +112,8 @@
 <main class="content-wrapper">
     <header class="white-text-container section-container">
         <div class="text-center">
-            <h1>I am {{ user.nom }} {{ user.prenom }}</h1>
-            <h2 style="font-size: 40px;">Welcome to <span style="font-family: 'Pacifico', cursive;">{{ user.pageNom }}</span></h2>
+            <h1>{{ 'I am'|trans|raw }} {{ user.nom }} {{ user.prenom }}</h1>
+            <h2 style="font-size: 40px;">{{ 'Welcome to'|trans|raw }} <span style="font-family: 'Pacifico', cursive;">{{ user.pageNom }}</span></h2>
         </div>
 
         {% endblock %}
@@ -80,7 +127,7 @@
                 <section id="about-me" class="about-me-section">
                 <div class="card about-me-card">
                     <div class="card-block">
-                        <h2 style="margin-bottom: 10px">About Me</h2>
+                        <h2 style="margin-bottom: 10px">{{ 'About Me'|trans|raw }}</h2>
                         <div class="row align-items-center">
                             <div class="col-md-4">
                                 <div class="about-me-image">
@@ -102,7 +149,7 @@
                     <section id="top-adventures" class="top-adventures-section">
                         <div class="card recommendations-card">
                             <div class="card-block">
-                                <h2 style="margin-bottom: 10px">Top Adventures</h2>
+                                <h2 style="margin-bottom: 10px">{{ 'Top Adventures'|trans|raw }}</h2>
                                 <div id="adventures-carousel" class="carousel slide" data-ride="carousel">
                                     <!-- Wrapper for slides -->
                                     <div class="carousel-inner" role="listbox">
@@ -117,7 +164,7 @@
                                                         {% if index < total_adventures %}
                                                             {% set adventure = adventuresReq[index] %}
                                                             <div class="col-md-4 mb-4">
-                                                                <a href="{{ path('adventure_detail', {'id': adventure.nom, 'slug': user.pageNom}) }}" class="adventure-link">
+                                                                <a href="{{ path('adventure_detail', {'id': adventure.nom, 'slug': user.pageNom ,'_locale' : langue}) }}" class="adventure-link">
                                                                     <div class="adventure-wrapper All-adventures-card">
                                                                         {% set imageFound = false %}
                                                                         {% for image in images %}
@@ -173,13 +220,13 @@
                     <section id="all-adventures" class="all-adventures-section">
                         <div class="card All-adventures-card">
                             <div class="card-block">
-                                <h2 style="margin-bottom: 10px" >All Adventures</h2>
+                                <h2 style="margin-bottom: 10px" >{{ 'All Adventures'|trans|raw }}</h2>
                                 <div class="row">
                                     {% set adventure_count = 0 %}
                                     {% for adventure in adventures %}
                                     {% if adventure_count < 9 %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('adventure_detail', {'id': adventure.nom, 'slug': user.pageNom}) }}" class="adventure-link">
+                                        <a href="{{ path('adventure_detail', {'id': adventure.nom, 'slug': user.pageNom ,'_locale' : langue}) }}" class="adventure-link">
                                             <div class="adventure-wrapper All-adventures-card">
                                                 {% set imageFound = false %}
                                                 {% for image in images %}
@@ -208,7 +255,7 @@
                                     {% endfor %}
                                 </div>
                                 <div class="text-center" style="margin-top: 20px;">
-                                    <a href="{{ path('all_adventures', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Adventures</a>
+                                    <a href="{{ path('all_adventures', {'slug': user.pageNom ,'_locale' : langue }) }}" class="btn btn-primary">{{ 'View All Adventures'|trans|raw }}</a>
                                 </div>
                             </div>
                         </div>
@@ -222,13 +269,13 @@
                     <section id="countries-visited" class="countries-visited-section">
                         <div class="card All-countries-card">
                             <div class="card-block">
-                                <h2 style="margin-bottom: 10px" >Countries Visited</h2>
+                                <h2 style="margin-bottom: 10px" >{{ 'Countries Visited'|trans|raw }}</h2>
                                 <div class="row">
                                     {% set country_count = 0 %}
                                     {% for country in countries %}
                                     {% if country_count < 9 %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('country_detail', {'id': country.name, 'slug': user.pageNom}) }}" class="country-link">
+                                        <a href="{{ path('country_detail', {'id': country.name, 'slug': user.pageNom ,'_locale' : langue}) }}" class="country-link">
                                             <div class="country-wrapper All-countries-card">
                                                 {% if country.flag %}
                                                     <div class="flag-wrapper">
@@ -251,7 +298,7 @@
                                     {% endfor %}
                                 </div>
                                 <div class="text-center" style="margin-top: 20px;">
-                                    <a href="{{ path('all_countries', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Countries</a>
+                                    <a href="{{ path('all_countries', {'slug': user.pageNom ,'_locale' : langue}) }}" class="btn btn-primary">{{ 'View All Countries'|trans|raw }}</a>
                                 </div>
                             </div>
                         </div>
@@ -268,13 +315,13 @@
                     <section id="all-podcasts" class="all-podcasts-section">
                         <div class="card All-podcasts-card">
                             <div class="card-block">
-                                <h2 style="margin-bottom: 10px" >All Podcasts</h2>
+                                <h2 style="margin-bottom: 10px" >{{ 'All Podcasts'|trans|raw }}</h2>
                                 <div class="row">
                                     {% set podcast_count = 0 %}
                                     {% for podcast in podcasts %}
                                     {% if podcast_count < 9 %}
                                     <div class="col-md-4 mb-4">
-                                        <a href="{{ path('podcast_detail', {'id': podcast.name, 'slug': user.pageNom}) }}" class="podcast-link">
+                                        <a href="{{ path('podcast_detail', {'id': podcast.name, 'slug': user.pageNom ,'_locale' : langue}) }}" class="podcast-link">
                                             <div class="podcast-wrapper All-podcasts-card">
                                                 {% set imageFound = false %}
                                                 {% for image in images %}
@@ -302,7 +349,7 @@
                                     {% endfor %}
                                 </div>
                                 <div class="text-center" style="margin-top: 20px;">
-                                    <a href="{{ path('all_podcasts', {'slug': user.pageNom }) }}" class="btn btn-primary">View All Podcasts</a>
+                                    <a href="{{ path('all_podcasts', {'slug': user.pageNom ,'_locale' : langue } ) }}" class="btn btn-primary">{{ 'View All Podcasts'|trans|raw }}</a>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +363,7 @@
                 <section id="social-network" class="social-network-section">
                 <div class="card social-card">
                     <div class="card-block">
-                        <h2 style="margin-bottom: 10px" >Social Network</h2>
+                        <h2 style="margin-bottom: 10px" >{{ 'Social Network'|trans|raw }}</h2>
                         <div class="row">
                             <div class="col-md-4">
                                 <p class="social-buttons">
@@ -357,12 +404,14 @@
                 <section id="contact" class="contact-section">
                 <div class="card contact-card">
                     <div class="card-block text-center">
-                        <h2 style="margin-bottom: 10px" >Get in Touch</h2>
+                        <h2 style="margin-bottom: 10px" >{{ 'Get in Touch'|trans|raw }}</h2>
                         <p style="font-size: 20px; margin-bottom: 20px;">
-                            Feel free to contact me if you have travel questions, comments, or suggestions! <br>I'll try to get back to you!
+                            {{ 'Feel free to contact me if you have travel questions, comments, or suggestions!'|trans|raw }}
+                            <br>
+                            {{ "I'll try to get back to you!"|trans|raw }}
                         </p>
                         <a href="mailto:{{user.email}}" class="btn btn-primary">
-                         Send Me an Email
+                            {{ "Send Me an Email"|trans|raw }}
                         </a>
                         <div style="margin-top: 20px; text-align: center;">
                             <i class="fa-solid fa-paper-plane" style="font-size: 3em; color: #1d517a;"></i>
@@ -376,7 +425,7 @@
                 {% if travelers|length > 0 %}
                     <div class="card travelers-card">
                         <div class="card-block">
-                            <h2 style="margin-bottom: 10px">Discover Other Travelers</h2>
+                            <h2 style="margin-bottom: 10px">{{ 'Discover Other Travelers'|trans|raw }}</h2>
                             <div id="travelers-carousel" class="carousel slide" data-ride="carousel">
                                 <!-- Wrapper for slides -->
                                 <div class="carousel-inner" role="listbox">
@@ -391,7 +440,7 @@
                                                     {% if index < total_travelers %}
                                                         {% set traveler = travelers[index] %}
                                                         <div class="col-md-2">
-                                                            <a href="{{ path('app_blog', {'slug': traveler.page }) }}" class="traveler-link" style="text-decoration: none; color: inherit;">
+                                                            <a href="{{ path('app_blog', {'slug': traveler.page ,'_locale' : langue }) }}" class="traveler-link" style="text-decoration: none; color: inherit;">
                                                                 <div class="traveler-wrapper">
                                                                     <div class="profile-photo-wrapper" style="overflow: hidden; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 10px;">
                                                                         {% if traveler.profilePhoto %}
@@ -460,12 +509,11 @@
     {% for label, messages in app.flashes %}
         <div class="flash-messages" data-label="{{ label }}" data-user-id="{{ user.id }}">
             {% for message in messages %}
-                <div class="flash-message">{{ message }}</div>
+                <div class="flash-message">{{ message|trans|raw }}</div>
             {% endfor %}
         </div>
     {% endfor %}
 </div>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function (event) {
@@ -507,14 +555,14 @@
                     swalOptions.html = message;
                     swalOptions.timer = null; // No auto-dismissal for warnings
                     if (message.includes('send a friend request')) {
-                        swalOptions.title = 'Please Note';
+                        swalOptions.title = {{ 'Please Note'|trans|raw }};
                         swalOptions.html = `
                         <p>${message}</p><br>
-                        <button onclick="sendFriendRequest(${userId})" class="swal2-confirm swal2-styled">Send a friend request</button>
-                        <button onclick="Swal.close()" class="swal2-cancel swal2-styled">Cancel</button>
+                        <button onclick="sendFriendRequest(${userId})" class="swal2-confirm swal2-styled">{{ 'Send a friend request'|trans|raw }}</button>
+                        <button onclick="Swal.close()" class="swal2-cancel swal2-styled">{{ 'Cancel'|trans|raw }}</button>
                     `;
                     } else if (message.includes('Log in to view all published adventures')) {
-                        swalOptions.title = 'Please Log In';
+                        swalOptions.title = {{ 'Please Log In'|trans|raw }};
                         swalOptions.html = `
                         ${message}<br><br>
                         <button onclick="window.location.href='/login'" class="swal2-confirm swal2-styled">Log In</button>

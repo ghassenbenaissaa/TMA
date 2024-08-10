@@ -10,16 +10,20 @@ use App\Repository\PodcastRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
 {
-    #[Route('/Blog/{slug}', name: 'app_blog')]
+    #[Route('/Blog/{slug}/{_locale}', name: 'app_blog' , defaults: ['_locale' => 'en'])]
     public function index(string $slug, UserRepository $userRepository, EntityManagerInterface $entityManager, ImageRepository $imageRepository,PodcastRepository $podcastRepository, AventureRepository $aventureRepository, SessionInterface $session): Response
     {
         $currentUser = $session->get('user');
+        $langue = $session->get('_locale');
+        $session->set('slug', $slug);
+        $url = 'app_blog';
 
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
@@ -189,6 +193,8 @@ class BlogController extends AbstractController
             'adventuresReq' => $aventuresReq,
             'images' => $image,
             'travelers' => $travelers,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
@@ -221,8 +227,8 @@ class BlogController extends AbstractController
     }
 
 
-    #[Route('/Blog/{slug}/Podcasts', name: 'all_podcasts')]
-    public function all_podcasts(string $slug,UserRepository $userRepository, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository): Response
+    #[Route('/{slug}/Podcasts/{_locale}', name: 'all_podcasts', defaults: ['_locale' => 'en'])]
+    public function all_podcasts(string $slug, SessionInterface $session, UserRepository $userRepository, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository): Response
     {
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
@@ -233,6 +239,8 @@ class BlogController extends AbstractController
 
 
         $sections = $user->getSections();
+        $langue = $session->get('_locale');
+        $url = 'all_podcasts';
 
         $coverImage = null;
 
@@ -300,13 +308,17 @@ class BlogController extends AbstractController
             'adventuresReq' => $aventuresReq,
             'images' => $image,
             'travelers' => $travelers,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/Blog/{slug}/Countries', name: 'all_countries')]
+    #[Route('/{slug}/Countries/{_locale}', name: 'all_countries' , defaults: ['_locale' => 'en'])]
     public function all_countries(string $slug,UserRepository $userRepository, EntityManagerInterface $entityManager, SessionInterface $session, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository): Response
     {
         $currentUser = $session->get('user');
+        $langue = $session->get('_locale');
+        $url = 'all_countries';
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
         // Si la page n'existe pas, lancer une exception
@@ -437,14 +449,18 @@ class BlogController extends AbstractController
             'adventuresReq' => $aventuresReq,
             'images' => $image,
             'travelers' => $travelers,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/Blog/{slug}/Adventures', name: 'all_adventures')]
+    #[Route('/{slug}/Adventures/{_locale}', name: 'all_adventures' , defaults: ['_locale' => 'en'])]
     public function all_adventures(string $slug,UserRepository $userRepository,SessionInterface $session,EntityManagerInterface $entityManager, AventureRepository $aventureRepository, ImageRepository $imageRepository, PodcastRepository $podcastRepository ): Response
     {
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
         $currentUser = $session->get('user');
+        $langue = $session->get('_locale');
+        $url = 'all_adventures';
         // Si la page n'existe pas, lancer une exception
         if (!$user) {
             return $this->redirectToRoute('app_error404');
@@ -572,19 +588,23 @@ class BlogController extends AbstractController
             'adventuresReq' => $aventuresReq,
             'images' => $image,
             'travelers' => $travelers,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/Blog/{slug}/Adventure/{id}', name: 'adventure_detail')]
-    public function adventure_detail(string $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
+    #[Route('/{slug}/Adventure/{id}/{_locale}', name: 'adventure_detail' , defaults: ['_locale' => 'en'])]
+    public function adventure_detail(string $id, SessionInterface $session, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
     {
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
-
+        $langue = $session->get('_locale');
+        $url = 'adventure_detail';
         // Si la page n'existe pas, lancer une exception
         if (!$user) {
             return $this->redirectToRoute('app_error404');
         }
         $sections = $user->getSections();
+
 
         $coverImage = null;
 
@@ -662,14 +682,18 @@ class BlogController extends AbstractController
             'images' => $images,
             'travelers' => $travelers,
             'videoId' => $videoId,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
-    #[Route('/Blog/{slug}/Podcast/{id}', name: 'podcast_detail')]
-    public function podcast_detail(string $id, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
+    #[Route('/{slug}/Podcast/{id}/{_locale}', name: 'podcast_detail' , defaults: ['_locale' => 'en'])]
+    public function podcast_detail(string $id, SessionInterface $session, UserRepository $userRepository, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
     {
 
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
+        $langue = $session->get('_locale');
+        $url = 'podcast_detail';
 
         // Si la page n'existe pas, lancer une exception
         if (!$user) {
@@ -732,14 +756,18 @@ class BlogController extends AbstractController
             'adventuresReq' => $aventuresReq,
             'images' => $images,
             'travelers' => $travelers,
+            'url' => $url,
+            'langue' => $langue,
         ]);
 
     }
 
-    #[Route('/Blog/{slug}/Country/{id}', name: 'country_detail')]
+    #[Route('/{slug}/Country/{id}/{_locale}', name: 'country_detail' , defaults: ['_locale' => 'en'])]
     public function country_detail(string $id, UserRepository $userRepository, EntityManagerInterface $entityManager, SessionInterface $session, string $slug, PodcastRepository $podcastRepository, AventureRepository $aventureRepository , ImageRepository $imageRepository): Response
     {
         $currentUser = $session->get('user');
+        $langue = $session->get('_locale');
+        $url = 'country_detail';
         $user = $userRepository->findOneBy(['pageNom' => $slug]);
 
         // Si la page n'existe pas, lancer une exception
@@ -869,9 +897,21 @@ class BlogController extends AbstractController
             'adventuresReq' => $aventuresReq,
             'images' => $image,
             'travelers' => $travelers,
+            'url' => $url,
+            'langue' => $langue,
         ]);
     }
 
+    #[Route('/change-local/{locale}/{url}', name: 'change_locale_langue')]
+    public function changeLocale($locale, $url, Request $request, SessionInterface $session)
+    {
+        $request->getSession()->set('_locale', $locale);
+        $slug = $session->get('slug');
+        return $this->redirectToRoute($url, [
+            '_locale' => $locale,
+            'slug' => $slug,
+        ]);
+    }
 
 
 }

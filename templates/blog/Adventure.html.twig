@@ -20,6 +20,7 @@
         <link href="{{asset('css/blog.css')}}" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -32,25 +33,25 @@
         <div class="collapse navbar-collapse" id="navbarNav" style="flex-grow: 0;">
             <ul class="navbar-nav" style="display: flex; justify-content: center; list-style: none; padding: 0;">
                 <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#about-me" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">About Me</a>
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom,'_locale' : langue }) }}#about-me" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'About Me'|trans|raw }}</a>
                 </li>
                 {% if adventuresReq|length > 0 %}<li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#top-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Top Adventures</a>
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom,'_locale' : langue }) }}#top-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Top Adventures'|trans|raw }}</a>
                     </li> {% endif %}
                 {% if adventures|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#all-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Adventures</a>
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom,'_locale' : langue }) }}#all-adventures" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'All Adventures'|trans|raw }}</a>
                 </li> {% endif %}
                 {% if countries|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#countries-visited" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Countries Visited</a>
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom,'_locale' : langue }) }}#countries-visited" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Countries Visited'|trans|raw }}</a>
                 </li> {% endif %}
                 {% if podcasts|length > 0 %} <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom }) }}#all-podcasts" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">All Podcasts</a>
+                    <a class="nav-link" href="{{ path('app_blog', {'slug': user.pageNom,'_locale' : langue }) }}#all-podcasts" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'All Podcasts'|trans|raw }}</a>
                 </li> {% endif %}
                 <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#social-network" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Social Network</a>
+                    <a class="nav-link" href="#social-network" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Social Network'|trans|raw }}</a>
                 </li>
                 <li class="nav-item" style="margin: 0 10px;">
-                    <a class="nav-link" href="#contact" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">Get in Touch</a>
+                    <a class="nav-link" href="#contact" style=" text-transform: uppercase; font-weight: bold; text-decoration: none;">{{ 'Get in Touch'|trans|raw }}</a>
                 </li>
             </ul>
         </div>
@@ -86,18 +87,18 @@
                                             <div class="card-country">
                                                 {% if countries %}
                                                     {% set country = countries[adventureClic.getIdPays().getId()] %}
-                                                    <p style="margin-top: 8px"><strong>Country:</strong> {{ country.name }}</p>
+                                                    <p style="margin-top: 8px"><strong>{{ 'Country'|trans|raw }}:</strong> {{ country.name }}</p>
                                                     <img src="{{ country.flag }}" class="country-flag" alt="{{ country.name }}">
                                                 {% endif %}
                                             </div>
 
                                             <!-- Recommendation Status -->
                                             <p class="card-recommendation">
-                                                <strong>Recommended:</strong>
+                                                <strong>{{ 'Recommended'|trans|raw }}:</strong>
                                                 {% if adventureClic.recommander == 1 %}
-                                                    <span class="badge badge-success">Recommended</span>
+                                                    <span class="badge badge-success">{{ 'Recommended'|trans|raw }}</span>
                                                 {% else %}
-                                                    <span class="badge badge-danger">Not Recommended</span>
+                                                    <span class="badge badge-danger">{{ 'Not Recommended'|trans|raw }}</span>
                                                 {% endif %}
                                             </p>
 
@@ -148,7 +149,7 @@
                 <section id="social-network" class="social-network-section">
                     <div class="card social-card">
                         <div class="card-block">
-                            <h2>Social Network</h2>
+                            <h2>{{ 'Social Network'|trans|raw }}</h2>
                             <div class="row">
                                 <div class="col-md-4">
                                     <p class="social-buttons">
@@ -189,12 +190,14 @@
                 <section id="contact" class="contact-section">
                     <div class="card contact-card">
                         <div class="card-block text-center">
-                            <h2>Get in Touch</h2>
+                            <h2 style="margin-bottom: 10px" >{{ 'Get in Touch'|trans|raw }}</h2>
                             <p style="font-size: 20px; margin-bottom: 20px;">
-                                Feel free to contact me if you have travel questions, comments, or suggestions! <br>I'll try to get back to you!
+                                {{ 'Feel free to contact me if you have travel questions, comments, or suggestions!'|trans|raw }}
+                                <br>
+                                {{ "I'll try to get back to you!"|trans|raw }}
                             </p>
                             <a href="mailto:{{user.email}}" class="btn btn-primary">
-                                Send Me an Email
+                                {{ "Send Me an Email"|trans|raw }}
                             </a>
                             <div style="margin-top: 20px; text-align: center;">
                                 <i class="fa-solid fa-paper-plane" style="font-size: 3em; color: #1d517a;"></i>
@@ -205,10 +208,11 @@
                 </section>
 
 
+
                 {% if travelers|length > 0 %}
                     <div class="card travelers-card">
                         <div class="card-block">
-                            <h2 style="margin-bottom: 10px">Discover Other Travelers</h2>
+                            <h2 style="margin-bottom: 10px">{{ 'Discover Other Travelers'|trans|raw }}</h2>
                             <div id="travelers-carousel" class="carousel slide" data-ride="carousel">
                                 <!-- Wrapper for slides -->
                                 <div class="carousel-inner" role="listbox">
