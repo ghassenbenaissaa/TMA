@@ -157,7 +157,7 @@ class HomeController extends AbstractController
     }
 
 
-    #[Route('/signup/{_locale}', name: 'app_signup', methods: ['GET', 'POST'])]
+    #[Route('/signup/{_locale}', name: 'app_signup', defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function signup(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository , SessionInterface $session): Response
     {
         $session = $this->get('session');
@@ -211,7 +211,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup1/{_locale}', name: 'app_form1', methods: ['GET', 'POST'])]
+    #[Route('/signup1/{_locale}', name: 'app_form1', defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function form1( Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository , SessionInterface $session): Response
     {
         $session = $this->get('session');
@@ -243,7 +243,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup2/{_locale}', name: 'app_form2', methods: ['GET', 'POST'])]
+    #[Route('/signup2/{_locale}', name: 'app_form2', defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function form2( Request $request, UserRepository $userRepository,ParameterBagInterface $params , SessionInterface $session): Response {
         $logos_directory = $params->get('logos_directory');
         $session = $this->get('session');
@@ -307,7 +307,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup3/{_locale}', name: 'app_form3', methods: ['GET', 'POST'])]
+    #[Route('/signup3/{_locale}', name: 'app_form3', defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function form3(EntityManagerInterface $entityManager, Request $request, UserRepository $userRepository,SectionRepository $sectionRepository, ParameterBagInterface $params , SessionInterface $session): Response {
         $logos_directory = $params->get('logos_directory');
         $session = $this->get('session');
@@ -363,7 +363,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/signup4/{_locale}', name: 'app_form4', methods: ['GET', 'POST'])]
+    #[Route('/signup4/{_locale}', name: 'app_form4', defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function form4(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $session = $this->get('session');

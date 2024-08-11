@@ -18,9 +18,9 @@ Safeguard your precious travel photos with our watermark feature, ensuring your 
 Choose Your Theme : Choisissez votre thème
 We offer three distinct themes for you to personalize your travel blog. Each theme is designed to reflect different aspects of your journey, allowing you to create a blog that truly represents your unique experiences. : Nous offrons trois thèmes distincts pour personnaliser votre blog de voyage. Chaque thème est conçu pour refléter différents aspects de votre voyage, vous permettant de créer un blog qui représente vraiment vos expériences uniques.
 Dark Theme : Thème sombre
-The Dark Theme is perfect for those who prefer a sleek and sophisticated look. With its elegant black background and clean design, your travel stories will stand out with a touch of class. : Le thème sombre est parfait pour ceux qui préfèrent un look élégant et sophistiqué. Son arrière-plan noir élégant et son design épuré mettront en valeur vos histoires de voyage.
+The Dark Theme is perfect for those who prefer a sleek and sophisticated look. With its elegant black background and clean design, your travel stories will stand out with a touch of class. : Le thème sombre est parfait pour ceux qui préfèrent un look sophistiqué. Son arrière-plan noir élégant et son design épuré mettront en valeur vos histoires de voyage.
 Marine Blue Theme : Thème bleu marine
-Dive into the depths of your adventures with the Marine Blue Theme. This theme features a rich navy blue background, evoking the mystery and allure of the open sea. : Plongez dans les profondeurs de vos aventures avec le thème bleu marine. Ce thème présente un arrière-plan bleu marine riche, évoquant le mystère et l'attrait de la mer ouverte.
+Dive into the depths of your adventures with the Marine Blue Theme. This theme features a rich navy blue background, evoking the mystery and allure of the open sea. : Plongez dans les profondeurs de vos aventures avec le thème bleu marine. Ce thème présente un arrière-plan bleu, riche, évoquant le mystère et l'attrait de la mer ouverte.
 Pistachio Green Theme : Thème vert pistache
 Embrace the freshness of nature with the Pistachio Green Theme. This vibrant and lively theme brings the essence of lush landscapes and natural beauty to your blog : Adoptez la fraîcheur de la nature avec le thème vert pistache. Ce thème vibrant et vivant apporte l'essence des paysages luxuriants et de la beauté naturelle à votre blog.
 Our Packages : Nos forfaits
@@ -64,7 +64,7 @@ Site name : Nom du site
 Logo : Logo
 Profile photo : Photo de profil
 Choose Your Subscription : Choisissez votre abonnement
-For now, our website is free just for testing purposes. : Pour l'instant, notre site Web est gratuit seulement pour des fins de test.
+For now, our website is free just for testing purposes. : Notre site web est temporairement gratuit, pour une période d'essai.
 Notifications : Notifications
 No notifications : Pas de notifications
 New request : Nouvelle demande
@@ -82,7 +82,7 @@ Subscription Information : Informations sur l'abonnement
 You have chosen the : Vous avez choisi le
 Free Plan : Plan gratuit
 which includes ads. : qui comprend des pubs.
-Upgrade to a premium experience without ads anytime. : Mettez à niveau votre expérience premium sans pubs à tout moment.
+Upgrade to a premium experience without ads. : Améliorez votre expérience et passez à premium sans pubs.
 Change Subscription : Changer d'abonnement
 Website Information : Informations sur le site Web
 Name : Nom
@@ -90,13 +90,13 @@ Continents : Continents
 Countries : Pays
 Adventures : Aventures
 Adventure Map : Carte des aventures
-Countries level progression : Progression au niveau des pays
+Countries level progression : Progression des aventures dans chaque pays
 Number of Adventures : Nombre d'aventures
 Progress : Progression
 Information : Informations
 Your Information : Vos informations
-The color intensity of a country indicates the number of adventures in that country. The more adventures in a single country, the darker the color. : La luminosité du pays indique le nombre d'aventures dans ce pays. Plus il y a d'aventures dans un seul pays, plus sombre est la couleur.
-Having more adventures overall increases your chances of being recommended across our site. : Avoir plus d'aventures au niveau général augmente vos chances d'être recommandé sur notre site.
+The color intensity of a country indicates the number of adventures in that country. The more adventures in a single country, the darker the color. : La luminosité de la couleur d'un pays indique le nombre d'aventures. Plus il y a d'aventures dans un seul pays, plus sombre est la couleur.
+Having more adventures overall increases your chances of being recommended across our site. : Avoir plus d'aventures en général augmente vos chances d'être recommandé sur notre site.
 No stars : Pas d'étoiles
 You have 5 stars : Vous avez 5 étoiles
 You have 4 stars : Vous avez 4 étoiles
@@ -116,7 +116,7 @@ Make sure you remember the password to log in. : Assurez-vous de mémoriser le m
 Old password : Ancien mot de passe
 New password : Nouveau mot de passe
 Confirm new password : Confirmez le nouveau mot de passe
-Please add the main sections of your site (Cover Image, About Me, Description) and at least one adventure to make the page complete. : Veuillez ajouter les sections principales de votre site (Image de couverture, À propos de moi, Description) et au moins une aventure pour que la page soit complète.
+Please add the main sections of your site (Cover Image, About Me, Description) and at least one adventure to make the page complete. : Veuillez ajouter les sections principales de votre site (Photo de couverture, À propos de moi, Description) et au moins une aventure pour que la page soit complète.
 Invalid current password. : Mot de passe actuel invalide.
 New password must be different from the old password. : Le nouveau mot de passe doit être différent du mot de passe actuel.
 New passwords do not match. : Les nouveaux mots de passe ne correspondent pas.
@@ -202,8 +202,8 @@ Social Network : Réseau social
 Get in Touch : Contacter
 Welcome to : Bienvenue sur
 About Me : À propos de moi
-Feel free to contact me if you have travel questions, comments, or suggestions! : Vous pouvez me contacter si vous avez des questions de voyage, des commentaires ou des suggestions!
-I'll try to get back to you! : Je tenterai de vous répondre!
+Feel free to contact me if you have travel questions, comments, or suggestions! : Vous pouvez me contacter si vous avez des questions, des commentaires ou des suggestions!
+I'll try to get back to you! : Je ferai de mon mieux pour vous répondre!
 Send Me an Email : Envoyer un email
 Discover Other Travelers : Découvrir d'autres voyageurs
 I am : Je suis
@@ -218,4 +218,4 @@ All Countries Visited : Tous les pays visités
 Recommended : Recommandé
 Not Recommended : Non recommandé
 Country : Pays
-All Adventures in : Toutes les aventures dans
+All Adventures in : Les aventures du
