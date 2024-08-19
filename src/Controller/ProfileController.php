@@ -187,7 +187,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/edit/{_locale}', name: 'app_editProfile', defaults: ['_locale' => 'en'])]
+    #[Route('/profile/Edit/{_locale}', name: 'app_editProfile', defaults: ['_locale' => 'en'])]
     public function editProfile(Request $request,AddFriendRepository $addFriendRepository, ParameterBagInterface $params): Response
     {
         $session = $this->get('session');
@@ -282,7 +282,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/Change-Password/{_locale}', name: 'app_CPassword', defaults: ['_locale' => 'en'])]
+    #[Route('/profile/ChangePassword/{_locale}', name: 'app_CPassword', defaults: ['_locale' => 'en'])]
     public function index2(Request $request, UserPasswordEncoderInterface $passwordEncoder,AddFriendRepository $addFriendRepository, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
@@ -380,7 +380,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/Delete-Account/{_locale}', name: 'app_DAccount' , defaults: ['_locale' => 'en'])]
+    #[Route('/profile/DeleteAccount/{_locale}', name: 'app_DAccount' , defaults: ['_locale' => 'en'])]
     public function index3(Request $request, UserRepository $userRepository,AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager): Response
     {
         $session = $this->get('session');
@@ -1627,7 +1627,7 @@ class ProfileController extends AbstractController
     }
 
 
-    #[Route('/profile/EditSiteWeb/{_locale}', name: 'app_Website' , defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
+    #[Route('/profile/EditWebSite/{_locale}', name: 'app_Website' , defaults: ['_locale' => 'en'], methods: ['GET', 'POST'])]
     public function editSite( Request $request, AddFriendRepository $addFriendRepository, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $session = $this->get('session');
