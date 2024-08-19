@@ -509,7 +509,7 @@
     {% for label, messages in app.flashes %}
         <div class="flash-messages" data-label="{{ label }}" data-user-id="{{ user.id }}">
             {% for message in messages %}
-                <div class="flash-message">{{ message|trans|raw }}</div>
+                <div class="flash-message">{{ message }}</div>
             {% endfor %}
         </div>
     {% endfor %}
@@ -555,14 +555,14 @@
                     swalOptions.html = message;
                     swalOptions.timer = null; // No auto-dismissal for warnings
                     if (message.includes('send a friend request')) {
-                        swalOptions.title = {{ 'Please Note'|trans|raw }};
+                        swalOptions.title = 'Please Note'
                         swalOptions.html = `
                         <p>${message}</p><br>
-                        <button onclick="sendFriendRequest(${userId})" class="swal2-confirm swal2-styled">{{ 'Send a friend request'|trans|raw }}</button>
-                        <button onclick="Swal.close()" class="swal2-cancel swal2-styled">{{ 'Cancel'|trans|raw }}</button>
+                        <button onclick="sendFriendRequest(${userId})" class="swal2-confirm swal2-styled">Send a friend request</button>
+                        <button onclick="Swal.close()" class="swal2-cancel swal2-styled">Cancel</button>
                     `;
                     } else if (message.includes('Log in to view all published adventures')) {
-                        swalOptions.title = {{ 'Please Log In'|trans|raw }};
+                        swalOptions.title = 'Please Log In';
                         swalOptions.html = `
                         ${message}<br><br>
                         <button onclick="window.location.href='/login'" class="swal2-confirm swal2-styled">Log In</button>
